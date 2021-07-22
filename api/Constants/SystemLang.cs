@@ -7,9 +7,9 @@ namespace Supermarket.Constants
 {
     public class SystemLang
     {
-        public static string Monthly = "vi";
-        public static string Quarterly = "en";
-        public static string HalfYear = "zh";
+        public static string VI = "vi";
+        public static string EN = "en";
+        public static string ZH = "zh";
 
     }
 }

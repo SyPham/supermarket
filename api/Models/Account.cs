@@ -32,5 +32,8 @@ namespace Supermarket.Models
         [ForeignKey(nameof(ConsumerId))]
         public virtual Consumer Consumer { get; set; }
 
+        public virtual ICollection<Cart> Carts { get; set; }
+
+
     }
 }

@@ -57,5 +57,10 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.UploadAvatar(request));
         }
+        [HttpGet]
+        public async Task<IActionResult> GetProductsForConsumer([FromQuery] FilterRequest request)
+        {
+            return Ok(await _service.GetProductsForConsumer(request));
+        }
     }
 }

@@ -19,4 +19,5 @@ namespace Supermarket.DTO
         public DateTime CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
     }
+   
 }

@@ -1,3 +1,6 @@
+import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
+import { BuyListComponent } from './buy-list/buy-list.component';
+import { CartComponent } from './cart/cart.component';
 import { ProductListComponent } from './product-list/product-list.component';
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
@@ -42,7 +45,9 @@ if (lang === 'vi') {
 }
 @NgModule({
   declarations: [
-    ProductListComponent
+    ProductListComponent,
+    CartComponent,
+    BuyListComponent
   ],
   imports: [
     CommonModule,
@@ -54,6 +59,7 @@ if (lang === 'vi') {
     GridAllModule,
     CheckBoxAllModule,
     SwitchModule,
+    ToolbarModule,
     ConsumerRoutingModule,
     DateInputsModule ,
     MultiSelectAllModule,

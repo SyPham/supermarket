@@ -12,3 +12,8 @@ export interface Product {
   storeId: number;
   kindId: number
 }
+export interface FilterRequest {
+  kindId: number
+  storeId: number;
+  langId: string;
+}

@@ -76,7 +76,7 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     this.role = JSON.parse(localStorage.getItem('level'));
     this.value = localStorage.getItem('lang');
     const user = JSON.parse(localStorage.getItem("user"));
-    this.userName = user?.username;
+    this.userName = user?.fullName;
     this.userID = user?.id;
   }
   toggleMinimize(e) {
@@ -110,7 +110,7 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     this.navEc = new Nav().getNavEc();
 
     // this.getAvatar();
-    this.currentUser = JSON.parse(localStorage.getItem('user')).username;
+    this.currentUser = JSON.parse(localStorage.getItem('user')).fullName;
     this.page = 1;
     this.pageSize = 10;
 

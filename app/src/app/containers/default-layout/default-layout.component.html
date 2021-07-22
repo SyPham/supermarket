@@ -13,7 +13,7 @@
     </li>
   </ul>
   <ul class="nav navbar-nav ml-auto p-0">
-    <li class="nav-item d-md-down-none mr-2">
+     <!--<li class="nav-item d-md-down-none mr-2">
       <a class="nav-link">
 
         <button type="button" (click)='openModal(versionHistoryModal)' class="btn btn-info text-white">Version
@@ -25,7 +25,7 @@
         <button type="button" (click)='openModal(versionHistoryModal)' class="btn btn-info text-white">Uploaded Time
           <span class="badge-pill" style="background-color: white; color:#63c2de;">{{firstItem?.createdTime | date: 'YYYY-MM-dd HH:mm'}}</span></button>
       </a>
-    </li>
+    </li> -->
     <li class="nav-item d-md-down-none mr-2" style="width: 70px;">
       <div class="nav-link">
 <ejs-dropdownlist id='langs' #langs [dataSource]='langsData' (change)='onChange($event)' [value]='value'

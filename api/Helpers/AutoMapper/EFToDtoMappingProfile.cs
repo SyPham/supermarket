@@ -16,14 +16,16 @@ namespace Supermarket.Helpers.AutoMapper
 
             CreateMap<Account, AccountDto>();
             CreateMap<AccountType, AccountTypeDto>();
-            CreateMap<Account, UserForDetailDto>();
-
+            CreateMap<Account, UserForDetailDto>()
+               .ForMember(d => d.FullName, o => o.MapFrom(s => s.ConsumerId != null ? s.Consumer.FullName : s.Username));
             CreateMap<Store, StoreDto>();
             CreateMap<Kind, KindDto>();
             CreateMap<Product, ProductDto>();
             CreateMap<Consumer, ConsumerDto>();
             CreateMap<Order, OrderDto>();
             CreateMap<OrderDetail, OrderDetailDto>();
+
+            CreateMap<Cart, CartDto>();
 
         }
     }

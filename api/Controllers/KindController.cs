@@ -44,6 +44,11 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetByIdAsync(id));
         }
+        [HttpGet]
+        public async Task<ActionResult> GetAllByLang(string langId)
+        {
+            return Ok(await _service.GetAllByLang(langId));
+        }
 
         [HttpGet]
         public async Task<ActionResult> GetWithPaginationsAsync(PaginationParams paramater)

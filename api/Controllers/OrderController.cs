@@ -26,7 +26,11 @@ namespace Supermarket.Controllers
         {
             return StatusCodeResult(await _service.AddAsync(model));
         }
-
+        [HttpPost]
+        public async Task<ActionResult> PlaceOrder()
+        {
+            return StatusCodeResult(await _service.PlaceOrder());
+        }
         [HttpPut]
         public async Task<ActionResult> UpdateAsync([FromBody] OrderDto model)
         {
@@ -44,7 +48,11 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetByIdAsync(id));
         }
-
+        [HttpGet]
+        public async Task<ActionResult> GetProductsInOrder(string langId)
+        {
+            return Ok(await _service.GetProductsInOrder(langId));
+        }
         [HttpGet]
         public async Task<ActionResult> GetWithPaginationsAsync(PaginationParams paramater)
         {
