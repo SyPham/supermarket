@@ -7,6 +7,11 @@ namespace Supermarket.Models
     [Table("Products")]
     public class Product: IDateTracking
     {
+        public Product()
+        {
+            CreatedTime = DateTime.Now;
+            ModifiedTime = DateTime.Now;
+        }
         [Key]
         public int Id { get; set; }
         public string VietnameseName { get; set; }

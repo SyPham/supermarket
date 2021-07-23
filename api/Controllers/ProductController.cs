@@ -66,32 +66,29 @@ namespace Supermarket.Controllers
                     {
                         file.CopyTo(fileStream);
                         fileStream.Flush();
-                        entity.VietnameseName = null;
-                        entity.EnglishName = null;
-                        entity.ChineseName = null;
-                        entity.Description = null;
-                        entity.OriginalPrice = 0;
-                        entity.CreatedBy = 0;
-                        entity.StoreId = 0;
-                        entity.KindId = 0;
-                        entity.CreatedTime = DateTime.Now;
-                        entity.ModifiedTime = DateTime.Now;
-                        entity.Avatar = $"/image/{file.FileName}";
+                        entity.VietnameseName = entity.VietnameseName;
+                        entity.EnglishName = entity.EnglishName;
+                        entity.ChineseName = entity.ChineseName;
+                        entity.Description = entity.Description;
+                        entity.OriginalPrice = entity.OriginalPrice;
+                        entity.CreatedBy = entity.CreatedBy;
+                        entity.StoreId = entity.StoreId;
+                        entity.KindId = entity.KindId;
+                        entity.Avatar = $"image/{file.FileName}";
 
                     }
                 }
                 else
                 {
-                    entity.VietnameseName = null;
-                    entity.EnglishName = null;
-                    entity.ChineseName = null;
-                    entity.Description = null;
-                    entity.OriginalPrice = 0;
-                    entity.CreatedBy = 0;
-                    entity.StoreId = 0;
-                    entity.KindId = 0;
-                    entity.CreatedTime = DateTime.Now;
-                    entity.ModifiedTime = DateTime.Now;
+                    entity.VietnameseName = entity.VietnameseName;
+                    entity.EnglishName = entity.EnglishName;
+                    entity.ChineseName = entity.ChineseName;
+                    entity.Description = entity.Description;
+                    entity.OriginalPrice = entity.OriginalPrice;
+                    entity.CreatedBy = entity.CreatedBy;
+                    entity.StoreId = entity.StoreId;
+                    entity.KindId = entity.KindId;
+
                 }
                 _context.Add(entity);
                 await _context.SaveChangesAsync();
@@ -104,7 +101,62 @@ namespace Supermarket.Controllers
             }
             return Ok(entity);
         }
+        [HttpPost]
+        public async Task<IActionResult> Updated([FromForm] Product entity)
+        {
 
+            if (ModelState.IsValid)
+            {
+                IFormFile file = Request.Form.Files["UploadedFile"];
+                
+                //var item = await _context.Projects.FindAsync(entity.ID);
+                if (file != null)
+                {
+                    if (!Directory.Exists(_environment.WebRootPath + "\\image\\"))
+                    {
+                        Directory.CreateDirectory(_environment.WebRootPath + "\\image\\");
+                    }
+                    using (FileStream fileStream = System.IO.File.Create(_environment.WebRootPath + "\\image\\" + file.FileName))
+                    {
+                        file.CopyTo(fileStream);
+                        fileStream.Flush();
+                        entity.VietnameseName = entity.VietnameseName;
+                        entity.EnglishName = entity.EnglishName;
+                        entity.ChineseName = entity.ChineseName;
+                        entity.Description = entity.Description;
+                        entity.OriginalPrice = entity.OriginalPrice;
+                        entity.CreatedBy = entity.CreatedBy;
+                        entity.StoreId = entity.StoreId;
+                        entity.KindId = entity.KindId;
+                        entity.Avatar = $"image/{file.FileName}";
+                        //return "\\image\\" + file.FileName;
+
+                    }
+                }
+                else
+                {
+                    entity.VietnameseName = entity.VietnameseName;
+                    entity.EnglishName = entity.EnglishName;
+                    entity.ChineseName = entity.ChineseName;
+                    entity.Description = entity.Description;
+                    entity.OriginalPrice = entity.OriginalPrice;
+                    entity.CreatedBy = entity.CreatedBy;
+                    entity.StoreId = entity.StoreId;
+                    entity.KindId = entity.KindId;
+                    entity.Avatar = entity.Avatar;
+                }
+                _context.Update(entity);
+                await _context.SaveChangesAsync();
+                return Ok(entity);
+
+            }
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+            }
+            return Ok(entity);
+
+        }
         [HttpPut]
         public async Task<ActionResult> UpdateAsync([FromBody] ProductDto model)
         {

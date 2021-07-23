@@ -12,7 +12,7 @@
           [locale]='locale'
           (actionBegin)="actionBegin($event)"
           (actionComplete)="actionComplete($event)"
-          [toolbar]='toolbarOptions'
+          [toolbar]='toolbarProductOptions'
           [pageSettings]='pageSettings'
           [allowExcelExport]='true'
           (recordDoubleClick)='onDoubleClick($event)'
@@ -28,25 +28,40 @@
 
               </ng-template>
             </e-column>
-            <e-column field='name' textAlign='Center' headerText="Name">
-              <ng-template #editTemplate let-data>
-                <!-- <div class="form-group">
-                  <label>Attack File</label><br>
-                  <file-pond #myPond
-                  label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
-                  allow-multiple="true"
-                  allowFileSizeValidation="true"
-                  maxFileSize="5MB"
-                  labelMaxFileSizeExceeded="File is too large"
-                  max-files="1"
-                  [files]="myFiles"
-                  [options]="pondOptions"
-                  (onprocessfile)="handleFileProcess($event)"
-                  (onremovefile)="pondHandleRemoveFile($event)">
-                  </file-pond>
-                </div> -->
+            <e-column field='name' textAlign='Center' headerText="Photo">
+              <ng-template #template let-data>
+                <td> <img [src]="base + data.photo" class="img-fluid" alt="" width="50%" height="50%"></td>
               </ng-template>
 
+            </e-column>
+            <e-column field='store_name' textAlign='Center' headerText="Store"></e-column>
+            <e-column field='name' textAlign='Center' headerText="Product name"></e-column>
+            <e-column field='description' textAlign='Center' headerText="Description">
+              <ng-template #template let-data>
+                <ng-container *ngIf="data.description === 'null'; else elseTemplate">
+                  N/A
+                </ng-container>
+                <ng-template #elseTemplate>
+                  {{data.description}}
+                </ng-template>
+
+              </ng-template>
+
+            </e-column>
+            <e-column field='price' textAlign='Center' headerText="Price"></e-column>
+            <e-column field='kind_name' textAlign='Center' headerText="Kind"></e-column>
+            <e-column field='Option' headerText='Option' textAlign='Center' width='150'>
+              <ng-template let-data #template >
+
+                <div class="btn-group mr-2" appPermission appFunction="Chemical" appAction="EDIT">
+                  <button type="button" (click)='edit(data,editProduct)' class="btn btn-xs btn-primary"><i
+                      class="fa fa-edit"></i></button>
+                </div>
+
+                <div class="btn-group" appPermission appFunction="Chemical" appAction="DELETE">
+                  <button type="button" (click)='delete(data.id)' class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                </div>
+            </ng-template>
             </e-column>
           </e-columns>
         </ejs-grid>
@@ -55,3 +70,161 @@
     </div>
   </div>
 </div>
+
+<ng-template #productModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">
+          <i class="fas fa-plus"></i> Product Add
+      </h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <form >
+      <div class="modal-body">
+          <div class="row">
+              <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="Name">English Name</label>
+                    <input [(ngModel)]="ProductCreate.englishName" name="name" type="text"  class="form-control Name" />
+                  </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="Chinese Name">Chinese Name</label>
+                  <input [(ngModel)]="ProductCreate.chineseName" name="Chinese Name" type="text"  class="form-control Name" />
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="Vietnamese Name">Vietnamese Name</label>
+                  <input [(ngModel)]="ProductCreate.vietnameseName" name="Vietnamese Name" type="text"  class="form-control Name" />
+                </div>
+            </div>
+              <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="Price">Price</label>
+                    <input [(ngModel)]="ProductCreate.originalPrice"  name="Price" type="text"  class="form-control Name" />
+                  </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="">Store</label>
+                  <ejs-dropdownlist [dataSource]='dataStore' [fields]='storeFields' [allowFiltering]='true'
+                    [value]="storeId" (change)='onChangeStore($event)'
+                    placeholder="Select a store">
+                  </ejs-dropdownlist>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="">Kind</label>
+                  <ejs-dropdownlist [dataSource]='dataKind' [fields]='kindFields' [allowFiltering]='true'
+                    [value]="kindId" (change)='onChangeKind($event)'
+                    placeholder="Select a Kind">
+                  </ejs-dropdownlist>
+                </div>
+              </div>
+              <div class="col-md-12">
+                  <div class="form-group">
+                      <label for="Name">Image</label>
+                      <input type="file" (change)="fileProgress($event)" class="form-control UploadedFile" name="UploadedFile"  placeholder="Upload file" />
+                      <div class="image-preview mb-3" *ngIf="previewUrl">
+                          <img [src]="previewUrl" height="300" width="300" />
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-12">
+                  <div class="form-group">
+                      <label for="Description">Description:</label>
+                      <textarea [(ngModel)]="ProductCreate.description"  name="description" class="form-control" rows="5" id="comment"></textarea>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+          <button type="submit" (click)="save()" class="btn btn-primary">Save changes</button>
+      </div>
+  </form>
+</ng-template>
+
+<ng-template #editProduct let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">
+          <i class="fas fa-plus"></i> Product Edit
+      </h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <form >
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+              <div class="form-group">
+                <label for="Name">English Name</label>
+                <input [(ngModel)]="ProductCreate.englishName" name="name" type="text"  class="form-control Name" />
+              </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="Chinese Name">Chinese Name</label>
+              <input [(ngModel)]="ProductCreate.chineseName" name="Chinese Name" type="text"  class="form-control Name" />
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="Vietnamese Name">Vietnamese Name</label>
+              <input [(ngModel)]="ProductCreate.vietnameseName" name="Vietnamese Name" type="text"  class="form-control Name" />
+            </div>
+        </div>
+          <div class="col-md-12">
+              <div class="form-group">
+                <label for="Price">Price</label>
+                <input [(ngModel)]="ProductCreate.originalPrice"  name="Price" type="text"  class="form-control Name" />
+              </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="">Store</label>
+              <ejs-dropdownlist [dataSource]='dataStore' [fields]='storeFields' [allowFiltering]='true'
+                [value]="ProductCreate.storeId" (change)='onChangeStore($event)'
+                placeholder="Select a store">
+              </ejs-dropdownlist>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="">Kind</label>
+              <ejs-dropdownlist [dataSource]='dataKind' [fields]='kindFields' [allowFiltering]='true'
+                [value]="ProductCreate.kindId" (change)='onChangeKind($event)'
+                placeholder="Select a Kind">
+              </ejs-dropdownlist>
+            </div>
+          </div>
+          <div class="col-md-12">
+              <div class="form-group">
+                <label for="Name">Thumbnail</label>
+                <input type="file" (change)="fileProgress2($event)" class="form-control UploadedFile" name="UploadedFile"  placeholder="Upload file" />
+                <div class="image-preview mb-3" *ngIf="img" >
+                    <img  [src]="img" height="300" width="300" />
+                </div>
+              </div>
+          </div>
+          <div class="col-md-12">
+              <div class="form-group">
+                  <label for="Description">Description:</label>
+                  <textarea [(ngModel)]="ProductCreate.description"  name="description" class="form-control" rows="5" id="comment"></textarea>
+              </div>
+          </div>
+
+      </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+          <button type="submit" (click)="update()" class="btn btn-primary">Save changes</button>
+      </div>
+  </form>
+</ng-template>

@@ -21,6 +21,17 @@ namespace Supermarket.Controllers
             return Ok(await _service.GetAllAsync());
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetAllByStore(int id)
+        {
+            return Ok(await _service.GetAllByStore(id));
+        }
+        [HttpGet("{id}/{lang}")]
+        public async Task<ActionResult> GetAllByStoreLang(int id, string lang)
+        {
+            return Ok(await _service.GetAllByStoreLang(id , lang));
+        }
+
         [HttpPost]
         public async Task<ActionResult> AddAsync([FromBody] KindDto model)
         {

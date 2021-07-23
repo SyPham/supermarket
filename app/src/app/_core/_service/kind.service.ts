@@ -22,4 +22,8 @@ export class KindService extends CURDService<Kind> {
     return this.http.get<any[]>(`${this.base}Store/GetAll`);
   }
 
+  getAllByStore(id ,lang) {
+    return this.http.get<any[]>(`${this.base}Kind/GetAllByStoreLang/${id}/${lang}`);
+  }
+
 }
