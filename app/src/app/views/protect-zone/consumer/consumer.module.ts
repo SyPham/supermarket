@@ -1,3 +1,6 @@
+import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
+import { BuyListComponent } from './buy-list/buy-list.component';
+import { CartComponent } from './cart/cart.component';
 import { ProductListComponent } from './product-list/product-list.component';
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
@@ -14,6 +17,7 @@ import { TreeGridAllModule } from '@syncfusion/ej2-angular-treegrid'
 
 
 import { ConsumerRoutingModule } from './consumer.routing.module'
+import { ImagePipe } from 'src/app/_core/pipes/image.pipe';
 
 // import { PeriodComponent } from './period/period.component';
 export function HttpLoaderFactory(http: HttpClient) {
@@ -35,14 +39,30 @@ loadCldr(
   require('cldr-data/main/vi/numbers.json'),
   require('cldr-data/main/vi/timeZoneNames.json'),
   require('cldr-data/supplemental/weekdata.json')); // To load the culture based first day of week
-if (lang === 'vi') {
-  defaultLang = lang;
-} else {
-  defaultLang = 'en';
-}
+
+  loadCldr(
+    require('cldr-data/supplemental/numberingSystems.json'),
+    require('cldr-data/main/zh/ca-gregorian.json'),
+    require('cldr-data/main/zh/numbers.json'),
+    require('cldr-data/main/zh/timeZoneNames.json'),
+    require('cldr-data/supplemental/weekdata.json')); // To load the culture based first day of week
+    if (lang === 'vi') {
+      defaultLang = lang;
+    } else if (lang === 'en') {
+      defaultLang = 'en';
+    } else {
+      defaultLang = 'zh';
+    }
+
+    const PIPE = [
+      ImagePipe,
+    ]
 @NgModule({
   declarations: [
-    ProductListComponent
+    ProductListComponent,
+    CartComponent,
+    BuyListComponent,
+    ...PIPE
   ],
   imports: [
     CommonModule,
@@ -54,6 +74,7 @@ if (lang === 'vi') {
     GridAllModule,
     CheckBoxAllModule,
     SwitchModule,
+    ToolbarModule,
     ConsumerRoutingModule,
     DateInputsModule ,
     MultiSelectAllModule,
@@ -67,7 +88,7 @@ if (lang === 'vi') {
     }),
   ]
 })
-export class ConsumerModule  {
+export class ConsumerModule {
   vi: any;
   en: any;
   constructor() {
@@ -77,11 +98,17 @@ export class ConsumerModule  {
         L10n.load(require('../../../../assets/ej2-lang/vi.json'));
         setCulture('vi');
       });
-    } else {
+    } else if (lang === 'en') {
       defaultLang = 'en';
       setTimeout(() => {
         L10n.load(require('../../../../assets/ej2-lang/en.json'));
         setCulture('en');
+      });
+    }else{
+      defaultLang = 'zh';
+      setTimeout(() => {
+        L10n.load(require('../../../../assets/ej2-lang/zh.json'));
+        setCulture('zh');
       });
     }
   }

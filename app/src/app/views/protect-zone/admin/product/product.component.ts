@@ -9,6 +9,7 @@ import { BaseComponent } from 'src/app/_core/_component/base.component';
 import { AlertifyService } from 'src/app/_core/_service/alertify.service';
 import { MessageConstants } from 'src/app/_core/_constants/system';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
 
 @Component({
   selector: 'app-product',
@@ -53,11 +54,14 @@ export class ProductComponent extends BaseComponent implements OnInit {
   previewUrl2:any = null
   kindFields: object = { text: 'name', value: 'id' };
   img: string | ArrayBuffer;
+  noImage = '/assets/img/photo1.png';
+
   constructor(
     private service: ProductService,
     private service_kind: KindService,
     private service_store: StoreService,
     private alertify: AlertifyService,
+    private utilitiesService: UtilitiesService,
     public modalService: NgbModal
   ) { super(); }
 
@@ -117,7 +121,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
           kind_ID: item.kindId,
           store_name: this.dataStore.filter((a) => a.id === item.storeId)[0]?.name,
           kind_name: this.dataKindAll.filter((a) => a.id === item.kindId)[0]?.englishName,
-          photo: item.avatar,
+          avatar: item.avatar,
           price: item.originalPrice,
           description: item.description
         }
@@ -333,5 +337,14 @@ export class ProductComponent extends BaseComponent implements OnInit {
   NO(index) {
     return (this.grid.pageSettings.currentPage - 1) * this.pageSettings.pageSize + Number(index) + 1;
   }
-
+  imagePath(data) {
+    if (data !== null && this.utilitiesService.checkValidImage(data)) {
+      if (this.utilitiesService.checkExistHost(data)) {
+        return data;
+      } else {
+        return this.base + data;
+      }
+    }
+    return this.noImage;
+  }
 }

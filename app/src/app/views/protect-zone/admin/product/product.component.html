@@ -30,7 +30,7 @@
             </e-column>
             <e-column field='name' textAlign='Center' headerText="Photo">
               <ng-template #template let-data>
-                <td> <img [src]="base + data.photo" class="img-fluid" alt="" width="50%" height="50%"></td>
+                <td> <img [src]="imagePath(data.avatar) | image: 'url'" class="img-fluid" alt="" width="50%" height="50%"></td>
               </ng-template>
 
             </e-column>

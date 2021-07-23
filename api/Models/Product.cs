@@ -1,5 +1,6 @@
 ﻿using Supermarket.Models.Interface;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace Supermarket.Models
@@ -33,5 +34,7 @@ namespace Supermarket.Models
 
         [ForeignKey(nameof(KindId))]
         public virtual Kind Kind { get; set; }
+        public virtual ICollection<Cart> Carts { get; set; }
+
     }
 }

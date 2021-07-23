@@ -20,6 +20,7 @@ import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import * as FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import * as FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import * as FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
+import { ImagePipe } from 'src/app/_core/pipes/image.pipe';
 registerPlugin(FilePondPluginFileValidateType,FilePondPluginFileValidateSize,FilePondPluginImagePreview);
 
 
@@ -43,18 +44,30 @@ loadCldr(
   require('cldr-data/main/vi/numbers.json'),
   require('cldr-data/main/vi/timeZoneNames.json'),
   require('cldr-data/supplemental/weekdata.json')); // To load the culture based first day of week
+  loadCldr(
+    require('cldr-data/supplemental/numberingSystems.json'),
+    require('cldr-data/main/zh/ca-gregorian.json'),
+    require('cldr-data/main/zh/numbers.json'),
+    require('cldr-data/main/zh/timeZoneNames.json'),
+    require('cldr-data/supplemental/weekdata.json')); // To load the culture based first day of week
 if (lang === 'vi') {
   defaultLang = lang;
-} else {
+} else if (lang === 'en') {
   defaultLang = 'en';
+} else {
+  defaultLang = 'zh';
 }
+const PIPE = [
+  ImagePipe,
+]
 @NgModule({
   declarations: [
     AccountComponent,
     StoreComponent,
     KindComponent,
     OrderComponent,
-    ProductComponent
+    ProductComponent,
+    ...PIPE
   ],
   imports: [
     FilePondModule,
@@ -90,11 +103,17 @@ export class AdminModule  {
         L10n.load(require('../../../../assets/ej2-lang/vi.json'));
         setCulture('vi');
       });
-    } else {
+    } else if (lang === 'en') {
       defaultLang = 'en';
       setTimeout(() => {
         L10n.load(require('../../../../assets/ej2-lang/en.json'));
         setCulture('en');
+      });
+    }else{
+      defaultLang = 'zh';
+      setTimeout(() => {
+        L10n.load(require('../../../../assets/ej2-lang/zh.json'));
+        setCulture('zh');
       });
     }
   }

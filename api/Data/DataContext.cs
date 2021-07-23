@@ -20,10 +20,35 @@ namespace Supermarket.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Consumer> Consumers { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Cart> Carts { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            modelBuilder.Entity<Cart>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.ProductId });
+
+                entity.ToTable("Cart");
+
+                entity.Property(e => e.AccountId).HasColumnName("AccountId");
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductId");
+
+                entity.Property(e => e.CreatedTime).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Carts)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Cart_Account");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.Carts)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Cart_Product");
+            });
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {

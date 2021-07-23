@@ -17,9 +17,8 @@ export class AccountComponent extends BaseComponent implements OnInit {
   data: Account[] = [];
   password = '';
   modalReference: NgbModalRef;
-  fields: object = { text: 'name', value: 'id' };
   accountTypeFields: object = { text: 'name', value: 'id' };
-  managerFields: object = { text: 'fullName', value: 'id' };
+  fields: object = { text: 'name', value: 'id' };
   // toolbarOptions = ['Search'];
   passwordFake = `aRlG8BBHDYjrood3UqjzRl3FubHFI99nEPCahGtZl9jvkexwlJ`;
   pageSettings = { pageCount: 20, pageSizes: true, pageSize: 10 };
@@ -28,11 +27,8 @@ export class AccountComponent extends BaseComponent implements OnInit {
   accountUpdate: Account;
   setFocus: any;
   locale = localStorage.getItem('lang');
-  accountGroupItem: any;
-  leaders: any[] = [];
-  managers: any[] = [];
-  leaderId: number;
-  managerId: number;
+  accountTypes: any[];
+  accountTypeId: any;
   constructor(
     private service: Account2Service,
     public modalService: NgbModal,
@@ -42,9 +38,8 @@ export class AccountComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     // this.Permission(this.route);
-    this.getAccountType();
     this.loadData();
-    // this.getAccounts();
+    this.getAccountType();
   }
   // life cycle ejs-grid
 
@@ -52,9 +47,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
     this.setFocus = args.column; // Get the column from Double click event
   }
   initialModel() {
-    this.accountGroupItem = [];
-    this.leaderId = 0;
-    this.managerId = 0;
     this.accountCreate = {
       id: 0,
       username: null,
@@ -67,29 +59,13 @@ export class AccountComponent extends BaseComponent implements OnInit {
       createdTime: new Date().toLocaleDateString(),
       modifiedBy: 0,
       modifiedTime: null,
-      accountGroupIds: null,
-      accountGroupText: null,
       accountType: null,
-      leader: this.leaderId,
-      manager: this.managerId,
-      leaderName: null,
-      managerName: null,
     };
 
   }
-  updateModel(data) {
-    this.accountGroupItem = data.accountGroupIds;
-    this.managerId = data.manager;
-    this.leaderId = data.accountTypeId;
-  }
-
   actionBegin(args) {
     if (args.requestType === 'add') {
       this.initialModel();
-    }
-    if (args.requestType === 'beginEdit') {
-      const item = args.rowData;
-      this.updateModel(item);
     }
     if (args.requestType === 'save' && args.action === 'add') {
       this.accountCreate = {
@@ -98,19 +74,13 @@ export class AccountComponent extends BaseComponent implements OnInit {
         password: args.data.password,
         fullName: args.data.fullName,
         email: args.data.email,
-        accountTypeId: this.leaderId,
+        accountTypeId: this.accountTypeId,
         isLock: false,
         createdBy: 0,
         createdTime: new Date().toLocaleDateString(),
         modifiedBy: 0,
         modifiedTime: null,
         accountType: null,
-        accountGroupIds: this.accountGroupItem,
-        accountGroupText: null,
-        leader: this.leaderId,
-        manager: this.managerId,
-        leaderName: null,
-        managerName: null,
       };
 
       if (args.data.username === undefined) {
@@ -139,12 +109,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
         modifiedBy:args.data.modifiedBy,
         modifiedTime: args.data.modifiedTime,
         accountType: null,
-        accountGroupIds: this.accountGroupItem,
-        accountGroupText: null,
-        leader: this.leaderId,
-        manager: this.managerId,
-        leaderName: null,
-        managerName: null,
       };
       this.update();
     }
@@ -167,7 +131,12 @@ export class AccountComponent extends BaseComponent implements OnInit {
       args.form.elements.namedItem('username').focus(); // Set focus to the Target element
     }
   }
-
+  getAccountType() {
+    this.service.getAccountType().subscribe(data => {
+      this.accountTypes = data;
+      console.log('getAccountType',data);
+    });
+  }
   // end life cycle ejs-grid
 
   // api
@@ -189,28 +158,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
 
   loadData() {
     this.service.getAll().subscribe((data: any) => {
-      this.data = data.map((item: any) => {
-        return {
-          id: item.id,
-          username: item.username,
-          password: item.password,
-          isLock: item.isLock,
-          accountTypeId: item.accountTypeId,
-          accountType_name: this.leaders.filter((a) => a.id === item.accountTypeId)[0]?.name,
-        }
-      });
-    });
-  }
-  getAccounts() {
-    this.service.getAccounts().subscribe(data => {
-      this.leaders = data;
-    });
-  }
-
-  getAccountType() {
-    this.service.getAccountType().subscribe(data => {
-      this.leaders = data;
-      console.log('getAccountType',data);
+      this.data = data;
     });
   }
 

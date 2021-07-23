@@ -18,6 +18,7 @@ namespace Supermarket.Installer
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IConsumerService, ConsumerService>();
+            services.AddScoped<ICartService, CartService>();
         }
     }
 }

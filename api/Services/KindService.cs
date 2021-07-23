@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Supermarket.Constants;
 using Supermarket.Data;
 using Supermarket.DTO;
 using Supermarket.Models;
@@ -16,6 +17,7 @@ namespace Supermarket.Services
     {
         Task<object> GetAllByStore(int id);
         Task<object> GetAllByStoreLang(int id, string lang );
+        Task<object> GetAllByLang(string langId);
     }
     public class KindService : ServiceBase<Kind, KindDto>, IKindService
     {
@@ -58,8 +60,16 @@ namespace Supermarket.Services
                     Name = x.EnglishName
                 }).ToListAsync();
             }
-            
-            throw new NotImplementedException();
+        }
+
+        public async Task<object> GetAllByLang(string langId)
+        {
+            var data = await _repo.FindAll().Select(x => new
+            {
+                Id = x.Id,
+                Name = langId == SystemLang.VI ? x.VietnameseName : langId == SystemLang.EN ? x.EnglishName : x.ChineseName,
+            }).ToListAsync();
+            return data;
         }
     }
 }

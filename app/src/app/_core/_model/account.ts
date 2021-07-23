@@ -13,10 +13,4 @@ export interface Account {
   createdTime: string;
   modifiedTime: string | null;
   accountType: AccountType;
-  accountGroupText: string;
-  accountGroupIds: number[];
-  leader: number;
-  manager: number;
-  leaderName: string;
-  managerName: string;
 }

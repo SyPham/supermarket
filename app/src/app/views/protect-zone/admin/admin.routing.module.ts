@@ -61,9 +61,9 @@ const routes: Routes = [
         path: 'order',
         component: OrderComponent,
         data: {
-          title: 'Order',
-          breadcrumb: 'Order',
-          functionCode: 'Order'
+          title: 'Buy List',
+          breadcrumb: 'Buy List',
+          functionCode: 'Buy List'
         },
         // canActivate: [AuthGuard]
       }

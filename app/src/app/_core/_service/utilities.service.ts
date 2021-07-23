@@ -115,4 +115,20 @@ export class UtilitiesService {
         return ele != value;
     });
 }
+serialize(obj) {
+  var str = [];
+  for (var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    }
+  return str.join("&");
+}
+ checkExistHost(url) {
+    const check = new RegExp("^(http|https)://", "i").test(url);
+    return check;
+  }
+  checkValidImage(data) {
+    const valid = new RegExp(".(?:jpg|gif|png)", "g").test(data);
+    return valid;
+  }
 }

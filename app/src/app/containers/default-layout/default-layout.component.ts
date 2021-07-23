@@ -76,7 +76,7 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     this.role = JSON.parse(localStorage.getItem('level'));
     this.value = localStorage.getItem('lang');
     const user = JSON.parse(localStorage.getItem("user"));
-    this.userName = user?.username;
+    this.userName = user?.fullName;
     this.userID = user?.id;
   }
   toggleMinimize(e) {
@@ -104,13 +104,13 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     //   this.firstItem = item[0] || {};
     // });
 
-    this.langsData = [{ id: 'vi', name: 'VI' }, { id: 'en', name: 'EN' }];
+    this.langsData = [{ id: 'vi', name: 'VI' }, { id: 'en', name: 'EN' }, { id: 'zh', name: 'ZH' }];
     this.navAdmin = new Nav().getNavAdmin();
     this.navClient = new Nav().getNavClient();
     this.navEc = new Nav().getNavEc();
 
     // this.getAvatar();
-    this.currentUser = JSON.parse(localStorage.getItem('user')).username;
+    this.currentUser = JSON.parse(localStorage.getItem('user')).fullName;
     this.page = 1;
     this.pageSize = 10;
 
@@ -125,24 +125,24 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
   }
 
   getMenu() {
-    const navs = JSON.parse(localStorage.getItem('navs'));
-    if (navs === null) {
-      this.spinner.show();
-      console.log('Header ------- Begin getMenuByUserPermission');
-      const langID = localStorage.getItem('lang');
-      this.permissionService.getMenuByLangID(this.userid, langID).subscribe((navsData: []) => {
-        this.navItems = navsData;
-        localStorage.setItem('navs', JSON.stringify(navsData));
-        this.spinner.hide();
+    // const navs = JSON.parse(localStorage.getItem('navs'));
+    // if (navs === null) {
+    //   this.spinner.show();
+    //   console.log('Header ------- Begin getMenuByUserPermission');
+    //   const langID = localStorage.getItem('lang');
+    //   this.permissionService.getMenuByLangID(this.userid, langID).subscribe((navsData: []) => {
+    //     this.navItems = navsData;
+    //     localStorage.setItem('navs', JSON.stringify(navsData));
+    //     this.spinner.hide();
 
-      }, (err) => {
-        this.spinner.hide();
-      });
-      console.log('Header ------- end getMenuByUserPermission');
-    } else {
-      console.log('Header ------- Begin getlocalstore menu');
-      this.navItems = navs;
-    }
+    //   }, (err) => {
+    //     this.spinner.hide();
+    //   });
+    //   console.log('Header ------- end getMenuByUserPermission');
+    // } else {
+    //   console.log('Header ------- Begin getlocalstore menu');
+    //   this.navItems = navs;
+    // }
   }
   home() {
     return '/ec/execution/todolist-2';
@@ -154,10 +154,12 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     localStorage.setItem('lang', lang);
     this.dataService.setValueLocale(lang);
     window.location.reload();
+
     // this.permissionService.getMenuByLangID(this.userid, lang).subscribe((navs: []) => {
     //   this.navItems = navs;
     //   localStorage.setItem('navs', JSON.stringify(navs));
     //   this.spinner.hide();
+    //   window.location.reload();
 
     // }, (err) => {
     //   this.spinner.hide();
