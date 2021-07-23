@@ -18,7 +18,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
   password = '';
   modalReference: NgbModalRef;
   fields: object = { text: 'name', value: 'id' };
-  leaderFields: object = { text: 'fullName', value: 'id' };
+  accountTypeFields: object = { text: 'name', value: 'id' };
   managerFields: object = { text: 'fullName', value: 'id' };
   // toolbarOptions = ['Search'];
   passwordFake = `aRlG8BBHDYjrood3UqjzRl3FubHFI99nEPCahGtZl9jvkexwlJ`;
@@ -42,8 +42,9 @@ export class AccountComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     // this.Permission(this.route);
+    this.getAccountType();
     this.loadData();
-    this.getAccounts();
+    // this.getAccounts();
   }
   // life cycle ejs-grid
 
@@ -79,8 +80,9 @@ export class AccountComponent extends BaseComponent implements OnInit {
   updateModel(data) {
     this.accountGroupItem = data.accountGroupIds;
     this.managerId = data.manager;
-    this.leaderId = data.leader;
+    this.leaderId = data.accountTypeId;
   }
+
   actionBegin(args) {
     if (args.requestType === 'add') {
       this.initialModel();
@@ -96,7 +98,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
         password: args.data.password,
         fullName: args.data.fullName,
         email: args.data.email,
-        accountTypeId: 2,
+        accountTypeId: this.leaderId,
         isLock: false,
         createdBy: 0,
         createdTime: new Date().toLocaleDateString(),
@@ -186,14 +188,29 @@ export class AccountComponent extends BaseComponent implements OnInit {
   }
 
   loadData() {
-    this.service.getAll().subscribe(data => {
-      this.data = data;
+    this.service.getAll().subscribe((data: any) => {
+      this.data = data.map((item: any) => {
+        return {
+          id: item.id,
+          username: item.username,
+          password: item.password,
+          isLock: item.isLock,
+          accountTypeId: item.accountTypeId,
+          accountType_name: this.leaders.filter((a) => a.id === item.accountTypeId)[0]?.name,
+        }
+      });
     });
   }
   getAccounts() {
     this.service.getAccounts().subscribe(data => {
       this.leaders = data;
-      this.managers = data;
+    });
+  }
+
+  getAccountType() {
+    this.service.getAccountType().subscribe(data => {
+      this.leaders = data;
+      console.log('getAccountType',data);
     });
   }
 

@@ -14,4 +14,12 @@ export class KindService extends CURDService<Kind> {
     super(http,"Kind", utilitiesService);
   }
 
+  getAll() {
+    return this.http.get<any[]>(`${this.base}Kind/GetAll`);
+  }
+
+  getAllStore() {
+    return this.http.get<any[]>(`${this.base}Store/GetAll`);
+  }
+
 }

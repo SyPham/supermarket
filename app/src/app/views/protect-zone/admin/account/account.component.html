@@ -29,40 +29,40 @@
               </ng-template>
             </e-column>
             <e-column field="username" textAlign='Center' headerText="{{ 'Username' | translate}}"> </e-column>
-            <e-column field="fullName" textAlign='Center' headerText="{{ 'FullName' | translate}}"> </e-column>
+            <!-- <e-column field="fullName" textAlign='Center' headerText="{{ 'FullName' | translate}}"> </e-column> -->
             <e-column field="password" textAlign='Center' headerText="{{ 'Password' | translate}}">
               <ng-template #template let-data>
                 ************
               </ng-template>
             </e-column>
-            <e-column field="email" textAlign='Center' headerText="Email"> </e-column>
-            <e-column field='accountGroupText' headerText="{{'Account Group' | translate}}" width='200' textAlign='Center'>
+            <!-- <e-column field="email" textAlign='Center' headerText="Email"> </e-column> -->
+            <!-- <e-column field='accountGroupText' headerText="{{'Account Group' | translate}}" width='200' textAlign='Center'>
               <ng-template #template let-data>
                 {{data.accountGroupText}}
               </ng-template>
               <ng-template #editTemplate let-data>
                 <ejs-multiselect [(ngModel)]='accountGroupItem' [fields]="fields" [showDropDownIcon]='true' mode='CheckBox' placeholder='Select months of the Year' [dataSource]='accountGroupData'></ejs-multiselect>
               </ng-template>
+              </e-column> -->
+
+
+              <!-- <e-column field='manager' headerText="{{'L1 Manager'}}" width='150' textAlign='Center'>
+                <ng-template #template let-data>
+                  {{data.managerName}}
+                </ng-template>
+                <ng-template #editTemplate let-data>
+                  <ejs-dropdownlist [(ngModel)]='managerId' [fields]="managerFields" placeholder='Select a manager' [dataSource]='managers'></ejs-dropdownlist>
+                </ng-template>
+                </e-column> -->
+
+              <e-column field='leaderName' headerText="{{'Account type'}}" width='150' textAlign='Center'>
+                <ng-template #template let-data>
+                  {{data.accountType_name}}
+                </ng-template>
+                <ng-template #editTemplate let-data>
+                  <ejs-dropdownlist [(ngModel)]='leaderId' [fields]="accountTypeFields" placeholder='Select account type' [dataSource]='leaders'></ejs-dropdownlist>
+                </ng-template>
               </e-column>
-
-
-                <e-column field='manager' headerText="{{'L1 Manager'}}" width='150' textAlign='Center'>
-                  <ng-template #template let-data>
-                    {{data.managerName}}
-                  </ng-template>
-                  <ng-template #editTemplate let-data>
-                    <ejs-dropdownlist [(ngModel)]='managerId' [fields]="managerFields" placeholder='Select a manager' [dataSource]='managers'></ejs-dropdownlist>
-                  </ng-template>
-                  </e-column>
-
-                  <e-column field='leaderName' headerText="{{'Functional Leader'}}" width='150' textAlign='Center'>
-                    <ng-template #template let-data>
-                      {{data.leaderName}}
-                    </ng-template>
-                    <ng-template #editTemplate let-data>
-                      <ejs-dropdownlist [(ngModel)]='leaderId' [fields]="leaderFields" placeholder='Select a leader' [dataSource]='leaders'></ejs-dropdownlist>
-                    </ng-template>
-                    </e-column>
 
             <e-column field="option" width="100" textAlign='Center' headerText="{{ 'Option' | translate}}">
               <ng-template #template let-data>

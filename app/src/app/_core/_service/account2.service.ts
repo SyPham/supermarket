@@ -23,7 +23,10 @@ export class Account2Service extends CURDService<Account> {
     );
   }
   getAccounts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}Account/GetAccounts`);
+    return this.http.get<any[]>(`${this.base}Account/GetAll`);
+  }
+  getAccountType(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}AccountType/GetAll`);
   }
 
 }

@@ -1,3 +1,49 @@
-<p>
-  kind works!
-</p>
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <ejs-grid #grid
+          id='grid'
+          [dataSource]="data"
+          [allowPaging]='true'
+          [allowResizing]='true'
+          [showColumnMenu]='true'
+          gridLines='Both'
+          [locale]='locale'
+          (actionBegin)="actionBegin($event)"
+          (actionComplete)="actionComplete($event)"
+          [toolbar]='toolbarOptions'
+          [pageSettings]='pageSettings'
+          [allowExcelExport]='true'
+          (recordDoubleClick)='onDoubleClick($event)'
+          (toolbarClick)='toolbarClick($event)'
+          [editSettings]='editSettings'
+        >
+          <e-columns>
+            <e-column  textAlign='Center' width="80" isPrimaryKey="true" headerText="#">
+              <ng-template #template let-data>
+                {{NO(data.index)}}
+              </ng-template>
+              <ng-template #editTemplate let-data>
+                #
+              </ng-template>
+            </e-column>
+            <e-column field='store_name' textAlign='Center' headerText="Store">
+              <!-- <ng-template #template let-data>
+                {{data.store_name}}
+              </ng-template> -->
+              <ng-template #editTemplate let-data>
+                <ejs-dropdownlist [(ngModel)]='storeId' [fields]="storeFields" placeholder='Select a store' [dataSource]='dataStore'></ejs-dropdownlist>
+              </ng-template>
+            </e-column>
+
+            <e-column field='chineseName' headerText="類別" width='150' textAlign='Center'></e-column>
+            <e-column field="vietnameseName" width="100" textAlign='Center' headerText="Thể loại"></e-column>
+            <e-column field="englishName" width="100" textAlign='Center' headerText="Kind"></e-column>
+          </e-columns>
+        </ejs-grid>
+      </div>
+      <!-- /.card-body -->
+    </div>
+  </div>
+</div>

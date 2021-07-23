@@ -3,6 +3,7 @@ export interface Kind {
   vietnameseName: string;
   englishName: string;
   chineseName: string;
+  store_ID: number;
   createdBy: number;
   modifiedBy: number | null;
   createdTime: string;

@@ -16,7 +16,11 @@ import { TreeGridAllModule } from '@syncfusion/ej2-angular-treegrid'
 import { AdminRoutingModule } from './admin.routing.module'
 import { OrderComponent } from './order/order.component';
 import { StoreComponent } from './store/store.component';
-
+import { FilePondModule, registerPlugin } from 'ngx-filepond';
+import * as FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import * as FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import * as FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
+registerPlugin(FilePondPluginFileValidateType,FilePondPluginFileValidateSize,FilePondPluginImagePreview);
 
 
 // import { PeriodComponent } from './period/period.component';
@@ -53,6 +57,7 @@ if (lang === 'vi') {
     ProductComponent
   ],
   imports: [
+    FilePondModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
