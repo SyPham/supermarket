@@ -122,7 +122,7 @@ export class CartComponent extends BaseComponent implements OnInit {
           this.alertify.success(MessageConstants.CREATED_OK_MSG);
           const storeId = +this.route.snapshot.params.storeId || 0;
           const kindId = +this.route.snapshot.params.kindId || 0;
-          this.router.navigate([`/consumer/product-list/${storeId}/${kindId}`]);
+          this.router.navigate([`/consumer/buy-list`]);
 
         } else {
           this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);

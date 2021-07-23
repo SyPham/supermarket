@@ -14,7 +14,10 @@ namespace Supermarket.Helpers.AutoMapper
         public EFToDtoMappingProfile()
         {
 
-            CreateMap<Account, AccountDto>();
+            CreateMap<Account, AccountDto>()
+               .ForMember(d => d.Email, o => o.MapFrom(s => s.ConsumerId != null ? s.Consumer.Email ?? "" : ""))
+               .ForMember(d => d.FullName, o => o.MapFrom(s => s.ConsumerId != null ? s.Consumer.FullName : s.Username));
+
             CreateMap<AccountType, AccountTypeDto>();
             CreateMap<Account, UserForDetailDto>()
                .ForMember(d => d.FullName, o => o.MapFrom(s => s.ConsumerId != null ? s.Consumer.FullName : s.Username));

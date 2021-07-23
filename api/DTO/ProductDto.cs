@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
+
 namespace Supermarket.DTO
 {
     public class ProductDto
@@ -48,6 +50,31 @@ namespace Supermarket.DTO
         public decimal AmountValue { get; set; }
 
     }
+    public class ProductInOrderDto
+    {
+        public int ProductId { get; set; }
+        public int AccountId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Avatar { get; set; }
+        public string OriginalPrice { get; set; }
+
+        public int? Quantity { get; set; }
+        public int StoreId { get; set; }
+        public int KindId { get; set; }
+        public string Amount { get; set; }
+        public decimal AmountValue { get; set; }
+        public List<ConsumerOrderDto> Consumers { get; set; }
+
+    }
+
+    public class ConsumerOrderDto
+    {
+        public int? Quantity { get; set; }
+        public string FullName { get; set; }
+
+    }
+
     public class UploadAvatarRequest
     {
         public IFormFile File { get; set; }

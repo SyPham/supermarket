@@ -18,8 +18,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
   password = '';
   modalReference: NgbModalRef;
   fields: object = { text: 'name', value: 'id' };
-  leaderFields: object = { text: 'fullName', value: 'id' };
-  managerFields: object = { text: 'fullName', value: 'id' };
   // toolbarOptions = ['Search'];
   passwordFake = `aRlG8BBHDYjrood3UqjzRl3FubHFI99nEPCahGtZl9jvkexwlJ`;
   pageSettings = { pageCount: 20, pageSizes: true, pageSize: 10 };
@@ -28,11 +26,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
   accountUpdate: Account;
   setFocus: any;
   locale = localStorage.getItem('lang');
-  accountGroupItem: any;
-  leaders: any[] = [];
-  managers: any[] = [];
-  leaderId: number;
-  managerId: number;
   constructor(
     private service: Account2Service,
     public modalService: NgbModal,
@@ -43,7 +36,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     // this.Permission(this.route);
     this.loadData();
-    this.getAccounts();
   }
   // life cycle ejs-grid
 
@@ -51,9 +43,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
     this.setFocus = args.column; // Get the column from Double click event
   }
   initialModel() {
-    this.accountGroupItem = [];
-    this.leaderId = 0;
-    this.managerId = 0;
     this.accountCreate = {
       id: 0,
       username: null,
@@ -66,28 +55,13 @@ export class AccountComponent extends BaseComponent implements OnInit {
       createdTime: new Date().toLocaleDateString(),
       modifiedBy: 0,
       modifiedTime: null,
-      accountGroupIds: null,
-      accountGroupText: null,
       accountType: null,
-      leader: this.leaderId,
-      manager: this.managerId,
-      leaderName: null,
-      managerName: null,
     };
 
-  }
-  updateModel(data) {
-    this.accountGroupItem = data.accountGroupIds;
-    this.managerId = data.manager;
-    this.leaderId = data.leader;
   }
   actionBegin(args) {
     if (args.requestType === 'add') {
       this.initialModel();
-    }
-    if (args.requestType === 'beginEdit') {
-      const item = args.rowData;
-      this.updateModel(item);
     }
     if (args.requestType === 'save' && args.action === 'add') {
       this.accountCreate = {
@@ -103,12 +77,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
         modifiedBy: 0,
         modifiedTime: null,
         accountType: null,
-        accountGroupIds: this.accountGroupItem,
-        accountGroupText: null,
-        leader: this.leaderId,
-        manager: this.managerId,
-        leaderName: null,
-        managerName: null,
       };
 
       if (args.data.username === undefined) {
@@ -137,12 +105,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
         modifiedBy:args.data.modifiedBy,
         modifiedTime: args.data.modifiedTime,
         accountType: null,
-        accountGroupIds: this.accountGroupItem,
-        accountGroupText: null,
-        leader: this.leaderId,
-        manager: this.managerId,
-        leaderName: null,
-        managerName: null,
       };
       this.update();
     }
@@ -188,12 +150,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
   loadData() {
     this.service.getAll().subscribe(data => {
       this.data = data;
-    });
-  }
-  getAccounts() {
-    this.service.getAccounts().subscribe(data => {
-      this.leaders = data;
-      this.managers = data;
     });
   }
 

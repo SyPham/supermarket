@@ -19,6 +19,7 @@ namespace Supermarket.Services
     public interface IOrderService : IServiceBase<Order, OrderDto>
     {
         Task<object> GetProductsInOrder(string langId);
+        Task<object> GetProductsInOrderByAdmin(string langId);
         Task<OperationResult> PlaceOrder();
     }
     public class OrderService : ServiceBase<Order, OrderDto>, IOrderService
@@ -121,13 +122,13 @@ namespace Supermarket.Services
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var data = await _repo.FindAll(x => x.ConsumerId == accountItem.ConsumerId.Value).ToListAsync();
+            var data = await _repo.FindAll(x => x.ConsumerId == accountItem.ConsumerId.Value).OrderByDescending(x=> x.Id).FirstOrDefaultAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var res = data.SelectMany(x=> x.OrderDetails).Select(x => new ProductCartDto
+            var res = data.OrderDetails.Select(x => new ProductCartDto
             {
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice.ToString("n0"),
@@ -137,12 +138,68 @@ namespace Supermarket.Services
                 Amount = (x.Quantity.Value * x.Product.OriginalPrice).ToString("n0")
             }).ToList();
 
+            var totalPrice = data.TotalPrice.Value.ToString("n0");
             return new
             {
-                TotalPrice = 0,
+                TotalPrice = totalPrice,
                 Data = res
             };
         }
+        public async Task<object> GetProductsInOrderByAdmin(string langId)
+        {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            if (accountItem == null) return new
+            {
+                TotalPrice = 0,
+                Data = new List<ProductCartDto> { }
+            };
+            var data = await _repo.FindAll(x => x.ConsumerId == accountItem.ConsumerId.Value).ToListAsync();
+            if (data == null) return new
+            {
+                TotalPrice = 0,
+                Data = new List<ProductCartDto> { }
+            };
+            var res = data.SelectMany(x => x.OrderDetails).Select(x => new 
+            {
+                Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                OriginalPrice = x.Product.OriginalPrice,
+                Quantity = x.Quantity,
+                Avatar = x.Product.Avatar,
+                Description = x.Product.Description,
+                Amount = (x.Quantity.Value * x.Product.OriginalPrice),
+                StoreId = x.Product.StoreId,
+                KindId = x.Product.KindId,
+                ProductId = x.ProductId,
+                StoreName = x.Product.Store.Name,
+                FullName = x.Orders.Consumer.FullName,
+                KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
+            }).ToList();
 
+            var result = res.GroupBy(x => new { x.ProductId, x.StoreId, x.KindId })
+                .Select(x => new
+                {
+                    Name = x.First().Name,
+                    OriginalPrice = x.First().OriginalPrice.ToString("n0"),
+                    Avatar = x.First().Avatar,
+                    Description = x.First().Description,
+                    StoreName = x.First().StoreName,
+                    KindName = x.First().KindName,
+                    Amount = x.Sum(a => a.Amount).ToString("n0"),
+                    Quantity = x.Sum(a => a.Quantity),
+                    Consumers = x.GroupBy(s => s.FullName).Select(a => new
+                    {
+                        FullName = a.Key,
+                        Quantity = a.Sum(b => b.Quantity)
+                    }),
+                });
+            var totalPrice = data.Sum(x => x.TotalPrice).Value.ToString("n0");
+            return new
+            {
+                TotalPrice = totalPrice,
+                Data = result
+            };
+        }
     }
 }

@@ -41,6 +41,7 @@ namespace Supermarket.Services
             _mapper = mapper;
             _configMapper = configMapper;
         }
+        
         /// <summary>
         /// Add account sau do add AccountGroupAccount
         /// </summary>
@@ -50,10 +51,21 @@ namespace Supermarket.Services
         {
             try
             {
+                var checkUsername = await _repo.FindAll(x => x.Username == model.Username).AnyAsync();
+                if (checkUsername)
+                {
+                    operationResult.Message = "The username existed!";
+                    return operationResult;
+                }    
                 var item = _mapper.Map<Account>(model);
                 item.Password = item.Password.ToEncrypt();
+                item.Consumer = new Consumer
+                {
+                    EmployeeId = model.Username,
+                    Email = model.Email,
+                    FullName = model.FullName
+                };
                 _repo.Add(item);
-
                 await _unitOfWork.SaveChangeAsync();
 
                 operationResult = new OperationResult
@@ -79,11 +91,19 @@ namespace Supermarket.Services
         {
             try
             {
+                var checkUsername = await _repo.FindAll(x => x.Username == model.Username).AnyAsync();
+                if (checkUsername)
+                {
+                    operationResult.Message = "The username existed!";
+                    return operationResult;
+                }
                 var item = await _repo.FindByIdAsync(model.Id);
                 if (model.Password.IsBase64() == false)
                         item.Password = model.Password.ToEncrypt();
                 item.Username = model.Username;
-             
+                item.Consumer.EmployeeId = model.Username;
+                item.Consumer.Email = model.Email;
+                item.Consumer.FullName= model.FullName;
                 _repo.Update(item);
                 await _unitOfWork.SaveChangeAsync();
 

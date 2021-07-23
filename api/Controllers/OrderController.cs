@@ -54,6 +54,11 @@ namespace Supermarket.Controllers
             return Ok(await _service.GetProductsInOrder(langId));
         }
         [HttpGet]
+        public async Task<ActionResult> GetProductsInOrderByAdmin(string langId)
+        {
+            return Ok(await _service.GetProductsInOrderByAdmin(langId));
+        }
+        [HttpGet]
         public async Task<ActionResult> GetWithPaginationsAsync(PaginationParams paramater)
         {
             return Ok(await _service.GetWithPaginationsAsync(paramater));

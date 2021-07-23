@@ -2,7 +2,7 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        buy list
+        <div class="card-title"> {{fullName}} buy list </div>
       </div>
       <div class="card-body table-responsive p-0">
         <ejs-grid #grid
@@ -71,7 +71,7 @@
         <div style="font-weight:bold; font-size: 16px"> Total: {{totalPrice}} đ</div>
        </div>
          <div class="card-footer d-flex flex-row-reverse">
-               <button type="button" class="btn btn-success" (click)='back()'>Place Order</button>
+               <button type="button" class="btn btn-success" (click)='back()'>Back</button>
        </div>
     </div>
   </div>

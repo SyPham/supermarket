@@ -25,7 +25,7 @@ namespace Supermarket.Services
         }
         public async Task<Account> Login(string username, string password)
         {
-            var account = await _repo.FindAll().FirstOrDefaultAsync(x => x.Username == username);
+            var account = await _repo.FindAll().FirstOrDefaultAsync(x => x.Username.ToLower() == username.ToLower());
 
             if (account == null)
                 return null;

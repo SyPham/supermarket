@@ -23,4 +23,7 @@ export class OrderService extends CURDService<Order> {
   getProductsInOrder(): Observable<any> {
     return this.http.get<any>(`${this.base}Order/GetProductsInOrder?langId=${localStorage.getItem("lang")}`);
   }
+  getProductsInOrderByAdmin(): Observable<any> {
+    return this.http.get<any>(`${this.base}Order/getProductsInOrderByAdmin?langId=${localStorage.getItem("lang")}`);
+  }
 }
