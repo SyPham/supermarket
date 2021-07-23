@@ -153,15 +153,15 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     localStorage.removeItem('lang');
     localStorage.setItem('lang', lang);
     this.dataService.setValueLocale(lang);
-    this.permissionService.getMenuByLangID(this.userid, lang).subscribe((navs: []) => {
-      this.navItems = navs;
-      localStorage.setItem('navs', JSON.stringify(navs));
-      this.spinner.hide();
-      window.location.reload();
+    window.location.reload();
+    // this.permissionService.getMenuByLangID(this.userid, lang).subscribe((navs: []) => {
+    //   this.navItems = navs;
+    //   localStorage.setItem('navs', JSON.stringify(navs));
+    //   this.spinner.hide();
 
-    }, (err) => {
-      this.spinner.hide();
-    });
+    // }, (err) => {
+    //   this.spinner.hide();
+    // });
   }
   getBuilding() {
     const userID = JSON.parse(localStorage.getItem('user')).user.id;
