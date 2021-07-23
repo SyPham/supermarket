@@ -8,6 +8,7 @@ namespace Supermarket.DTO
         public string VietnameseName { get; set; }
         public string EnglishName { get; set; }
         public string ChineseName { get; set; }
+        public string Name { get; set; }
         public int CreatedBy { get; set; }
         public int Store_ID { get; set; }
         public int? ModifiedBy { get; set; }

@@ -27,11 +27,16 @@ export class KindComponent  extends BaseComponent implements OnInit {
   constructor(
     private service: KindService,
     private alertify: AlertifyService,
-  ) { super(); }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.getAllStore();
-    this.getAll();
+    setTimeout(() => {
+
+      this.getAll();
+    }, 300);
   }
   toolbarClick(args) {
     switch (args.item.id) {
