@@ -53,8 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.login();
       }
     }
-    const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
-
+    const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId || 0;
     this.uri = this.route.snapshot.queryParams.uri || accountTypeId === 1 ? '/admin/account' : '/consumer/product-list';
   }
   role: number;
@@ -65,6 +64,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (accessToken && refreshToken && this.route.routeConfig.path === 'login') {
       const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
       const uri = decodeURI(this.uri) || accountTypeId === 1 ? '/admin/account' : '/consumer/product-list';
+      
       this.router.navigate([uri]);
     }
   }

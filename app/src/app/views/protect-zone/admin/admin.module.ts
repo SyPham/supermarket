@@ -20,7 +20,7 @@ import { FilePondModule, registerPlugin } from 'ngx-filepond';
 import * as FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import * as FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import * as FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
-import { ImagePipe } from 'src/app/_core/pipes/image.pipe';
+import { ImageAdminPipe } from 'src/app/_core/pipes/image-admin.pipe';
 registerPlugin(FilePondPluginFileValidateType,FilePondPluginFileValidateSize,FilePondPluginImagePreview);
 
 
@@ -58,7 +58,7 @@ if (lang === 'vi') {
   defaultLang = 'zh';
 }
 const PIPE = [
-  ImagePipe,
+  ImageAdminPipe,
 ]
 @NgModule({
   declarations: [

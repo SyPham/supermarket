@@ -194,7 +194,7 @@ namespace Supermarket.Services
                         Quantity = a.Sum(b => b.Quantity)
                     }),
                 });
-            var totalPrice = data.Sum(x => x.TotalPrice).Value.ToString("n0");
+            var totalPrice = result.Sum(x => x.Amount.ToInt()).ToString("n0");
             return new
             {
                 TotalPrice = totalPrice,
