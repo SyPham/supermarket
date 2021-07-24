@@ -103,7 +103,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
         fullName: args.data.fullName,
         email: args.data.email,
         isLock: args.data.isLock,
-        accountTypeId: args.data.accountTypeId,
+        accountTypeId: this.accountTypeId,
         createdBy: args.data.createdBy,
         createdTime: args.data.createdTime,
         modifiedBy:args.data.modifiedBy,

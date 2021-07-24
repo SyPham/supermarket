@@ -22,7 +22,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./product-list.component.scss']
 })
 export class ProductListComponent extends BaseComponent implements OnInit {
-  base = environment.apiUrl;
+  base = environment.apiUrl.replace('/api','');
   data: Account[] = [];
   password = '';
   modalReference: NgbModalRef;
@@ -41,6 +41,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   stores: Store[];
   cartTotal = 0;
   noImage = '/assets/img/photo1.png';
+  dataKind: any[];
   constructor(
     private service: ProductListService,
     private serviceCart: CartService,
@@ -63,12 +64,16 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     // this.Permission(this.route);
     this.wrapSettings = { wrapMode: 'Content' };
-
   }
   search(args) {
     this.grid.search(this.name);
   }
-
+  getAllKindByStore(id) {
+    this.serviceKind.getAllByStore(id, this.locale).subscribe(res => {
+      console.log(res);
+      this.kinds = res
+    })
+  }
   onChangeStore(args) {
       this.storeId = args.itemData.id;
       this.filterRequest = {
@@ -76,7 +81,8 @@ export class ProductListComponent extends BaseComponent implements OnInit {
         langId: localStorage.getItem("lang"),
         kindId: this.kindId
       };
-      this.loadData();
+      this.getAllKindByStore(this.storeId)
+      // this.loadData();
   }
   onChangeKind(args) {
       this.kindId = args.itemData.id;

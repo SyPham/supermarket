@@ -14,7 +14,9 @@
           gridLines='Both'
           (actionBegin)="actionBegin($event)"
           (actionComplete)="actionComplete($event)"
+          (recordDoubleClick)='onDoubleClick($event)'
           [allowExcelExport]='true'
+          [toolbar]='toolbarOptions'
            [textWrapSettings]="wrapSettings"
           [editSettings]='editSettings'
         >
@@ -29,10 +31,10 @@
             </e-column>
             <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
              <ng-template #template let-data>
-               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+               <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.avatar}}" />
               </ng-template>
                <ng-template #editTemplate let-data>
-               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+               <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.avatar}}" />
               </ng-template>
             </e-column>
             <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">

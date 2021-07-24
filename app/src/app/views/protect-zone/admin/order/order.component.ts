@@ -7,6 +7,8 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Cart, UpdateQuantityRequest } from 'src/app/_core/_model/cart';
 import { OrderService } from 'src/app/_core/_service/order.service';
+import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -18,7 +20,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     password = '';
     modalReference: NgbModalRef;
     fields: object = { text: 'name', value: 'id' };
-    toolbarOptions = ['Search'];
+    toolbarOptions = ['ExcelExport', 'Search'];
     wrapSettings= { wrapMode: 'Content' };
     pageSettings = { pageCount: 20, pageSizes: true, pageSize: 10 };
     @ViewChild('grid') public grid: GridComponent;
@@ -29,11 +31,16 @@ export class OrderComponent extends BaseComponent implements OnInit {
     name: any;
     updateQuantityRequest: UpdateQuantityRequest;
     fullName: any;
+  noImage = '/assets/img/photo1.png';
+  base = environment.apiUrl
+
     constructor(
       private service: OrderService,
       public modalService: NgbModal,
       private alertify: AlertifyService,
       private router: Router,
+    private utilitiesService: UtilitiesService,
+
       private route: ActivatedRoute,
     ) { super(); }
 
@@ -83,6 +90,15 @@ export class OrderComponent extends BaseComponent implements OnInit {
     NO(index) {
       return (this.grid.pageSettings.currentPage - 1) * this.pageSettings.pageSize + Number(index) + 1;
     }
-
+    imagePath(data) {
+      if (data !== null && this.utilitiesService.checkValidImage(data)) {
+        if (this.utilitiesService.checkExistHost(data)) {
+          return data;
+        } else {
+          return this.base + data;
+        }
+      }
+      return this.noImage;
+    }
   }
 
