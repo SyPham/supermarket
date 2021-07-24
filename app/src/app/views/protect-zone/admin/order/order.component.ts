@@ -32,7 +32,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     updateQuantityRequest: UpdateQuantityRequest;
     fullName: any;
   noImage = '/assets/img/photo1.png';
-  base = environment.apiUrl
+  base = environment.apiUrl.replace('/api','');
 
     constructor(
       private service: OrderService,

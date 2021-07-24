@@ -18,5 +18,7 @@ namespace Supermarket.Models
         public int? ModifiedBy { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
+        [ForeignKey("StoreId")]
+        public virtual Store Store { get; set; }
     }
 }

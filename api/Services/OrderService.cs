@@ -155,7 +155,7 @@ namespace Supermarket.Services
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var data = await _repo.FindAll(x => x.ConsumerId == accountItem.ConsumerId.Value).ToListAsync();
+            var data = await _repo.FindAll().ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,

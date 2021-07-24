@@ -53,14 +53,18 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.login();
       }
     }
-    this.uri = this.route.snapshot.queryParams.uri || '/admin/account';
+    const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
+
+    this.uri = this.route.snapshot.queryParams.uri || accountTypeId === 1 ? '/admin/account' : '/consumer/product-list';
   }
   role: number;
   ngOnInit(): void {
     const accessToken = localStorage.getItem('token');
     const refreshToken = localStorage.getItem('refresh_token');
+
     if (accessToken && refreshToken && this.route.routeConfig.path === 'login') {
-      const uri = decodeURI(this.uri) || '/admin/account';
+      const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
+      const uri = decodeURI(this.uri) || accountTypeId === 1 ? '/admin/account' : '/consumer/product-list';
       this.router.navigate([uri]);
     }
   }
@@ -121,8 +125,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       // });
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('token', data.token);
-      this.router.navigate(['/admin/account']);
 
+      const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
+      if (accountTypeId === 1) {
+        this.router.navigate(['/admin/account']);
+      } else {
+        this.router.navigate(['/consumer/product-list']);
+      }
       // console.log('end getActionInFunctionByRoleID');
       this.alertifyService.success('Login Success!!');
       this.busy = false;

@@ -78,6 +78,12 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     const user = JSON.parse(localStorage.getItem("user"));
     this.userName = user?.fullName;
     this.userID = user?.id;
+    const accountTypeId = JSON.parse(localStorage.getItem('user')).accountTypeId;
+    if (accountTypeId === 1) {
+      this.navItems = this.navItems.filter(x=> x.name === 'admin' || x.name === 'Dashboard');
+    } else {
+      this.navItems = this.navItems.filter(x=> x.name === 'Consumer' || x.name === 'Dashboard');
+    }
   }
   toggleMinimize(e) {
     this.sidebarMinimized = e;

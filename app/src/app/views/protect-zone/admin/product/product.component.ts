@@ -17,7 +17,7 @@ import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
   styleUrls: ['./product.component.scss']
 })
 export class ProductComponent extends BaseComponent implements OnInit {
-  base = environment.apiUrl
+  base = environment.apiUrl.replace('/api','')
   locale = localStorage.getItem('lang');
   pageSettings = { pageCount: 20, pageSizes: true, pageSize: 10 };
   setFocus: any;
