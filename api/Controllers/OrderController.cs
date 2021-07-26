@@ -2,6 +2,7 @@
 using Supermarket.DTO;
 using Supermarket.Helpers;
 using Supermarket.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Supermarket.Controllers
@@ -14,7 +15,18 @@ namespace Supermarket.Controllers
         {
             _service = service;
         }
-
+        [HttpPut]
+        public async Task<IActionResult> TransferBuyList(List<AddToBuyListDto> model)
+        {
+            var status = await _service.Transfer(model);
+            return Ok(status);
+        }
+        [HttpPut]
+        public async Task<IActionResult> TransferComplete(List<AddToCompleteListDto> model)
+        {
+            var status = await _service.TransferComplete(model);
+            return Ok(status);
+        }
         [HttpGet]
         public async Task<ActionResult> GetAllAsync()
         {
@@ -57,6 +69,22 @@ namespace Supermarket.Controllers
         public async Task<ActionResult> GetProductsInOrderByAdmin(string langId)
         {
             return Ok(await _service.GetProductsInOrderByAdmin(langId));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetProductsInOrderPendingByAdmin(string langId)
+        {
+            return Ok(await _service.GetProductsInOrderPendingByAdmin(langId));
+        }
+        [HttpGet]
+        public async Task<ActionResult> GetProductsInOrderBuyingByAdmin(string langId)
+        {
+            return Ok(await _service.GetProductsInOrderBuyingByAdmin(langId));
+        }
+        [HttpGet]
+        public async Task<ActionResult> GetProductsInOrderCompleteByAdmin(string langId)
+        {
+            return Ok(await _service.GetProductsInOrderCompleteByAdmin(langId));
         }
         [HttpGet]
         public async Task<ActionResult> GetWithPaginationsAsync(PaginationParams paramater)

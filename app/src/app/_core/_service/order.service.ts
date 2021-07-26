@@ -26,4 +26,19 @@ export class OrderService extends CURDService<Order> {
   getProductsInOrderByAdmin(): Observable<any> {
     return this.http.get<any>(`${this.base}Order/getProductsInOrderByAdmin?langId=${localStorage.getItem("lang")}`);
   }
+  getProductsInOrderPendingByAdmin(): Observable<any> {
+    return this.http.get<any>(`${this.base}Order/getProductsInOrderPendingByAdmin?langId=${localStorage.getItem("lang")}`);
+  }
+  getProductsInOrderByingByAdmin(): Observable<any> {
+    return this.http.get<any>(`${this.base}Order/GetProductsInOrderBuyingByAdmin?langId=${localStorage.getItem("lang")}`);
+  }
+  getProductsInOrderCompleteByAdmin(): Observable<any> {
+    return this.http.get<any>(`${this.base}Order/getProductsInOrderCompleteByAdmin?langId=${localStorage.getItem("lang")}`);
+  }
+  transferByList(model) {
+    return this.http.put(`${this.base}Order/TransferBuyList`, model);
+  }
+  transferComplete(model) {
+    return this.http.put(`${this.base}Order/TransferComplete`, model);
+  }
 }

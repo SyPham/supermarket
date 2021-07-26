@@ -28,6 +28,7 @@ namespace Supermarket.Helpers.AutoMapper
             CreateMap<Consumer, ConsumerDto>();
             CreateMap<Order, OrderDto>();
             CreateMap<OrderDetail, OrderDetailDto>();
+            CreateMap<OrderDetailHistory, OrderDetailHistoryDto>();
 
             CreateMap<Cart, CartDto>();
 

@@ -3,25 +3,217 @@
     <div class="card">
       <div class="card-header">
         <div class="card-title"> Admin buy list </div>
+        <ejs-toolbar #toolbarTodo>
+          <e-items>
+            <e-item id='pending' >
+              <ng-template #template>
+                <button type="button" (click)="Tabpending()" [ngClass]="pendingTabClass"  >Pending </button>
+              </ng-template>
+            </e-item>
+            <e-item id='buy-list' >
+              <ng-template #template>
+                <button type="button" (click)="TabBuying()" [ngClass]="buyingTabClass" >Buy list </button>
+              </ng-template>
+            </e-item>
+            <e-item id='complete' >
+              <ng-template #template>
+                <button type="button" (click)="TabComplete()" [ngClass]="completeTabClass" >Complete </button>
+              </ng-template>
+            </e-item>
+          </e-items>
+        </ejs-toolbar>
       </div>
       <div class="card-body table-responsive p-0">
-        <ejs-grid #grid
+        <ejs-toolbar #toolbarTodo>
+          <e-items>
+            <e-item id='buy-list' >
+              <ng-template #template>
+                <button type="button" *ngIf="pendingTab" (click)="byList()" class="btn btn-success" >Today buy list </button>
+              </ng-template>
+            </e-item>
+            <e-item align='right'>
+              <ng-template #template>
+                <div class="e-toolbar-item e-search-wrapper e-toolbar-right" aria-disabled="false" title="Search">
+                  <div class="e-input-group e-search" role="search"> <input id="toolbar_searchbar" style="width:178px" autocomplete="off"
+                      [(ngModel)]="name" (change)='search($event)' class="e-input"
+                      placeholder="{{ 'Search'}}">
+                    <span id="toolbar_searchbutton" class="e-input-group-icon fa fa-search e-icons" tabindex="-1"
+                      title="Search" aria-label="search"></span>
+                  </div>
+                </div>
+              </ng-template>
+            </e-item>
+          </e-items>
+        </ejs-toolbar>
+
+        <ejs-grid *ngIf="pendingTab" #grid
           id='grid'
           [dataSource]="data"
           [allowResizing]='true'
           [showColumnMenu]='true'
-          allowTextWrap='true'
           gridLines='Both'
+          isPrimaryKey='true'
+          [showColumnChooser]='true'
           (actionBegin)="actionBegin($event)"
           (actionComplete)="actionComplete($event)"
           [allowExcelExport]='true'
-           [textWrapSettings]="wrapSettings"
+          (rowDeselected)='rowDeselected($event)'
+          (rowSelected)='rowSelected($event)'
+          [selectionSettings]="{ checkboxMode: 'ResetOnRowClick'}"
+          [textWrapSettings]="wrapSettings"
           [editSettings]='editSettings'
         >
           <e-columns>
+            <e-column type='checkbox' isPrimaryKey='true' textAlign='Center' width='40'></e-column>
             <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="ID">
               <ng-template #template let-data>
                 {{NO(data.index)}}
+              </ng-template>
+              <ng-template #editTemplate let-data>
+                #
+              </ng-template>
+            </e-column>
+            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
+             <ng-template #template let-data>
+               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+              </ng-template>
+               <ng-template #editTemplate let-data>
+               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+              </ng-template>
+            </e-column>
+            <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
+              <ng-template #editTemplate let-data>
+               <span>{{data.name}}</span>
+              </ng-template>
+             </e-column>
+            <e-column field="description" textAlign='Left' headerText="Description">
+              <ng-template #editTemplate let-data>
+               <span style="text-align: left">{{data.description}}</span>
+              </ng-template>
+            </e-column>
+             <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+              <ng-template #editTemplate let-data>
+               <span>{{data.originalPrice}} đ</span>
+              </ng-template>
+                <ng-template #template let-data>
+               <span>{{data.originalPrice}} đ</span>
+              </ng-template>
+            </e-column>
+            <e-column field="quantity" width="80" textAlign='Center' headerText="Quantity"> </e-column>
+
+             <e-column field="amount" width="100" textAlign='Center' headerText="Amount">
+              <ng-template #editTemplate let-data>
+               <span>{{data.amount}} đ</span>
+              </ng-template>
+                <ng-template #template let-data>
+               <span>{{data.amount}} đ</span>
+              </ng-template>
+            </e-column>
+               <e-column field='consumers' width="100" headerTextAlign='Center' headerText='Consumers'>
+              <ng-template #template let-data>
+                <ul style="padding: 0 0 0 15px;">
+                  <li *ngFor="let item of data.consumers">{{item.fullName}}: {{item.quantity}}</li>
+                </ul>
+              </ng-template>
+            </e-column>
+          </e-columns>
+        </ejs-grid>
+
+        <ejs-grid #gridBuying
+          *ngIf="buyingTab"
+          id='grid'
+          [dataSource]="data"
+          [allowResizing]='true'
+          [showColumnMenu]='true'
+          gridLines='Both'
+          isPrimaryKey='true'
+          [showColumnChooser]='true'
+          (actionBegin)="actionBegin($event)"
+          (actionComplete)="actionComplete($event)"
+          [allowExcelExport]='true'
+          (rowDeselected)='rowDeselected($event)'
+          (rowSelected)='rowSelected($event)'
+          [selectionSettings]="{ checkboxMode: 'ResetOnRowClick'}"
+          [textWrapSettings]="wrapSettings"
+          [editSettings]='editSettings'
+          (recordDoubleClick)='onDoubleClickDone($event)'
+        >
+          <e-columns>
+            <!-- <e-column type='checkbox' isPrimaryKey='true' textAlign='Center' width='40'></e-column> -->
+            <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="ID">
+              <ng-template #template let-data>
+                {{NOBuying(data.index)}}
+              </ng-template>
+              <ng-template #editTemplate let-data>
+                #
+              </ng-template>
+            </e-column>
+            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
+             <ng-template #template let-data>
+               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+              </ng-template>
+               <ng-template #editTemplate let-data>
+               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+              </ng-template>
+            </e-column>
+            <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
+              <ng-template #editTemplate let-data>
+               <span>{{data.name}}</span>
+              </ng-template>
+             </e-column>
+            <e-column field="description" textAlign='Left' headerText="Description">
+              <ng-template #editTemplate let-data>
+               <span style="text-align: left">{{data.description}}</span>
+              </ng-template>
+            </e-column>
+             <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+              <ng-template #editTemplate let-data>
+               <span>{{data.originalPrice}} đ</span>
+              </ng-template>
+                <ng-template #template let-data>
+               <span>{{data.originalPrice}} đ</span>
+              </ng-template>
+            </e-column>
+            <e-column field="quantity" width="80" textAlign='Center' headerText="Quantity"> </e-column>
+
+             <e-column field="amount" width="100" textAlign='Center' headerText="Amount">
+              <ng-template #editTemplate let-data>
+               <span>{{data.amount}} đ</span>
+              </ng-template>
+                <ng-template #template let-data>
+               <span>{{data.amount}} đ</span>
+              </ng-template>
+            </e-column>
+               <e-column field='consumers' width="100" headerTextAlign='Center' headerText='Consumers'>
+              <ng-template #template let-data>
+                <ul style="padding: 0 0 0 15px;">
+                  <li *ngFor="let item of data.consumers">{{item.fullName}}: {{item.quantity}}</li>
+                </ul>
+              </ng-template>
+            </e-column>
+          </e-columns>
+        </ejs-grid>
+
+        <ejs-grid *ngIf="completeTab" #gridComplete
+          id='grid'
+          [dataSource]="data"
+          [allowResizing]='true'
+          [showColumnMenu]='true'
+          gridLines='Both'
+          isPrimaryKey='true'
+          (actionBegin)="actionBegin($event)"
+          (actionComplete)="actionComplete($event)"
+          [allowExcelExport]='true'
+          (rowDeselected)='rowDeselected($event)'
+          (rowSelected)='rowSelected($event)'
+          [textWrapSettings]="wrapSettings"
+          [editSettings]='editSettings'
+        >
+          <e-columns>
+            <!-- <e-column type='checkbox' isPrimaryKey='true' textAlign='Center' width='40'></e-column> -->
+            <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="ID">
+              <ng-template #template let-data>
+                {{NOComplete(data.index)}}
               </ng-template>
               <ng-template #editTemplate let-data>
                 #
@@ -83,4 +275,51 @@
     </div>
   </div>
 </div>
+
+<ng-template #dispatchModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">
+          <i class="fas fa-plus"></i> DisPatch
+      </h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+    <ejs-grid #gridDisPatch
+      id='grid'
+      [dataSource]="dispatchData"
+      [allowResizing]='true'
+      [showColumnMenu]='true'
+      gridLines='Both'
+      isPrimaryKey='true'
+      (actionBegin)="actionBeginDisPatch($event)"
+      (actionComplete)="actionCompleteDisPatch($event)"
+      [allowExcelExport]='true'
+      [textWrapSettings]="wrapSettings"
+      [editSettings]='editSettingsDisPatch'
+    >
+      <e-columns>
+        <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
+          <ng-template #editTemplate let-data>
+          <span>{{data.name}}</span>
+          </ng-template>
+        </e-column>
+        <e-column field="fullName" textAlign='Center' headerText="{{ 'Consumer'}}">
+          <ng-template #editTemplate let-data>
+          <span>{{data.fullName}}</span>
+          </ng-template>
+        </e-column>
+        <e-column field="quantity" textAlign='Center' headerText="{{ 'Total Qty'}}">
+        </e-column>
+        <e-column field="qtyTamp" textAlign='Center' headerText="{{ 'Actual Qty'}}">
+        </e-column>
+      </e-columns>
+    </ejs-grid>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+      <button type="submit" (click)="saveDisPatch()" class="btn btn-primary">Save changes</button>
+  </div>
+</ng-template>
 

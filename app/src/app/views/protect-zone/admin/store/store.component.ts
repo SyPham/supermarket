@@ -17,6 +17,7 @@ export class StoreComponent extends BaseComponent implements OnInit {
   pageSettings = { pageCount: 20, pageSizes: true, pageSize: 10 };
   setFocus: any;
   StoreCreate: Store;
+  name: any;
   StoreUpdate: Store;
   data: Store[] = [];
   storeFields: object = { text: 'name', value: 'id' };
@@ -41,6 +42,9 @@ export class StoreComponent extends BaseComponent implements OnInit {
   }
   onDoubleClick(args: any): void {
     this.setFocus = args.column; // Get the column from Double click event
+  }
+  search(args) {
+    this.grid.search(this.name);
   }
   getAll(){
     this.service.getAll().subscribe((item: any) => {

@@ -7,5 +7,9 @@
         public int ProductId { get; set; }
         public int? Quantity { get; set; }
         public decimal? Price { get; set; }
+
+        public bool PendingStatus { get; set; }
+        public bool ByingStatus { get; set; }
+        public bool CompleteStatus { get; set; }
     }
 }
