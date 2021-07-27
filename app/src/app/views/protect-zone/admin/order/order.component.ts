@@ -10,6 +10,8 @@ import { OrderService } from 'src/app/_core/_service/order.service';
 import { MessageConstants } from 'src/app/_core/_constants/system';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -53,11 +55,15 @@ export class OrderComponent extends BaseComponent implements OnInit {
   pendingTabClass: any = "btn btn-success"
   buyingTabClass: any = "btn btn-default"
   completeTabClass: any = "btn btn-default"
+  noImage = '/assets/img/photo1.png';
+  base = environment.apiUrl.replace('/api','')
+
   constructor(
     private service: OrderService,
     public modalService: NgbModal,
     private alertify: AlertifyService,
     private router: Router,
+    private utilitiesService: UtilitiesService,
     private route: ActivatedRoute,
   ) { super(); }
 
@@ -74,6 +80,12 @@ export class OrderComponent extends BaseComponent implements OnInit {
   onDoubleClickDone(args: any): void {
     this.dispatchData = args.rowData.consumers
     if (args.column.field === 'consumers') {
+      // const value = args.rowData as IToDoList;
+      // this.openDispatchModalDoneList(value);
+      this.showModal(this.dispatchModal);
+      this.setLocalStore("dispatch",args.rowData.consumers)
+    }
+    if (args.column.field === 'quantity') {
       // const value = args.rowData as IToDoList;
       // this.openDispatchModalDoneList(value);
       this.showModal(this.dispatchModal);
@@ -352,6 +364,15 @@ export class OrderComponent extends BaseComponent implements OnInit {
   NOComplete(index) {
     return (this.gridComplete.pageSettings.currentPage - 1) * this.pageSettings.pageSize + Number(index) + 1;
   }
-
+  imagePath(data) {
+    if (data !== null && this.utilitiesService.checkValidImage(data)) {
+      if (this.utilitiesService.checkExistHost(data)) {
+        return data;
+      } else {
+        return this.base + data;
+      }
+    }
+    return this.noImage;
+  }
 }
 

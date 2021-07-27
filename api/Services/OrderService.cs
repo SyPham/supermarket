@@ -167,6 +167,20 @@ namespace Supermarket.Services
 
                 _repo.Add(orderItem);
                 await _unitOfWork.SaveChangeAsync();
+
+                var orderHistory = orderItem.OrderDetails.Select(x => new OrderDetailHistory
+                {
+                    Id = 0,
+                    OrderDetailId = x.Id,
+                    ProductId = x.ProductId,
+                    PendingQty = x.Quantity.Value,
+                    ByingQty = 0,
+                    CompleteQty = 0,
+                    ConsumerId = orderItem.ConsumerId,
+                    OrderDate = orderItem.CreatedTime
+                }).ToList();
+                _repoOrderHistory.AddRange(orderHistory);
+                await _unitOfWork.SaveChangeAsync();
                 // Đặt hàng xong thì xóa giỏ hàng
                 var cartRemove = await _repoCart.FindAll(x => x.AccountId == accountId).ToListAsync();
                 _repoCart.RemoveMultiple(cartRemove);
@@ -196,7 +210,7 @@ namespace Supermarket.Services
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var data = await _repo.FindAll(x => x.ConsumerId == accountItem.ConsumerId.Value).OrderByDescending(x=> x.Id).FirstOrDefaultAsync();
+            var data = await _repo.FindAll(x => x.ConsumerId == accountItem.ConsumerId.Value).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
@@ -235,7 +249,7 @@ namespace Supermarket.Services
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var res = data.SelectMany(x => x.OrderDetails).Select(x => new 
+            var res = data.SelectMany(x => x.OrderDetails).Select(x => new
             {
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
@@ -287,7 +301,7 @@ namespace Supermarket.Services
             //    Data = new List<ProductCartDto> { }
             //};
             //var data = await _repo.FindAll().ToListAsync();
-            var data = await _repoOrderHistory.FindAll().ToListAsync() ;
+            var data = await _repoOrderHistory.FindAll().ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
@@ -311,7 +325,7 @@ namespace Supermarket.Services
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
             }).ToList();
 
-            var result = res.GroupBy(x => new { x.Name})
+            var result = res.GroupBy(x => new { x.Name })
                 .Select(x => new
                 {
                     Name = x.First().Name,
@@ -420,7 +434,7 @@ namespace Supermarket.Services
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
             }).ToList();
 
-            var result = res.GroupBy(x => new { x.Name , x.ConsumerId })
+            var result = res.GroupBy(x => new { x.Name, x.ConsumerId })
                 .Select(x => new
                 {
                     Name = x.First().Name,
@@ -433,7 +447,7 @@ namespace Supermarket.Services
                     KindName = x.First().KindName,
                     Amount = x.Sum(a => a.Amount).ToString("n0"),
                     Quantity = x.Sum(a => a.Quantity),
-                    Date = Convert.ToDateTime( x.First().Date).ToString("MM/yy")
+                    Date = Convert.ToDateTime(x.First().Date).ToString("MM/yy")
                 });
             var totalPrice = res.Sum(x => x.Amount).ToString("n0");
             return new
@@ -444,6 +458,6 @@ namespace Supermarket.Services
 
         }
 
-       
+
     }
 }
