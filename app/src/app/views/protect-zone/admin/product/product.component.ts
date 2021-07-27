@@ -83,6 +83,9 @@ export class ProductComponent extends BaseComponent implements OnInit {
     })
   }
   resetForm() {
+    this.previewUrl = null,
+    this.img = null
+    this.file = null
     this.ProductCreate = {
       id: 0,
       vietnameseName:  null,
@@ -146,7 +149,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.getAllKindByStore(data.store_ID);
     this.ProductCreate.kindId = data.kind_ID
     this.ProductCreate.originalPrice = data.price
-    this.img = this.base + data.photo
+    this.img = this.base + data.avatar
   }
   openModalEdit(modal){
     this.modalReference = this.modalService.open(modal, { size: 'lg'});
@@ -172,19 +175,16 @@ export class ProductComponent extends BaseComponent implements OnInit {
     }
   }
   onChangeStore(args) {
-    console.log(args);
     this.storeId = args.value
     this.ProductCreate.storeId = args.value
     this.getAllKindByStore(this.storeId)
   }
   getAllKindByStore(id) {
     this.service_kind.getAllByStore(id, this.locale).subscribe(res => {
-      console.log(res);
       this.dataKind = res
     })
   }
   onChangeKind(args) {
-    console.log(args);
     this.ProductCreate.kindId = args.value
     this.kindId = args.value
   }

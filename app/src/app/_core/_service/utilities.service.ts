@@ -128,7 +128,7 @@ serialize(obj) {
     return check;
   }
   checkValidImage(data) {
-    const valid = new RegExp(".(?:jpg|gif|png)", "g").test(data);
+    const valid = new RegExp(".(?:jpg|gif|png|jpeg|raw)", "g").test(data.toLowerCase());
     return valid;
   }
 }

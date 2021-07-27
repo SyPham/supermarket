@@ -298,13 +298,13 @@ export const navItems: INavData[] = [
         icon: 'icon-puzzle'
       },
       {
-        name: 'Buy List',
-        url: '/admin/order',
+        name: 'Product',
+        url: '/admin/product',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Product',
-        url: '/admin/product',
+        name: 'Buy List',
+        url: '/admin/order',
         icon: 'icon-puzzle'
       },
     ]
