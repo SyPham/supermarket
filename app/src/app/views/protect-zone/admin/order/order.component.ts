@@ -1,3 +1,4 @@
+import { NgxSpinnerService } from 'ngx-spinner';
 import { FilterRequest } from './../../../../_core/_model/product';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
@@ -41,7 +42,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   fullName: any;
   dataPicked = [];
   dataPickedDitchPatch = [];
-  @ViewChild('htmlData') htmlData:ElementRef<HTMLImageElement>;
+  @ViewChild('htmlData2') public htmlData:ElementRef;
   dataAdd: any
   dataBuyingAdd: any
   public enableVirtualization: boolean = true;
@@ -67,6 +68,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     public modalService: NgbModal,
     private alertify: AlertifyService,
     private router: Router,
+    private spinner: NgxSpinnerService,
     private utilitiesService: UtilitiesService,
     private route: ActivatedRoute,
   ) { super(); }
@@ -99,17 +101,25 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
 
   PrintBuying() {
-    let DATA = document.getElementById('htmlData2');;
-    html2canvas(DATA).then(canvas => {
-      const imgData = canvas.toDataURL('image/png')
-      let fileWidth = 208;
-      let fileHeight = canvas.height * fileWidth / canvas.width;
-      let PDF = new jsPDF('p', 'mm', 'a4');
-      let position = 0;
-      PDF.addImage(imgData, 'PNG', 0, position, fileWidth, fileHeight)
+    this.spinner.show()
+    setTimeout(() => {
+      let DATA = document.getElementById('htmlData2');
+      document.getElementById("htmlData2").style.visibility = "";
+      html2canvas(DATA).then(canvas => {
+        const imgData = canvas.toDataURL('image/png',1)
+        let fileWidth = 208;
+        let fileHeight = canvas.height * fileWidth / canvas.width;
+        let PDF = new jsPDF('p', 'mm', 'a4');
+        let position = 0;
+        PDF.addImage(imgData, 'PNG', 0, position, fileWidth, fileHeight)
 
-      PDF.save('buyingList.pdf');
-    });
+        PDF.save('buyingList.pdf');
+        this.dataFake = []
+        this.spinner.hide();
+        document.getElementById("htmlData2").style.visibility = "hidden";
+
+      });
+    }, 100);
   }
   removeLocalStore(key: string) {
     localStorage.removeItem(key);

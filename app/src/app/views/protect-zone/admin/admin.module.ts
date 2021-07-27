@@ -23,11 +23,12 @@ import * as FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-s
 import { ImagePipe } from 'src/app/_core/pipes/image.pipe';
 registerPlugin(FilePondPluginFileValidateType,FilePondPluginFileValidateSize,FilePondPluginImagePreview);
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
-
+import { NgxSpinnerModule } from "ngx-spinner";
 // import { PeriodComponent } from './period/period.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 declare var require: any;
 let defaultLang: string;
 const lang = localStorage.getItem('lang');
@@ -71,6 +72,7 @@ const PIPE = [
   ],
   imports: [
     FilePondModule,
+    NgxSpinnerModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -92,7 +94,8 @@ const PIPE = [
       },
       defaultLanguage: defaultLang
     }),
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminModule  {
   vi: any;
