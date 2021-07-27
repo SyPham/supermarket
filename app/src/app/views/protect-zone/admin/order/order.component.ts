@@ -37,7 +37,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   fullName: any;
   dataPicked = [];
   dataPickedDitchPatch = [];
-  @ViewChild('htmlData') htmlData:ElementRef;
+  @ViewChild('htmlData') htmlData:ElementRef<HTMLImageElement>;
   dataAdd: any
   dataBuyingAdd: any
   public enableVirtualization: boolean = true;
@@ -67,6 +67,19 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.wrapSettings = { wrapMode: 'Content' };
     this.loadDataPending();
+  }
+  PrintBuying() {
+    let DATA = document.getElementById('htmlData2');;
+    html2canvas(DATA).then(canvas => {
+      const imgData = canvas.toDataURL('image/jpeg')
+      let fileWidth = 208;
+      let fileHeight = canvas.height * fileWidth / canvas.width;
+      let PDF = new jsPDF('p', 'mm', 'a4');
+      let position = 0;
+      PDF.addImage(imgData, 'PNG', 0, position, fileWidth, fileHeight)
+
+      PDF.save('buyingList.pdf');
+    });
   }
   removeLocalStore(key: string) {
     localStorage.removeItem(key);
@@ -165,29 +178,8 @@ export class OrderComponent extends BaseComponent implements OnInit {
       this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
     }
   }
-  // PrintBuying() {
-  //   // this.gridBuying.pdfExport();
-  //   const selectedRecords = this.gridBuying.getSelectedRecords();
-  //   console.log(selectedRecords);
-  //   const exportProperties = {
-  //       dataSource: selectedRecords
-  //   };
-  //   this.gridBuying.pdfExport(exportProperties);
-  // }
-  public PrintBuying():void {
-    let DATA = document.getElementById('htmlData');
-    html2canvas(DATA).then(canvas => {
-        let fileWidth = 208;
-        let fileHeight = canvas.height * fileWidth / canvas.width;
 
-        const FILEURI = canvas.toDataURL('image/png')
-        let PDF = new jsPDF('p', 'mm', 'a4');
-        let position = 0;
-        PDF.addImage(FILEURI, 'JPG', 0, position, fileWidth, fileHeight)
 
-        PDF.save('buyingList.pdf');
-    });
-  }
   rowSelected(args){
     if (args.isHeaderCheckboxClicked) {
       for (const item of args.data) {
