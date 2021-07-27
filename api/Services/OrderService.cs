@@ -10,8 +10,11 @@ using Supermarket.Models;
 using Supermarket.Services.Base;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Supermarket.Services
@@ -287,6 +290,8 @@ namespace Supermarket.Services
             //    Data = new List<ProductCartDto> { }
             //};
             //var data = await _repo.FindAll().ToListAsync();
+            string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
+                    _httpContextAccessor.HttpContext.Request.Host + "/api/";
             var data = await _repoOrderHistory.FindAll().ToListAsync() ;
             if (data == null) return new
             {
@@ -298,7 +303,7 @@ namespace Supermarket.Services
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.PendingQty,
-                Avatar = x.Product.Avatar,
+                Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
                 Description = x.Product.Description,
                 Amount = (x.PendingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
@@ -340,6 +345,8 @@ namespace Supermarket.Services
         }
         public async Task<object> GetProductsInOrderBuyingByAdmin(string langId)
         {
+            string host = _httpContextAccessor.HttpContext.Request.Scheme +"://" +
+                    _httpContextAccessor.HttpContext.Request.Host + "/api/";
             var data = await _repoOrderHistory.FindAll().ToListAsync();
             if (data == null) return new
             {
@@ -351,7 +358,7 @@ namespace Supermarket.Services
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.ByingQty,
-                Avatar = x.Product.Avatar,
+                Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
                 Description = x.Product.Description,
                 Amount = (x.ByingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
@@ -395,6 +402,8 @@ namespace Supermarket.Services
         }
         public async Task<object> GetProductsInOrderCompleteByAdmin(string langId)
         {
+            string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
+                    _httpContextAccessor.HttpContext.Request.Host + "/api/";
             var data = await _repoOrderHistory.FindAll().ToListAsync();
             if (data == null) return new
             {
@@ -406,7 +415,7 @@ namespace Supermarket.Services
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.CompleteQty,
-                Avatar = x.Product.Avatar,
+                Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
                 Description = x.Product.Description,
                 Amount = (x.CompleteQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
@@ -444,6 +453,46 @@ namespace Supermarket.Services
 
         }
 
-       
+        public String ConvertImageURLToBase64(String url)
+        {
+            StringBuilder _sb = new StringBuilder();
+
+            Byte[] _byte = this.GetImage(url);
+
+            _sb.Append("data:image/png;base64, " + Convert.ToBase64String(_byte, 0, _byte.Length));
+
+            return _sb.ToString();
+        }
+        private byte[] GetImage(string url)
+        {
+            Stream stream = null;
+            byte[] buf;
+
+            try
+            {
+                WebProxy myProxy = new WebProxy();
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+
+                HttpWebResponse response = (HttpWebResponse)req.GetResponse();
+                stream = response.GetResponseStream();
+
+                using (BinaryReader br = new BinaryReader(stream))
+                {
+                    int len = (int)(response.ContentLength);
+                    buf = br.ReadBytes(len);
+                    br.Close();
+                }
+
+                stream.Close();
+                response.Close();
+            }
+            catch (Exception exp)
+            {
+                buf = null;
+            }
+
+            return (buf);
+        }
+        
     }
 }

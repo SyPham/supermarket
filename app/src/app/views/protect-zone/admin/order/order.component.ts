@@ -10,6 +10,10 @@ import { OrderService } from 'src/app/_core/_service/order.service';
 import { MessageConstants } from 'src/app/_core/_constants/system';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
+import { environment } from 'src/environments/environment';
+import { DomSanitizer } from '@angular/platform-browser';
+import imageToBase64 from 'image-to-base64/browser';
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -53,11 +57,17 @@ export class OrderComponent extends BaseComponent implements OnInit {
   pendingTabClass: any = "btn btn-success"
   buyingTabClass: any = "btn btn-default"
   completeTabClass: any = "btn btn-default"
+  base = environment.apiUrl
+  noImage = '/assets/img/photo1.png';
+  img: any
+  dataFake: any
   constructor(
     private service: OrderService,
+    private sanitizer: DomSanitizer,
     public modalService: NgbModal,
     private alertify: AlertifyService,
     private router: Router,
+    private utilitiesService: UtilitiesService,
     private route: ActivatedRoute,
   ) { super(); }
 
@@ -68,10 +78,30 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.wrapSettings = { wrapMode: 'Content' };
     this.loadDataPending();
   }
+  imagePath(data) {
+    if (data !== null && this.utilitiesService.checkValidImage(data)) {
+      if (this.utilitiesService.checkExistHost(data)) {
+        return data;
+      } else {
+        return this.base + data;
+      }
+    }
+    return this.noImage;
+  }
+  public getSantizeUrl(url : string) {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
+  }
+  loadDataBuying() {
+    this.service.getProductsInOrderByingByAdmin().subscribe(res => {
+      this.data = res.data || [];
+      this.totalPrice = res.totalPrice || 0;
+    });
+  }
+
   PrintBuying() {
     let DATA = document.getElementById('htmlData2');;
     html2canvas(DATA).then(canvas => {
-      const imgData = canvas.toDataURL('image/jpeg')
+      const imgData = canvas.toDataURL('image/png')
       let fileWidth = 208;
       let fileHeight = canvas.height * fileWidth / canvas.width;
       let PDF = new jsPDF('p', 'mm', 'a4');
@@ -181,6 +211,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
 
 
   rowSelected(args){
+
     if (args.isHeaderCheckboxClicked) {
       for (const item of args.data) {
         for (const item2 of item.consumers) {
@@ -202,7 +233,6 @@ export class OrderComponent extends BaseComponent implements OnInit {
     }
   }
   rowDeselected(args){
-
     if (args.isHeaderCheckboxClicked) {
       this.dataPicked = []
     }else {
@@ -217,6 +247,8 @@ export class OrderComponent extends BaseComponent implements OnInit {
     }
   }
   rowSelectedBuying(args){
+    this.dataFake = this.gridBuying.getSelectedRecords();
+    console.log(this.dataFake);
     if (args.isHeaderCheckboxClicked) {
       for (const item of args.data) {
         for (const item2 of item.consumers) {
@@ -240,6 +272,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     }
   }
   rowDeselectedBuying(args){
+    this.dataFake = this.gridBuying.getSelectedRecords();
 
     if (args.isHeaderCheckboxClicked) {
       this.dataPickedDitchPatch = []
@@ -320,16 +353,10 @@ export class OrderComponent extends BaseComponent implements OnInit {
     });
   }
 
-  loadDataBuying() {
-    this.service.getProductsInOrderByingByAdmin().subscribe(res => {
-      this.data = res.data || [];
-      this.totalPrice = res.totalPrice || 0;
-    });
-  }
+
   loadDataComplete() {
     this.service.getProductsInOrderCompleteByAdmin().subscribe(res => {
       this.data = res.data || [];
-      console.log(res);
       this.totalPrice = res.totalPrice || 0;
     });
   }

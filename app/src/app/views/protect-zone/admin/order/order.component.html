@@ -31,11 +31,11 @@
                 <button type="button" *ngIf="pendingTab" (click)="byList()" class="btn btn-success" >Today buy list </button>
               </ng-template>
             </e-item>
-            <!-- <e-item id='print' >
+            <e-item id='print' >
               <ng-template #template>
                 <button type="button" *ngIf="buyingTab" (click)="PrintBuying()" class="btn btn-secondary" >Print </button>
               </ng-template>
-            </e-item> -->
+            </e-item>
             <e-item id='dispatch' >
               <ng-template #template>
                 <button type="button" *ngIf="buyingTab" (click)="DisPatchCheckBox()" class="btn btn-primary" >Dispatch </button>
@@ -85,10 +85,10 @@
             </e-column>
             <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
              <ng-template #template let-data>
-               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+               <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
               </ng-template>
                <ng-template #editTemplate let-data>
-               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+               <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
               </ng-template>
             </e-column>
             <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
@@ -128,6 +128,7 @@
             </e-column>
           </e-columns>
         </ejs-grid>
+
         <div id="htmlData">
           <ejs-grid #gridBuying
             *ngIf="buyingTab"
@@ -159,10 +160,10 @@
               </e-column>
               <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
               <ng-template #template let-data>
-                <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+                <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
                 </ng-template>
                 <ng-template #editTemplate let-data>
-                <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+                <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
                 </ng-template>
               </e-column>
 
@@ -204,6 +205,7 @@
             </e-columns>
           </ejs-grid>
         </div>
+
         <ejs-grid *ngIf="completeTab" #gridComplete
           id='grid'
           [dataSource]="data"
@@ -234,10 +236,10 @@
             <e-column field='kindName' width="100" headerTextAlign='Center' headerText='Kind'></e-column>
             <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
              <ng-template #template let-data>
-               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+               <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
               </ng-template>
                <ng-template #editTemplate let-data>
-               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+               <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
               </ng-template>
             </e-column>
             <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
@@ -315,18 +317,31 @@
       <button type="submit" (click)="saveDisPatch()" class="btn btn-primary">Dispatch</button>
   </div>
 </ng-template>
-<!-- <div class="col-md-8" id="htmlData2">
+<div  style="color: transparent;" class="col-md-8" id="htmlData2">
   <table class="table table-bordered">
       <tr class="table-primary">
-          <th>Id</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
+          <th>Avatar</th>
+          <th>Product Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Amounts</th>
+          <th>Consumers</th>
       </tr>
-      <tr *ngFor="let user of data">
-          <th><img class='avatar' src="{{user.avatar}}" alt="{{user.avatar}}" /></th>
+      <tr *ngFor="let item of dataFake">
+          <th><img class='avatar' [src]="getSantizeUrl(item.avatar)"  /></th>
+          <th>{{item.name}}</th>
+          <th>{{item.description}}</th>
+          <th>{{item.originalPrice}}</th>
+          <th>{{item.quantity}}</th>
+          <th>{{item.amount}}</th>
+          <th>
+            <ul>
+              <li *ngFor="let items of item.consumers">{{items.fullName}}</li>
+            </ul>
+          </th>
 
       </tr>
   </table>
-</div> -->
+</div>
 
