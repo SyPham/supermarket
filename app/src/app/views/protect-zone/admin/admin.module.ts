@@ -22,7 +22,7 @@ import * as FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import * as FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import { ImageAdminPipe } from 'src/app/_core/pipes/image-admin.pipe';
 registerPlugin(FilePondPluginFileValidateType,FilePondPluginFileValidateSize,FilePondPluginImagePreview);
-
+import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 
 // import { PeriodComponent } from './period/period.component';
 export function HttpLoaderFactory(http: HttpClient) {
@@ -79,6 +79,7 @@ const PIPE = [
     DropDownListModule,
     GridAllModule,
     CheckBoxAllModule,
+    ToolbarModule,
     SwitchModule,
     AdminRoutingModule,
     DateInputsModule ,

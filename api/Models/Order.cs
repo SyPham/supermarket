@@ -25,7 +25,9 @@ namespace Supermarket.Models
         public string EmployeeId { get; set; }
 
         public int ConsumerId { get; set; }
-
+        public bool PendingStatus { get; set; }
+        public bool ByingStatus { get; set; }
+        public bool CompleteStatus { get; set; }
         public int? CreatedBy { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }

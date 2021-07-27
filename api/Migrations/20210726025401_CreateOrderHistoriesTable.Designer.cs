@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Supermarket.Data;
 
 namespace Supermarket.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210726025401_CreateOrderHistoriesTable")]
+    partial class CreateOrderHistoriesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,9 +158,6 @@ namespace Supermarket.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("StoreId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Store_ID")
                         .HasColumnType("int");
 
@@ -166,8 +165,6 @@ namespace Supermarket.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
 
                     b.ToTable("Kinds");
                 });
@@ -271,26 +268,20 @@ namespace Supermarket.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ByingQty")
-                        .HasColumnType("int");
+                    b.Property<string>("ByingQty")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CompleteQty")
-                        .HasColumnType("int");
+                    b.Property<string>("CompleteQty")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ConsumerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DispatchDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("OrderDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("OrderDetailId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PendingQty")
-                        .HasColumnType("int");
+                    b.Property<string>("PendingQty")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -412,15 +403,6 @@ namespace Supermarket.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Supermarket.Models.Kind", b =>
-                {
-                    b.HasOne("Supermarket.Models.Store", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId");
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Supermarket.Models.Order", b =>

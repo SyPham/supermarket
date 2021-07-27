@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Supermarket.Data;
 
 namespace Supermarket.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210724071345_UpdateKindOrderTable")]
+    partial class UpdateKindOrderTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,9 +158,6 @@ namespace Supermarket.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("StoreId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Store_ID")
                         .HasColumnType("int");
 
@@ -166,8 +165,6 @@ namespace Supermarket.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
 
                     b.ToTable("Kinds");
                 });
@@ -262,46 +259,6 @@ namespace Supermarket.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderDetails");
-                });
-
-            modelBuilder.Entity("Supermarket.Models.OrderDetailHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ByingQty")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CompleteQty")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ConsumerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DispatchDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderDetailId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PendingQty")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConsumerId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderDetailHistories");
                 });
 
             modelBuilder.Entity("Supermarket.Models.Product", b =>
@@ -414,15 +371,6 @@ namespace Supermarket.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Supermarket.Models.Kind", b =>
-                {
-                    b.HasOne("Supermarket.Models.Store", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId");
-
-                    b.Navigation("Store");
-                });
-
             modelBuilder.Entity("Supermarket.Models.Order", b =>
                 {
                     b.HasOne("Supermarket.Models.Consumer", "Consumer")
@@ -449,25 +397,6 @@ namespace Supermarket.Migrations
                         .IsRequired();
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Supermarket.Models.OrderDetailHistory", b =>
-                {
-                    b.HasOne("Supermarket.Models.Consumer", "Consumer")
-                        .WithMany()
-                        .HasForeignKey("ConsumerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Supermarket.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Consumer");
 
                     b.Navigation("Product");
                 });
