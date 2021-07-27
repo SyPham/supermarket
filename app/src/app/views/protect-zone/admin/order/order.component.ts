@@ -1,6 +1,6 @@
 import { FilterRequest } from './../../../../_core/_model/product';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AlertifyService } from 'src/app/_core/_service/alertify.service';
 import { GridComponent } from '@syncfusion/ej2-angular-grids';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -8,6 +8,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Cart, UpdateQuantityRequest } from 'src/app/_core/_model/cart';
 import { OrderService } from 'src/app/_core/_service/order.service';
 import { MessageConstants } from 'src/app/_core/_constants/system';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -35,7 +37,9 @@ export class OrderComponent extends BaseComponent implements OnInit {
   fullName: any;
   dataPicked = [];
   dataPickedDitchPatch = [];
+  @ViewChild('htmlData') htmlData:ElementRef;
   dataAdd: any
+  dataBuyingAdd: any
   public enableVirtualization: boolean = true;
   pendingTab: boolean =  true;
   buyingTab: boolean = false;
@@ -84,16 +88,32 @@ export class OrderComponent extends BaseComponent implements OnInit {
     };
 
   }
+  DisPatchCheckBox() {
+    if (this.dataPickedDitchPatch.length > 0) {
+      this.service.transferComplete(this.dataPickedDitchPatch).subscribe(res => {
+        if(res) {
+          this.alertify.success(MessageConstants.CREATED_OK_MSG);
+          this.loadDataBuying();
+          this.dataPickedDitchPatch = []
+        }else {
+          this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+        }
+      })
+    } else {
+      this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+    }
+  }
   saveDisPatch(){
     const data = this.getLocalStore("dispatch");
     this.service.transferComplete(data).subscribe(res => {
       if(res) {
         this.alertify.success(MessageConstants.CREATED_OK_MSG);
         this.loadDataBuying();
+        this.dataPickedDitchPatch = []
         this.modalReference.close()
         this.removeLocalStore("dispatch");
       }else {
-
+        this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
       }
     })
   }
@@ -137,12 +157,36 @@ export class OrderComponent extends BaseComponent implements OnInit {
       this.service.transferByList(this.dataPicked).subscribe(res => {
         if(res) {
           this.alertify.success(MessageConstants.CREATED_OK_MSG);
+          this.dataPicked = []
           this.loadDataPending();
         }
       })
     } else {
       this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
     }
+  }
+  // PrintBuying() {
+  //   // this.gridBuying.pdfExport();
+  //   const selectedRecords = this.gridBuying.getSelectedRecords();
+  //   console.log(selectedRecords);
+  //   const exportProperties = {
+  //       dataSource: selectedRecords
+  //   };
+  //   this.gridBuying.pdfExport(exportProperties);
+  // }
+  public PrintBuying():void {
+    let DATA = document.getElementById('htmlData');
+    html2canvas(DATA).then(canvas => {
+        let fileWidth = 208;
+        let fileHeight = canvas.height * fileWidth / canvas.width;
+
+        const FILEURI = canvas.toDataURL('image/png')
+        let PDF = new jsPDF('p', 'mm', 'a4');
+        let position = 0;
+        PDF.addImage(FILEURI, 'JPG', 0, position, fileWidth, fileHeight)
+
+        PDF.save('buyingList.pdf');
+    });
   }
   rowSelected(args){
     if (args.isHeaderCheckboxClicked) {
@@ -174,6 +218,44 @@ export class OrderComponent extends BaseComponent implements OnInit {
         for (var i = 0; i < this.dataPicked.length; i++) {
           if (this.dataPicked[i].productId == item.productId && this.dataPicked[i].consumerId == item.consumerId) {
             this.dataPicked.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+  }
+  rowSelectedBuying(args){
+    if (args.isHeaderCheckboxClicked) {
+      for (const item of args.data) {
+        for (const item2 of item.consumers) {
+          this.dataBuyingAdd = {
+            productId: item2.productId,
+            consumerId: item2.consumerId,
+            qtyTamp: item2.quantity
+          };
+          this.dataPickedDitchPatch.push(this.dataBuyingAdd);
+        }
+      }
+    }else {
+      for (const item of args.data.consumers){
+        this.dataBuyingAdd = {
+          productId: item.productId,
+          consumerId: item.consumerId,
+          qtyTamp: item.quantity
+        };
+        this.dataPickedDitchPatch.push(this.dataBuyingAdd);
+      }
+    }
+  }
+  rowDeselectedBuying(args){
+
+    if (args.isHeaderCheckboxClicked) {
+      this.dataPickedDitchPatch = []
+    }else {
+      for (const item of args.data.consumers) {
+        for (var i = 0; i < this.dataPickedDitchPatch.length; i++) {
+          if (this.dataPickedDitchPatch[i].productId == item.productId && this.dataPickedDitchPatch[i].consumerId == item.consumerId) {
+            this.dataPickedDitchPatch.splice(i, 1);
             break;
           }
         }
@@ -255,6 +337,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   loadDataComplete() {
     this.service.getProductsInOrderCompleteByAdmin().subscribe(res => {
       this.data = res.data || [];
+      console.log(res);
       this.totalPrice = res.totalPrice || 0;
     });
   }

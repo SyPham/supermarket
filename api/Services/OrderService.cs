@@ -69,7 +69,7 @@ namespace Supermarket.Services
                 foreach (var item in model)
                 {
                     var total = item.QtyTamp;
-                    var data = _repoOrderHistory.FindAll().Where(x => x.ProductId == item.ProductId && x.ConsumerId == item.ConsumerId).ToList();
+                    var data = _repoOrderHistory.FindAll().Where(x => x.ProductId == item.ProductId && x.ConsumerId == item.ConsumerId && x.ByingQty > 0).ToList();
                     foreach (var transfer in data)
                     {
                         if (total == 0)
@@ -78,7 +78,7 @@ namespace Supermarket.Services
                             break;
                         if (transfer.ByingQty < total)
                         {
-                            transfer.CompleteQty = transfer.ByingQty;
+                            transfer.CompleteQty = transfer.CompleteQty + transfer.ByingQty;
                             transfer.ByingQty = 0;
                             transfer.DispatchDate = DateTime.Now;
                             total = total - transfer.CompleteQty;
@@ -86,7 +86,7 @@ namespace Supermarket.Services
                         else
                         {
                             transfer.ByingQty = transfer.ByingQty - total;
-                            transfer.CompleteQty = total;
+                            transfer.CompleteQty = transfer.CompleteQty + total;
                             transfer.DispatchDate = DateTime.Now;
                             total = 0;
                         }
@@ -405,40 +405,35 @@ namespace Supermarket.Services
             {
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
-                Quantity = x.PendingQty,
+                Quantity = x.CompleteQty,
                 Avatar = x.Product.Avatar,
                 Description = x.Product.Description,
-                Amount = (x.PendingQty * x.Product.OriginalPrice),
+                Amount = (x.CompleteQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
                 KindId = x.Product.KindId,
                 ProductId = x.ProductId,
                 OderDetailId = x.OrderDetailId,
                 StoreName = x.Product.Store.Name,
                 FullName = x.Consumer.FullName,
+                Date = x.DispatchDate,
                 ConsumerId = x.Consumer.Id,
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
             }).ToList();
 
-            var result = res.GroupBy(x => new { x.Name })
+            var result = res.GroupBy(x => new { x.Name , x.ConsumerId })
                 .Select(x => new
                 {
                     Name = x.First().Name,
                     OriginalPrice = x.First().OriginalPrice.ToString("n0"),
                     Avatar = x.First().Avatar,
                     Description = x.First().Description,
+                    FullName = x.First().FullName,
                     StoreName = x.First().StoreName,
                     OderDetailId = x.First().OderDetailId,
                     KindName = x.First().KindName,
                     Amount = x.Sum(a => a.Amount).ToString("n0"),
                     Quantity = x.Sum(a => a.Quantity),
-                    Consumers = x.GroupBy(s => new { s.FullName, s.ConsumerId }).Select(a => new
-                    {
-                        FullName = a.First().FullName,
-                        Name = a.First().Name,
-                        ProductId = a.First().ProductId,
-                        Quantity = a.Sum(b => b.Quantity),
-                        ConsumerId = a.Key.ConsumerId
-                    }),
+                    Date = Convert.ToDateTime( x.First().Date).ToString("MM/yy")
                 });
             var totalPrice = res.Sum(x => x.Amount).ToString("n0");
             return new

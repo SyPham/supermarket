@@ -101,6 +101,7 @@
     "font-awesome": "^4.7.0",
     "intro.js": "^3.2.1",
     "jquery": "^3.6.0",
+    "jspdf": "^2.3.1",
     "moment": "^2.24.0",
     "mqtt": "^4.2.8",
     "ng2-charts": "^2.4.2",
