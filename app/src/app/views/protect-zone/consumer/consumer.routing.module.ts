@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 import { AuthGuard } from 'src/app/_core/_guards/auth.guard'
 import { CartComponent } from './cart/cart.component';
+import { HistoryComponent } from './history/history.component';
 
 const routes: Routes = [
   {
@@ -62,6 +63,15 @@ const routes: Routes = [
           title: 'Buy List',
           breadcrumb: 'Buy List',
           functionCode: 'Buy List'
+        }
+      },
+      {
+        path: 'cart-status',
+        component: HistoryComponent,
+        data: {
+          title: 'Cart Status',
+          breadcrumb: 'Cart Status',
+          functionCode: 'Cart Status'
         }
       },
     ]

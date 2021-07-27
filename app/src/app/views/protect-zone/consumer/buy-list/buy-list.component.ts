@@ -7,12 +7,15 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Cart, UpdateQuantityRequest } from 'src/app/_core/_model/cart';
 import { OrderService } from 'src/app/_core/_service/order.service';
+import { environment } from 'src/environments/environment';
+import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
 @Component({
   selector: 'app-buy-list',
   templateUrl: './buy-list.component.html',
   styleUrls: ['./buy-list.component.scss']
 })
 export class BuyListComponent extends BaseComponent implements OnInit {
+  base = environment.apiUrl.replace('/api','');
   editSettings = { showDeleteConfirmDialog: false, allowEditing: false, allowAdding: false, allowDeleting: false, mode: 'Normal' };
   data: any[] = [];
   password = '';
@@ -29,11 +32,14 @@ export class BuyListComponent extends BaseComponent implements OnInit {
   name: any;
   updateQuantityRequest: UpdateQuantityRequest;
   fullName: any;
+  noImage = '/assets/img/photo1.png';
+
   constructor(
     private service: OrderService,
     public modalService: NgbModal,
     private alertify: AlertifyService,
     private router: Router,
+    private utilitiesService: UtilitiesService,
     private route: ActivatedRoute,
   ) { super(); }
 
@@ -86,5 +92,15 @@ export class BuyListComponent extends BaseComponent implements OnInit {
     return (this.grid.pageSettings.currentPage - 1) * this.pageSettings.pageSize + Number(index) + 1;
   }
 
+  imagePath(data) {
+    if (data !== null && this.utilitiesService.checkValidImage(data)) {
+      if (this.utilitiesService.checkExistHost(data)) {
+        return data;
+      } else {
+        return this.base + data;
+      }
+    }
+    return this.noImage;
+  }
 }
 
