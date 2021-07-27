@@ -1,3 +1,4 @@
+import { HistoryComponent } from './history/history.component';
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { BuyListComponent } from './buy-list/buy-list.component';
 import { CartComponent } from './cart/cart.component';
@@ -62,6 +63,7 @@ loadCldr(
     ProductListComponent,
     CartComponent,
     BuyListComponent,
+    HistoryComponent,
     ...PIPE
   ],
   imports: [

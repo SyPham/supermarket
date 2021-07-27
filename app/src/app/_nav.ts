@@ -319,6 +319,11 @@ export const navItems: INavData[] = [
         url: '/consumer/product-list',
         icon: 'icon-bell'
       },
+      {
+        name: 'Cart Status',
+        url: '/consumer/cart-status',
+        icon: 'icon-bell'
+      },
     ]
   },
   // {

@@ -10,13 +10,15 @@ import { MessageConstants } from 'src/app/_core/_constants/system';
 import { CartService } from 'src/app/_core/_service/cart.service';
 import { Cart, DeleteCartRequest, UpdateQuantityRequest } from 'src/app/_core/_model/cart';
 import { OrderService } from 'src/app/_core/_service/order.service';
+import { environment } from 'src/environments/environment';
+import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss']
 })
 export class CartComponent extends BaseComponent implements OnInit {
-
+  base = environment.apiUrl.replace('/api','');
   data: Account[] = [];
   password = '';
   modalReference: NgbModalRef;
@@ -32,11 +34,15 @@ export class CartComponent extends BaseComponent implements OnInit {
   name: any;
   updateQuantityRequest: UpdateQuantityRequest;
   deleteCartRequest: DeleteCartRequest;
+  noImage = '/assets/img/photo1.png';
+  fullName: any;
+
   constructor(
     private service: CartService,
     private serviceOrder: OrderService,
     public modalService: NgbModal,
     private alertify: AlertifyService,
+    private utilitiesService: UtilitiesService,
     private router: Router,
     private route: ActivatedRoute,
   ) { super(); }
@@ -188,6 +194,17 @@ export class CartComponent extends BaseComponent implements OnInit {
   // end api
   NO(index) {
     return (this.grid.pageSettings.currentPage - 1) * this.pageSettings.pageSize + Number(index) + 1;
+  }
+
+  imagePath(data) {
+    if (data !== null && this.utilitiesService.checkValidImage(data)) {
+      if (this.utilitiesService.checkExistHost(data)) {
+        return data;
+      } else {
+        return this.base + data;
+      }
+    }
+    return this.noImage;
   }
 
 }
