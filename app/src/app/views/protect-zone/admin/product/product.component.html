@@ -49,6 +49,9 @@
 
             </e-column>
             <e-column field='price' textAlign='Center' headerText="Price">
+              <ng-template #template let-data>
+                {{data.price | number:'1.0-0'}} đ
+              </ng-template>
 
             </e-column>
             <e-column field='kind_name' textAlign='Center' headerText="Kind"></e-column>
