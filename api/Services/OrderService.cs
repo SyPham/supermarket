@@ -383,7 +383,7 @@ namespace Supermarket.Services
                     KindName = x.First().KindName,
                     Amount = x.Sum(a => a.Amount).ToString("n0"),
                     Quantity = x.Sum(a => a.Quantity),
-                    TotalPrice = x.GroupBy(s => new { s.FullName, s.ConsumerId}).Select(a => new
+                    Consumers = x.GroupBy(s => new { s.FullName, s.ConsumerId}).Select(a => new
                     {
                         FullName = a.First().FullName,
                         ProductId = a.First().ProductId,
