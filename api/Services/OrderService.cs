@@ -28,8 +28,7 @@ namespace Supermarket.Services
         Task<object> GetProductsInOrderPendingByAdmin(string langId);
         Task<object> GetUserDelevery(string langId, DateTime startDate, DateTime endDate);
         Task<object> GetProductsInOrderBuyingByAdmin(string langId);
-        Task<object> GetProductsInOrderCompleteByAdmin(string langId);
-        Task<object> GetProductsForCartStatus(string langId);
+        Task<object> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate);
         Task<OperationResult> PlaceOrder();
     }
     public class OrderService : ServiceBase<Order, OrderDto>, IOrderService
@@ -470,7 +469,7 @@ namespace Supermarket.Services
                 Data = result
             };
         }
-        public async Task<object> GetProductsInOrderCompleteByAdmin(string langId)
+        public async Task<object> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate)
         {
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
@@ -480,7 +479,7 @@ namespace Supermarket.Services
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var res = data.Where(x => x.CompleteQty > 0).Select(x => new
+            var res = data.Where(x => x.CompleteQty > 0 && x.DispatchDate.Date >= startDate.Date && x.DispatchDate.Date <= endDate.Date).Select(x => new
             {
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,

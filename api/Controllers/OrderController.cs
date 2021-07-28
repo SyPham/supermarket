@@ -91,10 +91,10 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetProductsInOrderBuyingByAdmin(langId));
         }
-        [HttpGet]
-        public async Task<ActionResult> GetProductsInOrderCompleteByAdmin(string langId)
+        [HttpGet("{langId}/{startDate}/{endDate}")]
+        public async Task<ActionResult> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate)
         {
-            return Ok(await _service.GetProductsInOrderCompleteByAdmin(langId));
+            return Ok(await _service.GetProductsInOrderCompleteByAdmin(langId, startDate, endDate));
         }
         [HttpGet]
         public async Task<ActionResult> GetWithPaginationsAsync(PaginationParams paramater)
