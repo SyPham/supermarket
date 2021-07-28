@@ -25,6 +25,7 @@ namespace Supermarket.Services
         Task<object> GetProductsInOrderPendingByAdmin(string langId);
         Task<object> GetProductsInOrderBuyingByAdmin(string langId);
         Task<object> GetProductsInOrderCompleteByAdmin(string langId);
+        Task<object> GetProductsForCartStatus(string langId);
         Task<OperationResult> PlaceOrder();
     }
     public class OrderService : ServiceBase<Order, OrderDto>, IOrderService
@@ -458,6 +459,79 @@ namespace Supermarket.Services
 
         }
 
-
+        public async Task<object> GetProductsForCartStatus(string langId)
+        {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            var data = await _repo.FindAll().ToListAsync();
+            var model = await _repoOrderHistory.FindAll(x => accountItem.ConsumerId == x.ConsumerId)
+              .Select(x => new
+              {
+                  x.Consumer.FullName,
+                  StoreName = x.Product.Store.Name,
+                  KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
+                  ProductName = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                  x.Product.Avatar,
+                  x.Product.Description,
+                  x.PendingQty,
+                  x.ByingQty,
+                  x.CompleteQty,
+                  x.DispatchDate,
+                  x.OrderDate,
+                  OriginalPrice = x.Product.OriginalPrice,
+                  Quantity = x.PendingQty
+              }).ToListAsync();
+            var pending = model.Select(x => new
+                {
+                    x.FullName,
+                    x.StoreName,
+                    x.KindName,
+                    x.ProductName,
+                    x.Avatar,
+                    x.Description,
+                    x.PendingQty,
+                    x.DispatchDate,
+                    x.OrderDate,
+                    x.OriginalPrice,
+                    Quantity = x.PendingQty,
+                    Amount = (x.PendingQty * x.OriginalPrice).ToString("n0"),
+                    Status = "Pending"
+                }).ToList();
+            var buying = model.Select(x => new
+              {
+                  x.FullName,
+                  x.StoreName,
+                  x.KindName,
+                  x.ProductName,
+                  x.Avatar,
+                  x.Description,
+                  x.PendingQty,
+                  x.DispatchDate,
+                  x.OrderDate,
+                  x.OriginalPrice,
+                  Quantity = x.ByingQty,
+                  Amount = (x.ByingQty * x.OriginalPrice).ToString("n0"),
+                  Status = "Buying"
+              }).ToList();
+            var complete = model
+          .Select(x => new
+          {
+              x.FullName,
+              x.StoreName,
+              x.KindName,
+              x.ProductName,
+              x.Avatar,
+              x.Description,
+              x.PendingQty,
+              x.DispatchDate,
+              x.OrderDate,
+              x.OriginalPrice,
+              Quantity = x.CompleteQty,
+              Amount = (x.CompleteQty * x.OriginalPrice).ToString("n0"),
+              Status = "Complete"
+          }).ToList();
+            return pending.Concat(buying).Concat(complete);
+        }
     }
 }

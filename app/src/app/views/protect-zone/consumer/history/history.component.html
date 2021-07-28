@@ -11,9 +11,11 @@
           [allowResizing]='true'
           [showColumnMenu]='true'
           allowTextWrap='true'
+          [allowPaging]='true'
           gridLines='Both'
           [allowExcelExport]='true'
           [toolbar]='toolbarOptions'
+          [pageSettings]='pageSettings'
           [textWrapSettings]="wrapSettings"
         >
           <e-columns>
@@ -27,35 +29,23 @@
             </e-column>
 
              <e-column field="fullName" textAlign='Center' headerText="{{ 'Consumer'}}">
-              <ng-template #editTemplate let-data>
-               <span>{{data.fullName}}</span>
-              </ng-template>
             </e-column>
 
-            <e-column field="store" textAlign='Center' headerText="{{ 'Store'}}">
-              <ng-template #editTemplate let-data>
-               <span>{{data.store}}</span>
-              </ng-template>
+            <e-column field="storeName" textAlign='Center' headerText="{{ 'Store'}}">
             </e-column>
 
-              <e-column field="kind" textAlign='Center' headerText="{{ 'Kind'}}">
-              <ng-template #editTemplate let-data>
-               <span>{{data.kind}}</span>
-              </ng-template>
+              <e-column field="kindName" textAlign='Center' headerText="{{ 'Kind'}}">
             </e-column>
 
-            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
+            <e-column field="avatar" width="120" textAlign='Center' headerText="{{ 'Avatar'}}">
              <ng-template #template let-data>
-               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
-              </ng-template>
-               <ng-template #editTemplate let-data>
-               <img class='avatar' src="{{data.avatar}}" alt="{{data.avatar}}" />
+              <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
               </ng-template>
             </e-column>
 
-            <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
+            <e-column field="productName" textAlign='Center' headerText="{{ 'Product Name'}}">
               <ng-template #editTemplate let-data>
-               <span>{{data.name}}</span>
+               <span>{{data.productName}}</span>
               </ng-template>
             </e-column>
             <e-column field="description" textAlign='Left' headerText="Description">
@@ -82,9 +72,9 @@
               </ng-template>
             </e-column>
 
-            <e-column field="placeOrderDate" textAlign='Center' headerText="{{ 'Placing Order Date'}}">
-              <ng-template #editTemplate let-data>
-               <span>{{data.placeOrderDate}}</span>
+            <e-column field="orderDate" textAlign='Center' headerText="{{ 'Placing Order Date'}}">
+              <ng-template #template let-data>
+               <span>{{data.orderDate | date: 'MM/dd'}}</span>
               </ng-template>
             </e-column>
 
@@ -95,8 +85,8 @@
             </e-column>
 
            <e-column field="dispatchedDate" textAlign='Center' headerText="{{ 'Dispatched Date'}}">
-              <ng-template #editTemplate let-data>
-               <span>{{data.dispatchedDate}}</span>
+              <ng-template #template let-data>
+               <span>{{data.dispatchDate | date: 'MM/dd'}}</span>
               </ng-template>
             </e-column>
 

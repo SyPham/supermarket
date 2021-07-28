@@ -41,4 +41,7 @@ export class OrderService extends CURDService<Order> {
   transferComplete(model) {
     return this.http.put(`${this.base}Order/TransferComplete`, model);
   }
+  getProductsForCartStatus(): Observable<any> {
+    return this.http.get<any>(`${this.base}Order/GetProductsForCartStatus?langId=${localStorage.getItem("lang")}`);
+  }
 }

@@ -70,7 +70,11 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetProductsInOrderByAdmin(langId));
         }
-
+        [HttpGet]
+        public async Task<ActionResult> GetProductsForCartStatus(string langId)
+        {
+            return Ok(await _service.GetProductsForCartStatus(langId));
+        }
         [HttpGet]
         public async Task<ActionResult> GetProductsInOrderPendingByAdmin(string langId)
         {
