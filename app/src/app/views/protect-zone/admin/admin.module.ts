@@ -1,3 +1,4 @@
+import { DeliveryComponent } from './delivery/delivery.component';
 import { ProductComponent } from './product/product.component';
 import { KindComponent } from './kind/kind.component';
 import { AccountComponent } from './account/account.component';
@@ -28,6 +29,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 declare var require: any;
 let defaultLang: string;
@@ -68,10 +70,12 @@ const PIPE = [
     KindComponent,
     OrderComponent,
     ProductComponent,
+    DeliveryComponent,
     ...PIPE
   ],
   imports: [
     FilePondModule,
+    DatePickerModule,
     NgxSpinnerModule,
     CommonModule,
     FormsModule,

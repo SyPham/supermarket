@@ -9,6 +9,13 @@ namespace Supermarket.Models
     [Table("OrderDetailHistories")]
     public class OrderDetailHistory
     {
+        public OrderDetailHistory()
+        {
+            this.DispatchDate = DateTime.Now;
+            //this.CreatedTime = DateTime.Now.ToString("MMMM dd, yyyy HH:mm:ss tt");
+            this.OrderDate = DateTime.Now;
+
+        }
         [Key]
         public int Id { get; set; }
         public int OrderDetailId { get; set; }
@@ -16,8 +23,8 @@ namespace Supermarket.Models
         public int ProductId { get; set; }
         public int PendingQty { get; set; }
         public int ByingQty { get; set; }
-        public DateTime? OrderDate { get; set; }
-        public DateTime? DispatchDate { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime DispatchDate { get; set; }
         public int CompleteQty { get; set; }
         [ForeignKey(nameof(ConsumerId))]
         public virtual Consumer Consumer { get; set; }

@@ -64,11 +64,11 @@ export class OrderComponent extends BaseComponent implements OnInit {
   dataFake: any
   constructor(
     private service: OrderService,
+    private spinner: NgxSpinnerService,
     private sanitizer: DomSanitizer,
     public modalService: NgbModal,
     private alertify: AlertifyService,
     private router: Router,
-    private spinner: NgxSpinnerService,
     private utilitiesService: UtilitiesService,
     private route: ActivatedRoute,
   ) { super(); }

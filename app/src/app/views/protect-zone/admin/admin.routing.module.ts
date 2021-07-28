@@ -1,3 +1,4 @@
+import { DeliveryComponent } from './delivery/delivery.component';
 import { OrderComponent } from './order/order.component';
 import { ProductComponent } from './product/product.component';
 import { KindComponent } from './kind/kind.component';
@@ -65,7 +66,15 @@ const routes: Routes = [
           breadcrumb: 'Buy List',
           functionCode: 'Buy List'
         },
-        // canActivate: [AuthGuard]
+      },
+      {
+        path: 'delivery',
+        component: DeliveryComponent,
+        data: {
+          title: 'Delivery',
+          breadcrumb: 'Delivery',
+          functionCode: 'Delivery'
+        },
       }
     ]
   },

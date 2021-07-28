@@ -1,0 +1,71 @@
+<ngx-spinner [fullScreen]="false" type="square-jelly-box" size="medium">
+  <p class="loading">Loading data...</p>
+</ngx-spinner>
+<div class="row pt-2">
+  <div class="col-md-12 ">
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="row my-3">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-1">
+                <div class="font-weight-bold">{{'FILTER_LABEL' | translate}}:</div>
+              </div>
+              <div class="col-md-3">
+                <ejs-datepicker [value]='startDate' (change)='startDateOnchange($event)' [(ngModel)]='startDate'>
+                </ejs-datepicker>
+              </div>
+              <div class="col-md-3">
+                <ejs-datepicker [value]='endDate' (change)='endDateOnchange($event)' [(ngModel)]='endDate'>
+                </ejs-datepicker>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-sm btn-secondary" (click)='onClickDefault()'>
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ejs-grid  #grid
+        id='grid'
+        [dataSource]="data"
+        [allowResizing]='true'
+        [showColumnMenu]='true'
+        gridLines='Both'
+        isPrimaryKey='true'
+        (queryCellInfo)='queryCellInfoEvent($event)'
+        [allowExcelExport]='true'
+        [editSettings]='editSettings'
+      >
+        <e-columns>
+          <!-- <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="ID">
+            <ng-template #template let-data>
+              {{NOComplete(data.index)}}
+            </ng-template>
+            <ng-template #editTemplate let-data>
+              #
+            </ng-template>
+          </e-column> -->
+          <e-column field='consumerId' [visible]='false' width="100" headerTextAlign='Center' headerText='ConsumerId'>
+          </e-column>
+          <e-column field='fullName' width="100" headerTextAlign='Center' textAlign='Center' headerText='Name'>
+          </e-column>
+          <e-column field="name" textAlign='Left'  headerText="{{ 'Product Name'}}">
+            <ng-template #editTemplate let-data>
+             <span>{{data.name}}</span>
+            </ng-template>
+           </e-column>
+
+          <e-column field="quantity" width="80" textAlign='Center' headerText="Qty"> </e-column>
+          <e-column field="originalPrice" width="80" textAlign='Center' headerText="Price"> </e-column>
+          <e-column field="subtotalPrice" width="80" textAlign='Center' headerText="Subtotal"> </e-column>
+          <e-column field="totalPrice" width="80" textAlign='Center' headerText="Total"> </e-column>
+          <e-column field="date" width="80" textAlign='Center' headerText="Date"> </e-column>
+        </e-columns>
+      </ejs-grid>
+      </div>
+
+    </div>
+  </div>
+</div>
