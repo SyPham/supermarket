@@ -33,7 +33,6 @@ export class DeliveryComponent extends BaseComponent implements OnInit {
     }
   }
   ngOnInit() {
-
     this.getAll()
   }
   onClickDefault() {
@@ -52,11 +51,11 @@ export class DeliveryComponent extends BaseComponent implements OnInit {
     this.getAll()
   }
   getAll() {
+    this.spinner.show();
     this.service.GetUserDelevery(this.startDate.toDateString() , this.endDate.toDateString()).subscribe(res => {
       this.dataTamp = res.data || [];
       this.data = res.data || [];
-
-      console.log(this.data);
+      this.spinner.hide();
     })
   }
   convertTotal(item) {
