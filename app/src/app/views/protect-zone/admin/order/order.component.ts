@@ -155,12 +155,6 @@ export class OrderComponent extends BaseComponent implements OnInit {
       this.showModal(this.dispatchModal);
       this.setLocalStore("dispatch",args.rowData.consumers)
     }
-    if (args.column.field === 'quantity') {
-      // const value = args.rowData as IToDoList;
-      // this.openDispatchModalDoneList(value);
-      this.showModal(this.dispatchModal);
-      this.setLocalStore("dispatch",args.rowData.consumers)
-    }
   }
   initialModel() {
     this.ModelCreate = {
@@ -405,5 +399,5 @@ export class OrderComponent extends BaseComponent implements OnInit {
   NOComplete(index) {
     return (this.gridComplete.pageSettings.currentPage - 1) * this.pageSettings.pageSize + Number(index) + 1;
   }
-}
 
+}

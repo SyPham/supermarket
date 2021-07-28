@@ -29,6 +29,8 @@ namespace Supermarket.Services
         Task<object> GetUserDelevery(string langId, DateTime startDate, DateTime endDate);
         Task<object> GetProductsInOrderBuyingByAdmin(string langId);
         Task<object> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate);
+        Task<object> GetProductsForCartStatus(string langId);
+
         Task<OperationResult> PlaceOrder();
     }
     public class OrderService : ServiceBase<Order, OrderDto>, IOrderService
