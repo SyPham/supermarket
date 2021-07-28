@@ -547,7 +547,7 @@ namespace Supermarket.Services
                   OriginalPrice = x.Product.OriginalPrice,
                   Quantity = x.PendingQty
               }).ToListAsync();
-            var pending = model.Select(x => new
+            var pending = model.Where(x => x.PendingQty > 0).Select(x => new
                 {
                     x.FullName,
                     x.StoreName,
@@ -563,7 +563,7 @@ namespace Supermarket.Services
                     Amount = (x.PendingQty * x.OriginalPrice).ToString("n0"),
                     Status = "Pending"
                 }).ToList();
-            var buying = model.Select(x => new
+            var buying = model.Where(x => x.ByingQty > 0).Select(x => new
               {
                   x.FullName,
                   x.StoreName,
@@ -579,7 +579,7 @@ namespace Supermarket.Services
                   Amount = (x.ByingQty * x.OriginalPrice).ToString("n0"),
                   Status = "Buying"
               }).ToList();
-            var complete = model
+            var complete = model.Where(x => x.CompleteQty > 0)
           .Select(x => new
           {
               x.FullName,
