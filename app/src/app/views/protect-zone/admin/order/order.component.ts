@@ -62,6 +62,8 @@ export class OrderComponent extends BaseComponent implements OnInit {
   noImage = '/assets/img/photo1.png';
   img: any
   dataFake: any
+  startDate = new Date();
+  endDate = new Date();
   constructor(
     private service: OrderService,
     private spinner: NgxSpinnerService,
@@ -79,6 +81,27 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.wrapSettings = { wrapMode: 'Content' };
     this.loadDataPending();
+  }
+  onClickDefault() {
+    this.startDate = new Date();
+    this.endDate = new Date();
+    this.loadDataComplete()
+  }
+
+  startDateOnchange(args) {
+    this.startDate = (args.value as Date);
+    this.loadDataComplete()
+  }
+
+  endDateOnchange(args) {
+    this.endDate = (args.value as Date);
+    this.loadDataComplete()
+  }
+  loadDataComplete() {
+    this.service.getProductsInOrderCompleteByAdmin(this.startDate.toDateString() , this.endDate.toDateString()).subscribe(res => {
+      this.data = res.data || [];
+      this.totalPrice = res.totalPrice || 0;
+    });
   }
   imagePath(data) {
     if (data !== null && this.utilitiesService.checkValidImage(data)) {
@@ -364,12 +387,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
 
 
-  loadDataComplete() {
-    this.service.getProductsInOrderCompleteByAdmin().subscribe(res => {
-      this.data = res.data || [];
-      this.totalPrice = res.totalPrice || 0;
-    });
-  }
+
 
   // end api
   NO(index) {
