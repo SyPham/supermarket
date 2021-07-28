@@ -2,6 +2,7 @@
 using Supermarket.DTO;
 using Supermarket.Helpers;
 using Supermarket.Services;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -79,6 +80,11 @@ namespace Supermarket.Controllers
         public async Task<ActionResult> GetProductsInOrderPendingByAdmin(string langId)
         {
             return Ok(await _service.GetProductsInOrderPendingByAdmin(langId));
+        }
+        [HttpGet("{langId}/{startDate}/{endDate}")]
+        public async Task<ActionResult> GetUserDelevery(string langId , DateTime startDate, DateTime endDate)
+        {
+            return Ok(await _service.GetUserDelevery(langId, startDate, endDate));
         }
         [HttpGet]
         public async Task<ActionResult> GetProductsInOrderBuyingByAdmin(string langId)

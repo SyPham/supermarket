@@ -1,3 +1,4 @@
+import { DeliveryComponent } from './delivery/delivery.component';
 import { ProductComponent } from './product/product.component';
 import { KindComponent } from './kind/kind.component';
 import { AccountComponent } from './account/account.component';
@@ -23,11 +24,13 @@ import * as FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-s
 import { ImageAdminPipe } from 'src/app/_core/pipes/image-admin.pipe';
 registerPlugin(FilePondPluginFileValidateType,FilePondPluginFileValidateSize,FilePondPluginImagePreview);
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
-
+import { NgxSpinnerModule } from "ngx-spinner";
 // import { PeriodComponent } from './period/period.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 declare var require: any;
 let defaultLang: string;
 const lang = localStorage.getItem('lang');
@@ -67,10 +70,13 @@ const PIPE = [
     KindComponent,
     OrderComponent,
     ProductComponent,
+    DeliveryComponent,
     ...PIPE
   ],
   imports: [
     FilePondModule,
+    DatePickerModule,
+    NgxSpinnerModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -92,7 +98,8 @@ const PIPE = [
       },
       defaultLanguage: defaultLang
     }),
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminModule  {
   vi: any;

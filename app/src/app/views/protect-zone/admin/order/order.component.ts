@@ -1,3 +1,4 @@
+import { NgxSpinnerService } from 'ngx-spinner';
 import { FilterRequest } from './../../../../_core/_model/product';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
@@ -12,6 +13,8 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
 import { environment } from 'src/environments/environment';
+import { DomSanitizer } from '@angular/platform-browser';
+import imageToBase64 from 'image-to-base64/browser';
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -39,7 +42,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   fullName: any;
   dataPicked = [];
   dataPickedDitchPatch = [];
-  @ViewChild('htmlData') htmlData:ElementRef;
+  @ViewChild('htmlData2') public htmlData:ElementRef;
   dataAdd: any
   dataBuyingAdd: any
   public enableVirtualization: boolean = true;
@@ -55,11 +58,14 @@ export class OrderComponent extends BaseComponent implements OnInit {
   pendingTabClass: any = "btn btn-success"
   buyingTabClass: any = "btn btn-default"
   completeTabClass: any = "btn btn-default"
+  base = environment.apiUrl
   noImage = '/assets/img/photo1.png';
-  base = environment.apiUrl.replace('/api','')
-
+  img: any
+  dataFake: any
   constructor(
     private service: OrderService,
+    private spinner: NgxSpinnerService,
+    private sanitizer: DomSanitizer,
     public modalService: NgbModal,
     private alertify: AlertifyService,
     private router: Router,
@@ -73,6 +79,47 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.wrapSettings = { wrapMode: 'Content' };
     this.loadDataPending();
+  }
+  imagePath(data) {
+    if (data !== null && this.utilitiesService.checkValidImage(data)) {
+      if (this.utilitiesService.checkExistHost(data)) {
+        return data;
+      } else {
+        return this.base + data;
+      }
+    }
+    return this.noImage;
+  }
+  public getSantizeUrl(url : string) {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
+  }
+  loadDataBuying() {
+    this.service.getProductsInOrderByingByAdmin().subscribe(res => {
+      this.data = res.data || [];
+      this.totalPrice = res.totalPrice || 0;
+    });
+  }
+
+  PrintBuying() {
+    this.spinner.show()
+    setTimeout(() => {
+      let DATA = document.getElementById('htmlData2');
+      document.getElementById("htmlData2").style.visibility = "";
+      html2canvas(DATA).then(canvas => {
+        const imgData = canvas.toDataURL('image/png',1)
+        let fileWidth = 208;
+        let fileHeight = canvas.height * fileWidth / canvas.width;
+        let PDF = new jsPDF('p', 'mm', 'a4');
+        let position = 0;
+        PDF.addImage(imgData, 'PNG', 0, position, fileWidth, fileHeight)
+
+        PDF.save('buyingList.pdf');
+        this.dataFake = []
+        this.spinner.hide();
+        document.getElementById("htmlData2").style.visibility = "hidden";
+
+      });
+    }, 100);
   }
   removeLocalStore(key: string) {
     localStorage.removeItem(key);
@@ -177,30 +224,10 @@ export class OrderComponent extends BaseComponent implements OnInit {
       this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
     }
   }
-  // PrintBuying() {
-  //   // this.gridBuying.pdfExport();
-  //   const selectedRecords = this.gridBuying.getSelectedRecords();
-  //   console.log(selectedRecords);
-  //   const exportProperties = {
-  //       dataSource: selectedRecords
-  //   };
-  //   this.gridBuying.pdfExport(exportProperties);
-  // }
-  public PrintBuying():void {
-    let DATA = document.getElementById('htmlData');
-    html2canvas(DATA).then(canvas => {
-        let fileWidth = 208;
-        let fileHeight = canvas.height * fileWidth / canvas.width;
 
-        const FILEURI = canvas.toDataURL('image/png')
-        let PDF = new jsPDF('p', 'mm', 'a4');
-        let position = 0;
-        PDF.addImage(FILEURI, 'JPG', 0, position, fileWidth, fileHeight)
 
-        PDF.save('buyingList.pdf');
-    });
-  }
   rowSelected(args){
+
     if (args.isHeaderCheckboxClicked) {
       for (const item of args.data) {
         for (const item2 of item.consumers) {
@@ -222,7 +249,6 @@ export class OrderComponent extends BaseComponent implements OnInit {
     }
   }
   rowDeselected(args){
-
     if (args.isHeaderCheckboxClicked) {
       this.dataPicked = []
     }else {
@@ -237,6 +263,8 @@ export class OrderComponent extends BaseComponent implements OnInit {
     }
   }
   rowSelectedBuying(args){
+    this.dataFake = this.gridBuying.getSelectedRecords();
+    console.log(this.dataFake);
     if (args.isHeaderCheckboxClicked) {
       for (const item of args.data) {
         for (const item2 of item.consumers) {
@@ -260,6 +288,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     }
   }
   rowDeselectedBuying(args){
+    this.dataFake = this.gridBuying.getSelectedRecords();
 
     if (args.isHeaderCheckboxClicked) {
       this.dataPickedDitchPatch = []
@@ -340,16 +369,10 @@ export class OrderComponent extends BaseComponent implements OnInit {
     });
   }
 
-  loadDataBuying() {
-    this.service.getProductsInOrderByingByAdmin().subscribe(res => {
-      this.data = res.data || [];
-      this.totalPrice = res.totalPrice || 0;
-    });
-  }
+
   loadDataComplete() {
     this.service.getProductsInOrderCompleteByAdmin().subscribe(res => {
       this.data = res.data || [];
-      console.log(res);
       this.totalPrice = res.totalPrice || 0;
     });
   }
@@ -363,16 +386,6 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
   NOComplete(index) {
     return (this.gridComplete.pageSettings.currentPage - 1) * this.pageSettings.pageSize + Number(index) + 1;
-  }
-  imagePath(data) {
-    if (data !== null && this.utilitiesService.checkValidImage(data)) {
-      if (this.utilitiesService.checkExistHost(data)) {
-        return data;
-      } else {
-        return this.base + data;
-      }
-    }
-    return this.noImage;
   }
 }
 

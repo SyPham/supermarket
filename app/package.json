@@ -99,6 +99,7 @@
     "filepond-plugin-image-preview": "^4.6.4",
     "flag-icon-css": "^3.5.0",
     "font-awesome": "^4.7.0",
+    "image-to-base64": "^2.2.0",
     "intro.js": "^3.2.1",
     "jquery": "^3.6.0",
     "jspdf": "^2.3.1",
