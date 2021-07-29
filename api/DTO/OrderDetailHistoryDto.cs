@@ -10,7 +10,7 @@ namespace Supermarket.DTO
         public int ProductId { get; set; }
         public int PendingQty { get; set; }
         public int ByingQty { get; set; }
-        
+        public bool CancelStatus { get; set; }
         public int CompleteQty { get; set; }
     }
 

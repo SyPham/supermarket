@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { QueryCellInfoEventArgs } from '@syncfusion/ej2-angular-grids';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ExcelCell, ExcelQueryCellInfoEventArgs, GridComponent, GroupSettingsModel, QueryCellInfoEventArgs } from '@syncfusion/ej2-angular-grids';
 import { EmitType } from '@syncfusion/ej2-base';
+import { ExportAsConfig, ExportAsService, SupportedExtensions } from 'ngx-export-as';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
 import { OrderService } from 'src/app/_core/_service/order.service';
-
+let gridcells: ExcelCell ;
+let ValOfconsumerId:Number =null;
+let i=1;
+// global variable declaration for pdf Export
 @Component({
   selector: 'app-delivery',
   templateUrl: './delivery.component.html',
@@ -12,12 +16,20 @@ import { OrderService } from 'src/app/_core/_service/order.service';
 })
 export class DeliveryComponent extends BaseComponent implements OnInit {
   data: any = []
+  pageSettings = { pageCount: 20, pageSizes: true, pageSize: 10 };
   dataTamp: any = []
   total: number;
   startDate = new Date();
   endDate = new Date();
+  public groupOptions: GroupSettingsModel;
+  @ViewChild('grid') public grid: GridComponent;
+  config: ExportAsConfig = {
+    type: 'xlsx',
+    elementIdOrContent: 'mytable',
+  };
   constructor(
     private service: OrderService,
+    private exportAsService: ExportAsService,
     private spinner: NgxSpinnerService
   ) { super();}
   public queryCellInfoEvent: EmitType<QueryCellInfoEventArgs> = (args: QueryCellInfoEventArgs) => {
@@ -34,6 +46,23 @@ export class DeliveryComponent extends BaseComponent implements OnInit {
   }
   ngOnInit() {
     this.getAll()
+  }
+  exportAs() {
+    this.exportAsService.save(this.config, 'myFile').subscribe(() => {
+      // save started
+    });
+  }
+  toolbarClick(args) {
+    switch (args.item.id) {
+      case 'grid_excelexport':
+        this.exportAsService.save(this.config, 'myFile').subscribe(() => {
+          // save started
+        });
+        // this.grid.excelExport();
+        break;
+      default:
+        break;
+    }
   }
   onClickDefault() {
     this.startDate = new Date();

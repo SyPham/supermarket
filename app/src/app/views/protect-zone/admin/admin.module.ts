@@ -25,6 +25,7 @@ import { ImageAdminPipe } from 'src/app/_core/pipes/image-admin.pipe';
 registerPlugin(FilePondPluginFileValidateType,FilePondPluginFileValidateSize,FilePondPluginImagePreview);
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { NgxSpinnerModule } from "ngx-spinner";
+import { ExportAsModule } from 'ngx-export-as';
 // import { PeriodComponent } from './period/period.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -75,6 +76,7 @@ const PIPE = [
   ],
   imports: [
     FilePondModule,
+    ExportAsModule,
     DatePickerModule,
     NgxSpinnerModule,
     CommonModule,

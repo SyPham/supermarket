@@ -27,43 +27,47 @@
             </div>
           </div>
         </div>
-        <ejs-grid  #grid
-        id='grid'
-        [dataSource]="data"
-        [allowResizing]='true'
-        [showColumnMenu]='true'
-        gridLines='Both'
-        isPrimaryKey='true'
-        (queryCellInfo)='queryCellInfoEvent($event)'
-        [allowExcelExport]='true'
-        [editSettings]='editSettings'
-      >
-        <e-columns>
-          <!-- <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="ID">
-            <ng-template #template let-data>
-              {{NOComplete(data.index)}}
-            </ng-template>
-            <ng-template #editTemplate let-data>
-              #
-            </ng-template>
-          </e-column> -->
-          <e-column field='consumerId' [visible]='false' width="100" headerTextAlign='Center' headerText='ConsumerId'>
-          </e-column>
-          <e-column field='fullName' width="100" headerTextAlign='Center' textAlign='Center' headerText='Name'>
-          </e-column>
-          <e-column field="name" textAlign='Left'  headerText="{{ 'Product Name'}}">
-            <ng-template #editTemplate let-data>
-             <span>{{data.name}}</span>
-            </ng-template>
-           </e-column>
+        <div id="mytable">
+          <ejs-grid  #grid
+          id='grid'
+          [dataSource]="data"
+          [allowResizing]='true'
+          [showColumnMenu]='true'
+          gridLines='Both'
+          (toolbarClick)='toolbarClick($event)'
+          isPrimaryKey='true'
+          (queryCellInfo)='queryCellInfoEvent($event)'
+          [allowExcelExport]='true'
+          [editSettings]='editSettings'
+          [pageSettings]='pageSettings'
+        >
+          <e-columns>
+            <!-- <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="ID">
+              <ng-template #template let-data>
+                {{NOComplete(data.index)}}
+              </ng-template>
+              <ng-template #editTemplate let-data>
+                #
+              </ng-template>
+            </e-column> -->
+            <e-column field='consumerId' [visible]='false' width="100" headerTextAlign='Center' headerText='ConsumerId'>
+            </e-column>
+            <e-column field='fullName' width="100" headerTextAlign='Center' textAlign='Center' headerText='Name'>
+            </e-column>
+            <e-column field="name" textAlign='Left'  headerText="{{ 'Product Name'}}">
+              <ng-template #editTemplate let-data>
+              <span>{{data.name}}</span>
+              </ng-template>
+            </e-column>
 
-          <e-column field="quantity" width="80" textAlign='Center' headerText="Qty"> </e-column>
-          <e-column field="originalPrice" width="80" textAlign='Center' headerText="Price"> </e-column>
-          <e-column field="subtotalPrice" width="80" textAlign='Center' headerText="Subtotal"> </e-column>
-          <e-column field="totalPrice" width="80" textAlign='Center' headerText="Total"> </e-column>
-          <e-column field="date" width="80" textAlign='Center' headerText="Date"> </e-column>
-        </e-columns>
-      </ejs-grid>
+            <e-column field="quantity" width="80" textAlign='Center' headerText="Qty"> </e-column>
+            <e-column field="originalPrice" width="80" textAlign='Center' headerText="Price"> </e-column>
+            <e-column field="subtotalPrice" width="80" textAlign='Center' headerText="Subtotal"> </e-column>
+            <e-column field="totalPrice" width="80" textAlign='Center' headerText="Total"> </e-column>
+            <e-column field="date" width="80" textAlign='Center' headerText="Date"> </e-column>
+          </e-columns>
+        </ejs-grid>
+      </div>
       </div>
 
     </div>

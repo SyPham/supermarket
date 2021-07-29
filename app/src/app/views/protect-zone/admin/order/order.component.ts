@@ -3,7 +3,7 @@ import { FilterRequest } from './../../../../_core/_model/product';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AlertifyService } from 'src/app/_core/_service/alertify.service';
-import { GridComponent } from '@syncfusion/ej2-angular-grids';
+import { GridComponent, QueryCellInfoEventArgs } from '@syncfusion/ej2-angular-grids';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Cart, UpdateQuantityRequest } from 'src/app/_core/_model/cart';
@@ -15,6 +15,9 @@ import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
 import { environment } from 'src/environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import imageToBase64 from 'image-to-base64/browser';
+import { ExportAsConfig, ExportAsService } from 'ngx-export-as';
+import { EmitType } from '@syncfusion/ej2-base';
+
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -62,11 +65,21 @@ export class OrderComponent extends BaseComponent implements OnInit {
   noImage = '/assets/img/photo1.png';
   img: any
   dataFake: any
+  databuyingPersion: any
   startDate = new Date();
   endDate = new Date();
+  configItem: ExportAsConfig = {
+    type: 'xlsx',
+    elementIdOrContent: 'buyItem',
+  };
+  configPersion: ExportAsConfig = {
+    type: 'xlsx',
+    elementIdOrContent: 'byPerson',
+  };
   constructor(
     private service: OrderService,
     private spinner: NgxSpinnerService,
+    private exportAsService: ExportAsService,
     private sanitizer: DomSanitizer,
     public modalService: NgbModal,
     private alertify: AlertifyService,
@@ -74,13 +87,82 @@ export class OrderComponent extends BaseComponent implements OnInit {
     private utilitiesService: UtilitiesService,
     private route: ActivatedRoute,
   ) { super(); }
-
+  public queryCellInfoEvent: EmitType<QueryCellInfoEventArgs> = (args: QueryCellInfoEventArgs) => {
+    const data = args.data as any;
+    const fields = ['consumerId', 'fullName', 'totalPrice'];
+    if (fields.includes(args.column.field)) {
+      args.rowSpan = this.databuyingPersion.filter(
+        item => item.consumerId === data.consumerId &&
+          item.fullName === data.fullName &&
+          item.totalPrice === data.totalPrice
+      ).length;
+    }
+  }
   ngOnInit() {
     // this.Permission(this.route);
     this.removeLocalStore("dispatch")
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.wrapSettings = { wrapMode: 'Content' };
     this.loadDataPending();
+  }
+  CancelBuying() {
+    if (this.dataPickedDitchPatch.length > 0) {
+      this.alertify.confirm2('Cancel Order! <br>!', 'Are you sure you want to cancel order this ?', () => {
+        this.service.CancelBuying(this.dataPickedDitchPatch).subscribe(res => {
+          if(res) {
+            this.alertify.success(MessageConstants.CREATED_OK_MSG);
+            this.loadDataBuying();
+            this.dataPickedDitchPatch = []
+          }else {
+            this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+          }
+        })
+      }, () => {
+        // cancelCallback();
+      });
+
+    } else {
+      this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+    }
+  }
+  CancelPending() {
+    if (this.dataPicked.length > 0 ) {
+      this.alertify.confirm2('Cancel Order! <br>!', 'Are you sure you want to cancel order this ?', () => {
+        this.service.CancelPending(this.dataPicked).subscribe(res => {
+          if(res) {
+            this.alertify.success(MessageConstants.CREATED_OK_MSG);
+            this.dataPicked = []
+            this.loadDataPending();
+          }
+        })
+      }, () => {
+        // cancelCallback();
+      });
+
+    } else {
+      this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+    }
+  }
+  getbuyingPersion(){
+    this.service.GetBuyingBuyPerson().subscribe(res => {
+      this.databuyingPersion = res.data || []
+      console.log(this.databuyingPersion);
+    })
+  }
+  exportBuyItem() {
+    this.exportAsService.save(this.configItem, 'BuyingItem').subscribe(() => {
+      // save started
+    });
+    // get the data as base64 or json object for json type - this will be helpful in ionic or SSR
+    // this.exportAsService.get(this.config).subscribe(content => {
+    //   console.log(content);
+    // });
+
+  }
+  exportBuyPersion() {
+    this.exportAsService.save(this.configPersion, 'BuyingPerisonItem').subscribe(() => {
+      // save started
+    });
   }
   onClickDefault() {
     this.startDate = new Date();
@@ -123,27 +205,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     });
   }
 
-  PrintBuying() {
-    this.spinner.show()
-    setTimeout(() => {
-      let DATA = document.getElementById('htmlData2');
-      document.getElementById("htmlData2").style.visibility = "";
-      html2canvas(DATA).then(canvas => {
-        const imgData = canvas.toDataURL('image/png',1)
-        let fileWidth = 208;
-        let fileHeight = canvas.height * fileWidth / canvas.width;
-        let PDF = new jsPDF('p', 'mm', 'a4');
-        let position = 0;
-        PDF.addImage(imgData, 'PNG', 0, position, fileWidth, fileHeight)
 
-        PDF.save('buyingList.pdf');
-        this.dataFake = []
-        this.spinner.hide();
-        document.getElementById("htmlData2").style.visibility = "hidden";
-
-      });
-    }, 100);
-  }
   removeLocalStore(key: string) {
     localStorage.removeItem(key);
   }
@@ -369,6 +431,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.completeTab = false
     this.buyingTab = true
     this.loadDataBuying()
+    this.getbuyingPersion()
   }
   TabComplete(){
     this.pendingTabClass = "btn btn-default"
