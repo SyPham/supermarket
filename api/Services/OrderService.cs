@@ -24,12 +24,15 @@ namespace Supermarket.Services
         Task<object> GetProductsInOrder(string langId);
         Task<object> GetProductsInOrderByAdmin(string langId);
         Task<bool> Transfer(List<AddToBuyListDto> model);
+        Task<bool> CancelBuyList(List<AddToBuyListDto> model);
+        Task<bool> CancelPendingList(List<AddToBuyListDto> model);
         Task<bool> TransferComplete(List<AddToCompleteListDto> model);
         Task<object> GetProductsInOrderPendingByAdmin(string langId);
         Task<object> GetUserDelevery(string langId, DateTime startDate, DateTime endDate);
         Task<object> GetProductsInOrderBuyingByAdmin(string langId);
         Task<object> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate);
         Task<object> GetProductsForCartStatus(string langId);
+        Task<object> GetBuyingBuyPerson(string langId);
 
         Task<OperationResult> PlaceOrder();
     }
@@ -68,6 +71,59 @@ namespace Supermarket.Services
             _mapper = mapper;
             _configMapper = configMapper;
         }
+        public async Task<bool> CancelBuyList(List<AddToBuyListDto> model)
+        {
+            try
+            {
+                foreach (var item in model)
+                {
+                    var data = _repoOrderHistory.FindAll().Where(x => x.ProductId == item.ProductId && x.ConsumerId == item.ConsumerId).ToList();
+                    foreach (var transfer in data)
+                    {
+                        transfer.CompleteQty = transfer.ByingQty;
+                        transfer.ByingQty = 0;
+                        transfer.CancelStatus = true;
+                        _repoOrderHistory.Update(transfer);
+
+                    }
+                }
+                await _unitOfWork.SaveChangeAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+                throw;
+            }
+            throw new NotImplementedException();
+        }
+        public async Task<bool> CancelPendingList(List<AddToBuyListDto> model)
+        {
+            try
+            {
+                foreach (var item in model)
+                {
+                    var data = _repoOrderHistory.FindAll().Where(x => x.ProductId == item.ProductId && x.ConsumerId == item.ConsumerId).ToList();
+                    foreach (var transfer in data)
+                    {
+                        transfer.CompleteQty = transfer.PendingQty;
+                        transfer.PendingQty = 0;
+                        transfer.CancelStatus = true;
+                        _repoOrderHistory.Update(transfer);
+
+                    }
+                }
+                await _unitOfWork.SaveChangeAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+                throw;
+            }
+            throw new NotImplementedException();
+        }
+
         public async Task<object> GetUserDelevery(string langId, DateTime startDate, DateTime endDate)
         {
             var data = await _repoOrderHistory.FindAll().ToListAsync();
@@ -114,6 +170,60 @@ namespace Supermarket.Services
                     totalPrice  = x.First().totalPrice.ToString("n0")
 
                 }) ;
+            var totalPrice = res.Sum(x => x.Amount).ToString("n0");
+            return new
+            {
+                TotalPrice = totalPrice,
+                Data = result
+            };
+            throw new NotImplementedException();
+        }
+        public async Task<object> GetBuyingBuyPerson(string langId)
+        {
+            var data = await _repoOrderHistory.FindAll().ToListAsync();
+            if (data == null) return new
+            {
+                TotalPrice = 0,
+                Data = new List<ProductCartDto> { }
+            };
+            var res = data.Where(x => x.ByingQty > 0 ).Select(x => new
+            {
+                Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                OriginalPrice = x.Product.OriginalPrice,
+                Quantity = x.ByingQty,
+                //Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
+                Description = x.Product.Description,
+                Amount = (x.ByingQty * x.Product.OriginalPrice),
+                StoreId = x.Product.StoreId,
+                KindId = x.Product.KindId,
+                ProductId = x.ProductId,
+                OderDetailId = x.OrderDetailId,
+                StoreName = x.Product.Store.Name,
+                FullName = x.Consumer.FullName,
+                Date = x.DispatchDate,
+                ConsumerId = x.Consumer.Id,
+                totalPrice = _repoOrderHistory.FindAll().Where(y => y.ConsumerId == x.Consumer.Id && y.ByingQty > 0 ).ToList().Select(x => (x.ByingQty * x.Product.OriginalPrice)).Sum(),
+                KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
+            }).ToList();
+
+            var result = res.GroupBy(x => new { x.Name, x.ConsumerId })
+                .Select(x => new
+                {
+                    Name = x.First().Name,
+                    OriginalPrice = x.First().OriginalPrice.ToString("n0"),
+                    //Avatar = x.First().Avatar,
+                    Description = x.First().Description,
+                    FullName = x.First().FullName,
+                    ConsumerId = x.First().ConsumerId,
+                    StoreName = x.First().StoreName,
+                    OderDetailId = x.First().OderDetailId,
+                    KindName = x.First().KindName,
+                    SubtotalPrice = x.Sum(a => a.Amount).ToString("n0"),
+                    Quantity = x.Sum(a => a.Quantity),
+                    Date = Convert.ToDateTime(x.First().Date).ToString("dd/MM/yy"),
+                    totalPrice = x.First().totalPrice.ToString("n0")
+
+                });
             var totalPrice = res.Sum(x => x.Amount).ToString("n0");
             return new
             {
@@ -496,6 +606,7 @@ namespace Supermarket.Services
                 StoreName = x.Product.Store.Name,
                 FullName = x.Consumer.FullName,
                 Date = x.DispatchDate,
+                CancelStatus = x.CancelStatus,
                 ConsumerId = x.Consumer.Id,
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
             }).ToList();
@@ -511,6 +622,7 @@ namespace Supermarket.Services
                     StoreName = x.First().StoreName,
                     OderDetailId = x.First().OderDetailId,
                     KindName = x.First().KindName,
+                    CancelStatus = x.First().CancelStatus,
                     Amount = x.Sum(a => a.Amount).ToString("n0"),
                     Quantity = x.Sum(a => a.Quantity),
                     Date = Convert.ToDateTime(x.First().Date).ToString("MM/yy")

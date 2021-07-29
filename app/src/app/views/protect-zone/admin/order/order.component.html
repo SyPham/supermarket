@@ -29,17 +29,32 @@
           <e-items>
             <e-item id='buy-list' >
               <ng-template #template>
-                <button type="button" *ngIf="pendingTab" (click)="byList()" class="btn btn-success" >Today buy list </button>
+                <button type="button" *ngIf="pendingTab" (click)="byList()" class="btn btn-success" ><i class="fa fa-exchange" aria-hidden="true"></i> Today buy list </button>
               </ng-template>
             </e-item>
-            <e-item id='print' >
+            <e-item id='cancelPending' >
               <ng-template #template>
-                <button type="button" *ngIf="buyingTab" (click)="PrintBuying()" class="btn btn-secondary" >Print </button>
+                <button type="button" *ngIf="pendingTab" (click)="CancelPending()" class="btn btn-danger" >Cancel</button>
+              </ng-template>
+            </e-item>
+            <e-item id='exportBuyItem' >
+              <ng-template #template>
+                <button type="button" *ngIf="buyingTab" (click)="exportBuyItem()" class="btn btn-secondary" ><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Buy Item </button>
+              </ng-template>
+            </e-item>
+            <e-item id='exportBuyPersion' >
+              <ng-template #template>
+                <button type="button" *ngIf="buyingTab" (click)="exportBuyPersion()" class="btn btn-secondary" ><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Buy Persion </button>
               </ng-template>
             </e-item>
             <e-item id='dispatch' >
               <ng-template #template>
-                <button type="button" *ngIf="buyingTab" (click)="DisPatchCheckBox()" class="btn btn-primary" >Dispatch </button>
+                <button type="button" *ngIf="buyingTab" (click)="DisPatchCheckBox()" class="btn btn-primary" ><i class="fa fa-exchange" aria-hidden="true"></i> Dispatch </button>
+              </ng-template>
+            </e-item>
+            <e-item id='cancelBuying' >
+              <ng-template #template>
+                <button type="button" *ngIf="buyingTab" (click)="CancelBuying()" class="btn btn-danger" ><i class="fa fa-ban" aria-hidden="true"></i> Cancel </button>
               </ng-template>
             </e-item>
             <e-item align='right'>
@@ -97,12 +112,12 @@
                <span>{{data.name}}</span>
               </ng-template>
              </e-column>
-            <e-column field="description" textAlign='Left' headerText="Description">
+            <e-column field="description" textAlign='Left' headerText="Unit">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
             </e-column>
-             <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+             <e-column field="originalPrice" width="100" textAlign='Center' headerText="Ref. Price">
               <ng-template #editTemplate let-data>
                <span>{{data.originalPrice}} đ</span>
               </ng-template>
@@ -130,80 +145,82 @@
           </e-columns>
         </ejs-grid>
 
-        <ejs-grid #gridBuying
-          *ngIf="buyingTab"
-          id='grid'
-          [allowPdfExport]='true'
-          [dataSource]="data"
-          [allowResizing]='true'
-          [showColumnMenu]='true'
-          gridLines='Both'
-          isPrimaryKey='true'
-          [showColumnChooser]='true'
-          [allowExcelExport]='true'
-          (rowDeselected)='rowDeselectedBuying($event)'
-          (rowSelected)='rowSelectedBuying($event)'
-          [selectionSettings]="{ checkboxMode: 'ResetOnRowClick'}"
-          [textWrapSettings]="wrapSettings"
-          [editSettings]='editSettings'
-          (recordDoubleClick)='onDoubleClickDone($event)'
-        >
-          <e-columns>
-            <e-column type='checkbox' isPrimaryKey='true' textAlign='Center' width='40'></e-column>
-            <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="ID">
-              <ng-template #template let-data>
-                {{NOBuying(data.index)}}
-              </ng-template>
-              <ng-template #editTemplate let-data>
-                #
-              </ng-template>
-            </e-column>
-            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
-            <ng-template #template let-data>
-              <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
-              </ng-template>
-              <ng-template #editTemplate let-data>
-              <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
-              </ng-template>
-            </e-column>
-
-            <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
-              <ng-template #editTemplate let-data>
-              <span>{{data.name}}</span>
-              </ng-template>
-            </e-column>
-            <e-column field="description" textAlign='Left' headerText="Description">
-              <ng-template #editTemplate let-data>
-              <span style="text-align: left">{{data.description}}</span>
-              </ng-template>
-            </e-column>
-            <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
-              <ng-template #editTemplate let-data>
-              <span>{{data.originalPrice}} đ</span>
-              </ng-template>
+        <div id="exportByitem">
+          <ejs-grid #gridBuying
+            *ngIf="buyingTab"
+            id='grid'
+            [allowPdfExport]='true'
+            [dataSource]="data"
+            [allowResizing]='true'
+            [showColumnMenu]='true'
+            gridLines='Both'
+            isPrimaryKey='true'
+            [showColumnChooser]='true'
+            [allowExcelExport]='true'
+            (rowDeselected)='rowDeselectedBuying($event)'
+            (rowSelected)='rowSelectedBuying($event)'
+            [selectionSettings]="{ checkboxMode: 'ResetOnRowClick'}"
+            [textWrapSettings]="wrapSettings"
+            [editSettings]='editSettings'
+            (recordDoubleClick)='onDoubleClickDone($event)'
+          >
+            <e-columns>
+              <e-column type='checkbox' isPrimaryKey='true' textAlign='Center' width='40'></e-column>
+              <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="ID">
                 <ng-template #template let-data>
-              <span>{{data.originalPrice}} đ</span>
-              </ng-template>
-            </e-column>
-            <e-column field="quantity" width="80" textAlign='Center' headerText="Quantity"> </e-column>
-
-            <e-column field="amount" width="100" textAlign='Center' headerText="Amount">
-              <ng-template #editTemplate let-data>
-              <span>{{data.amount}} đ</span>
-              </ng-template>
-                <ng-template #template let-data>
-              <span>{{data.amount}} đ</span>
-              </ng-template>
-            </e-column>
-            <e-column field='consumers' width="100" headerTextAlign='Center' headerText='Consumers'>
+                  {{NOBuying(data.index)}}
+                </ng-template>
+                <ng-template #editTemplate let-data>
+                  #
+                </ng-template>
+              </e-column>
+              <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
               <ng-template #template let-data>
-                <ul style="padding: 0 0 0 15px;">
-                  <li *ngFor="let item of data.consumers">{{item.fullName}}: {{item.quantity}}</li>
-                </ul>
-              </ng-template>
-            </e-column>
-          </e-columns>
-        </ejs-grid>
+                <img class='avatar' [src]="getSantizeUrl(data.avatar)" [alt]="getSantizeUrl(data.avatar)"  />
+                </ng-template>
+                <ng-template #editTemplate let-data>
+                <img class='avatar' [src]="getSantizeUrl(data.avatar)" [alt]="getSantizeUrl(data.avatar)"  />
+                </ng-template>
+              </e-column>
+
+              <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
+                <ng-template #editTemplate let-data>
+                <span>{{data.name}}</span>
+                </ng-template>
+              </e-column>
+              <e-column field="description" textAlign='Left' headerText="Unit">
+                <ng-template #editTemplate let-data>
+                <span style="text-align: left">{{data.description}}</span>
+                </ng-template>
+              </e-column>
+              <e-column field="originalPrice" width="100" textAlign='Center' headerText="Ref. Price">
+                <ng-template #editTemplate let-data>
+                <span>{{data.originalPrice}} đ</span>
+                </ng-template>
+                  <ng-template #template let-data>
+                <span>{{data.originalPrice}} đ</span>
+                </ng-template>
+              </e-column>
+              <e-column field="quantity" width="80" textAlign='Center' headerText="Quantity"> </e-column>
+
+              <e-column field="amount" width="100" textAlign='Center' headerText="Amount">
+                <ng-template #editTemplate let-data>
+                <span>{{data.amount}} đ</span>
+                </ng-template>
+                  <ng-template #template let-data>
+                <span>{{data.amount}} đ</span>
+                </ng-template>
+              </e-column>
+              <e-column field='consumers' width="100" headerTextAlign='Center' headerText='Consumers'>
+                <ng-template #template let-data>
+                  <ul style="padding: 0 0 0 15px;">
+                    <li *ngFor="let item of data.consumers">{{item.fullName}}: {{item.quantity}}</li>
+                  </ul>
+                </ng-template>
+              </e-column>
+            </e-columns>
+          </ejs-grid>
+        </div>
 
         <div *ngIf="completeTab" class="col-md-12">
           <div class="row">
@@ -266,12 +283,24 @@
                <span>{{data.name}}</span>
               </ng-template>
              </e-column>
-            <e-column field="description" textAlign='Left' headerText="Description">
+            <e-column field="description" textAlign='Left' headerText="Unit">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
             </e-column>
             <e-column field="quantity" width="80" textAlign='Center' headerText="Qty"> </e-column>
+            <e-column field="cancelStatus" width="80" textAlign='Center' headerText="Status">
+              <ng-template #template let-data>
+                <ng-container *ngIf="data.cancelStatus; else elseTemplate">
+                  <span class="badge badge-danger">Cancel</span>
+                </ng-container>
+                <ng-template #elseTemplate>
+                  <span class="badge badge-success">Complete</span>
+                </ng-template>
+
+              </ng-template>
+
+            </e-column>
             <e-column field="date" width="80" textAlign='Center' headerText="Date"> </e-column>
           </e-columns>
         </ejs-grid>
@@ -337,11 +366,12 @@
       <button type="submit" (click)="saveDisPatch()" class="btn btn-primary">Dispatch</button>
   </div>
 </ng-template>
-<div  style="visibility: hidden;" id="htmlData2"   #htmlData2 >
+
+<div  style="visibility: hidden;" id="buyItem"   #htmlData2 >
   <ejs-grid #gridBuying
       id='grid'
       [allowPdfExport]='true'
-      [dataSource]="dataFake"
+      [dataSource]="data"
       [allowResizing]='true'
       [showColumnMenu]='true'
       gridLines='Both'
@@ -360,26 +390,26 @@
             #
           </ng-template>
         </e-column>
-        <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
+        <!-- <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
         <ng-template #template let-data>
           <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
           </ng-template>
           <ng-template #editTemplate let-data>
           <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
           </ng-template>
-        </e-column>
+        </e-column> -->
 
         <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
           <ng-template #editTemplate let-data>
           <span>{{data.name}}</span>
           </ng-template>
         </e-column>
-        <e-column field="description" textAlign='Left' headerText="Description">
+        <e-column field="description" textAlign='Left' headerText="Unit">
           <ng-template #editTemplate let-data>
           <span style="text-align: left">{{data.description}}</span>
           </ng-template>
         </e-column>
-        <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+        <e-column field="originalPrice" width="100" textAlign='Center' headerText="Ref. Price">
           <ng-template #editTemplate let-data>
           <span>{{data.originalPrice}} đ</span>
           </ng-template>
@@ -406,28 +436,37 @@
         </e-column>
       </e-columns>
   </ejs-grid>
-  <!-- <table  class="table table-bordered">
-      <tr class="table-primary">
-          <th>Avatar</th>
-          <th>Product Name</th>
-          <th>Description</th>
-          <th>Price</th>
-          <th>Quantity</th>
-          <th>Amounts</th>
-          <th>Consumers</th>
-      </tr>
-      <tr *ngFor="let item of dataFake">
-          <th><img class='avatar' [src]="getSantizeUrl(item.avatar)"  /></th>
-          <th>{{item.name}}</th>
-          <th>{{item.description}}</th>
-          <th>{{item.originalPrice}}</th>
-          <th>{{item.quantity}}</th>
-          <th>{{item.amount}}</th>
-          <th>
-            <ul style="padding: 0 0 0 15px;">
-              <li *ngFor="let items of item.consumers">{{items.fullName}}</li>
-            </ul>
-          </th>
-      </tr>
-  </table> -->
+
+</div>
+<div style="visibility: hidden;" id="byPerson">
+  <ejs-grid  *ngIf="buyingTab"  #gridPersion
+    id='gridPersion'
+    [dataSource]="databuyingPersion"
+    [allowResizing]='true'
+    [showColumnMenu]='true'
+    gridLines='Both'
+    (toolbarClick)='toolbarClick($event)'
+    isPrimaryKey='true'
+    (queryCellInfo)='queryCellInfoEvent($event)'
+    [allowExcelExport]='true'
+    [editSettings]='editSettings'
+    [pageSettings]='pageSettings'
+  >
+    <e-columns>
+      <!-- <e-column field='consumerId' [visible]='false' width="100" headerTextAlign='Center' headerText='ConsumerId'>
+      </e-column> -->
+      <e-column field='fullName' width="100" headerTextAlign='Center' textAlign='Center' headerText='Name'>
+      </e-column>
+      <e-column field="name" textAlign='Left'  headerText="{{ 'Product Name'}}">
+        <ng-template #editTemplate let-data>
+        <span>{{data.name}}</span>
+        </ng-template>
+      </e-column>
+
+      <e-column field="quantity" width="80" textAlign='Center' headerText="Qty"> </e-column>
+      <e-column field="originalPrice" width="80" textAlign='Center' headerText="Ref. Price"> </e-column>
+      <e-column field="subtotalPrice" width="80" textAlign='Center' headerText="Subtotal"> </e-column>
+      <e-column field="totalPrice" width="80" textAlign='Center' headerText="Total"> </e-column>
+    </e-columns>
+  </ejs-grid>
 </div>

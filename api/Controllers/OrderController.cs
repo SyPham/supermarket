@@ -23,6 +23,18 @@ namespace Supermarket.Controllers
             return Ok(status);
         }
         [HttpPut]
+        public async Task<IActionResult> CancelBuyingList(List<AddToBuyListDto> model)
+        {
+            var status = await _service.CancelBuyList(model);
+            return Ok(status);
+        }
+        [HttpPut]
+        public async Task<IActionResult> CancelPendingList(List<AddToBuyListDto> model)
+        {
+            var status = await _service.CancelPendingList(model);
+            return Ok(status);
+        }
+        [HttpPut]
         public async Task<IActionResult> TransferComplete(List<AddToCompleteListDto> model)
         {
             var status = await _service.TransferComplete(model);
@@ -85,6 +97,11 @@ namespace Supermarket.Controllers
         public async Task<ActionResult> GetUserDelevery(string langId , DateTime startDate, DateTime endDate)
         {
             return Ok(await _service.GetUserDelevery(langId, startDate, endDate));
+        }
+        [HttpGet("{langId}")]
+        public async Task<ActionResult> GetBuyingBuyPerson(string langId)
+        {
+            return Ok(await _service.GetBuyingBuyPerson(langId));
         }
         [HttpGet]
         public async Task<ActionResult> GetProductsInOrderBuyingByAdmin(string langId)

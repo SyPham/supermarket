@@ -32,6 +32,9 @@ export class OrderService extends CURDService<Order> {
   GetUserDelevery(startDate, endDate): Observable<any> {
     return this.http.get<any>(`${this.base}Order/GetUserDelevery/${localStorage.getItem("lang")}/${startDate}/${endDate}`);
   }
+  GetBuyingBuyPerson(): Observable<any> {
+    return this.http.get<any>(`${this.base}Order/GetBuyingBuyPerson/${localStorage.getItem("lang")}`);
+  }
   getProductsInOrderByingByAdmin(): Observable<any> {
     return this.http.get<any>(`${this.base}Order/GetProductsInOrderBuyingByAdmin?langId=${localStorage.getItem("lang")}`);
   }
@@ -43,6 +46,12 @@ export class OrderService extends CURDService<Order> {
   }
   transferComplete(model) {
     return this.http.put(`${this.base}Order/TransferComplete`, model);
+  }
+  CancelBuying(model) {
+    return this.http.put(`${this.base}Order/CancelBuyingList`, model);
+  }
+  CancelPending(model) {
+    return this.http.put(`${this.base}Order/CancelPendingList`, model);
   }
   getProductsForCartStatus(): Observable<any> {
     return this.http.get<any>(`${this.base}Order/GetProductsForCartStatus?langId=${localStorage.getItem("lang")}`);
