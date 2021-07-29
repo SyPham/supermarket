@@ -86,6 +86,7 @@ namespace Supermarket.Services
                         transfer.CompleteQty = transfer.ByingQty;
                         transfer.ByingQty = 0;
                         transfer.CancelStatus = true;
+                        transfer.DispatchDate = DateTime.Now;
                         _repoOrderHistory.Update(transfer);
 
                     }
@@ -112,6 +113,7 @@ namespace Supermarket.Services
                         transfer.CompleteQty = transfer.PendingQty;
                         transfer.PendingQty = 0;
                         transfer.CancelStatus = true;
+                        transfer.DispatchDate = DateTime.Now;
                         _repoOrderHistory.Update(transfer);
 
                     }
