@@ -47,4 +47,12 @@ export class OrderService extends CURDService<Order> {
   getProductsForCartStatus(): Observable<any> {
     return this.http.get<any>(`${this.base}Order/GetProductsForCartStatus?langId=${localStorage.getItem("lang")}`);
   }
+
+  getProductsForCartStatusByCompleteStatus(): Observable<any> {
+    return this.http.get<any>(`${this.base}Order/GetProductsForCartStatusByCompleteStatus?langId=${localStorage.getItem("lang")}`);
+  }
+
+  getProductsForCartStatusByBuyingAndPenidngStatus(): Observable<any> {
+    return this.http.get<any>(`${this.base}Order/GetProductsForCartStatusByBuyingAndPenidngStatus?langId=${localStorage.getItem("lang")}`);
+  }
 }

@@ -102,5 +102,17 @@ namespace Supermarket.Controllers
             return Ok(await _service.GetWithPaginationsAsync(paramater));
         }
 
+        [HttpGet]
+        public async Task<ActionResult> GetProductsForCartStatusByCompleteStatus(string langId)
+        {
+            return Ok(await _service.GetProductsForCartStatusByCompleteStatus(langId));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetProductsForCartStatusByBuyingAndPenidngStatus(string langId)
+        {
+            return Ok(await _service.GetProductsForCartStatusByBuyingAndPenidngStatus(langId));
+        }
+
     }
 }
