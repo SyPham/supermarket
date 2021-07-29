@@ -1,6 +1,6 @@
 import { FilterRequest } from './../../../../_core/_model/product';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AlertifyService } from 'src/app/_core/_service/alertify.service';
 import { EditService, ToolbarService, PageService, GridComponent } from '@syncfusion/ej2-angular-grids';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -42,6 +42,10 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   cartTotal = 0;
   noImage = '/assets/img/photo1.png';
   dataKind: any[];
+  productName: any;
+  avatar: any;
+  @ViewChild('preview', { static: true }) previewModal: TemplateRef<any>;
+
   constructor(
     private service: ProductListService,
     private serviceCart: CartService,
@@ -193,6 +197,11 @@ export class ProductListComponent extends BaseComponent implements OnInit {
       }
     }
     return this.noImage;
+  }
+  mouseenter(args,data) {
+    this.avatar = data.avatar;
+    this.productName = data.name;
+    this.modalReference = this.modalService.open(this.previewModal, { size: 'lg'});
   }
 }
 
