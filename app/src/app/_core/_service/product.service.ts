@@ -26,6 +26,9 @@ export class ProductService extends CURDService<Product> {
     formData.append('KindId', model.kindId.toString());
     return this.http.post(this.base + 'Product/Created', formData);
   }
+  updateStatus(id) {
+    return this.http.post(this.base + `Product/UpdateStatus/${id}` ,{});
+  }
   Updated(model: Product) {
     const formData = new FormData();
     formData.append('Id', model.id.toString());
