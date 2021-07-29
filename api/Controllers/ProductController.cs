@@ -80,7 +80,7 @@ namespace Supermarket.Controllers
                         entity.StoreId = entity.StoreId;
                         entity.KindId = entity.KindId;
                         entity.Avatar = $"image/{file.FileName}";
-
+                        entity.Status = true;  
                     }
                 }
                 else
@@ -92,6 +92,7 @@ namespace Supermarket.Controllers
                     entity.OriginalPrice = entity.OriginalPrice;
                     entity.CreatedBy = entity.CreatedBy;
                     entity.StoreId = entity.StoreId;
+                    entity.Status = true;
                     entity.KindId = entity.KindId;
 
                 }
