@@ -29,7 +29,7 @@ export class ProductService extends CURDService<Product> {
   Updated(model: Product) {
     const formData = new FormData();
     formData.append('Id', model.id.toString());
-    formData.append('UploadedFile', model.avatar);
+    formData.append('UploadedFile', model.file);
     formData.append('Avatar', model.avatar);
     formData.append('VietnameseName', model.vietnameseName);
     formData.append('EnglishName', model.englishName);

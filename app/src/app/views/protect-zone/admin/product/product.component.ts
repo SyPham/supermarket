@@ -33,6 +33,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
     createdTime:  null,
     modifiedTime:  null,
     storeId: 0,
+    file: null,
     kindId: 0
   };
   ProductUpdate: Product;
@@ -98,7 +99,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
       createdTime:  null,
       modifiedTime:  null,
       storeId: 0,
-      kindId: 0
+      kindId: 0,
+      file: null
     }
   }
   getAllStore() {
@@ -146,6 +148,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.ProductCreate.chineseName = data.chineseName
     this.ProductCreate.description = data.description
     this.ProductCreate.storeId = data.store_ID
+    this.ProductCreate.avatar = data.avatar
     this.getAllKindByStore(data.store_ID);
     this.ProductCreate.kindId = data.kind_ID
     this.ProductCreate.originalPrice = data.price
@@ -310,7 +313,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.storeId = data.store_ID
   }
   update() {
-    this.ProductCreate.avatar = this.file;
+    this.ProductCreate.file = this.file;
     this.service.Updated(this.ProductCreate).subscribe(res => {
       if (res) {
         this.alertify.success(MessageConstants.UPDATED_OK_MSG);
