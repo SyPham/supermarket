@@ -180,6 +180,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.loadDataComplete()
   }
   loadDataComplete() {
+    this.data = [];
     this.service.getProductsInOrderCompleteByAdmin(this.startDate.toDateString() , this.endDate.toDateString()).subscribe(res => {
       this.data = res.data || [];
       this.totalPrice = res.totalPrice || 0;
@@ -199,6 +200,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
   loadDataBuying() {
+    this.data = [];
     this.service.getProductsInOrderByingByAdmin().subscribe(res => {
       this.data = res.data || [];
       this.totalPrice = res.totalPrice || 0;
@@ -443,6 +445,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.loadDataComplete()
   }
   loadDataPending() {
+    this.data = [];
     this.service.getProductsInOrderPendingByAdmin().subscribe(res => {
       this.data = res.data || [];
       this.totalPrice = res.totalPrice || 0;
