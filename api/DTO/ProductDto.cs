@@ -17,6 +17,7 @@ namespace Supermarket.DTO
         public DateTime CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
 
+        public bool Status { get; set; }
         public int StoreId { get; set; }
         public int KindId { get; set; }
      

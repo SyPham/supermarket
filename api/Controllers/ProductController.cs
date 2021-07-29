@@ -35,6 +35,11 @@ namespace Supermarket.Controllers
             _environment = environment;
         }
 
+        [HttpPost("{id}")]
+        public async Task<ActionResult> UpdateStatus(int id)
+        {
+            return Ok(await _service.UpdateStatus(id));
+        }
         [HttpGet]
         public async Task<ActionResult> GetAllAsync()
         {

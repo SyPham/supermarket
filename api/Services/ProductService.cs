@@ -22,6 +22,7 @@ namespace Supermarket.Services
     {
         Task<OperationResult> UploadAvatar(UploadAvatarRequest request);
         Task<object> GetProductsForConsumer(FilterRequest request);
+        Task<bool> UpdateStatus(int id);
 
     }
     public class ProductService : ServiceBase<Product, ProductDto>, IProductService
@@ -137,6 +138,23 @@ namespace Supermarket.Services
                     Description = x.Description
                 }).ToListAsync();
             return new List<ProductListDto>();
+        }
+
+        public async Task<bool> UpdateStatus(int id)
+        {
+            try
+            {
+                var data = _repo.FindById(id);
+                data.Status = !data.Status;
+                _repo.Update(data);
+                await _unitOfWork.SaveChangeAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            throw new NotImplementedException();
         }
     }
 }

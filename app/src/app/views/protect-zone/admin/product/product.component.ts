@@ -73,7 +73,16 @@ export class ProductComponent extends BaseComponent implements OnInit {
       this.getAllProduct();
     }, 300);
   }
-
+  updateStatus(id) {
+    this.service.updateStatus(id).subscribe(res => {
+      if (res) {
+        this.alertify.success(MessageConstants.UPDATED_OK_MSG);
+        this.getAllProduct();
+      } else {
+        this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+      }
+    })
+  }
   save() {
     this.ProductCreate.avatar = this.file;
     this.service.Add(this.ProductCreate).subscribe(res => {
@@ -128,6 +137,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
           kind_name: this.dataKindAll.filter((a) => a.id === item.kindId)[0]?.englishName,
           avatar: item.avatar,
           price: item.originalPrice,
+          status: item.status,
           description: item.description
         }
       });
