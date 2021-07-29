@@ -54,7 +54,6 @@
             <e-column field="productName" textAlign='Center' headerText="{{ 'Product Name'}}">
               <ng-template #template let-data>
                <span>{{data.productName}}</span>
-               <span *ngIf='data.cancelStatus' class="badge badge-danger">{{data.cancelStatus}}</span>
               </ng-template>
             </e-column>
             <e-column field="description" textAlign='Left' headerText="Unit">
@@ -89,7 +88,9 @@
 
             <e-column field="status" textAlign='Center' width="100" headerText="{{ 'Status'}}">
               <ng-template #template let-data>
-               <span class="badge badge-success">{{data.status}}</span>
+               <span *ngIf='data.cancelStatus' class="badge badge-danger">{{data.status}}</span>
+               <span *ngIf='!data.cancelStatus' class="badge badge-success">{{data.status}}</span>
+
               </ng-template>
             </e-column>
 

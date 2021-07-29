@@ -796,11 +796,11 @@ namespace Supermarket.Services
               x.PendingQty,
               x.DispatchDate,
               x.OrderDate,
-              CancelStatus = x.CancelStatus == true ? "Canceled by admin" : "",
+              x.CancelStatus,
               OriginalPrice = x.OriginalPrice.ToString("n0"),
               Quantity = x.CompleteQty,
               Amount = (x.CompleteQty * x.OriginalPrice).ToString("n0"),
-              Status = "Complete"
+              Status = x.CancelStatus == true ? "Cancel" : "Complete"
           }).ToList();
             return complete;
         }
