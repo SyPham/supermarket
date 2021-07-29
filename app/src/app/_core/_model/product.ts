@@ -10,7 +10,8 @@ export interface Product {
   createdTime: string;
   modifiedTime: string | null;
   storeId: number;
-  kindId: number
+  kindId: number,
+  file: null
 }
 export interface FilterRequest {
   kindId: number
