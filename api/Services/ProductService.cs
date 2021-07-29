@@ -116,7 +116,7 @@ namespace Supermarket.Services
                 return new List<ProductListDto>();
            
             if (request.StoreId > 0 && request.KindId > 0)
-                return await _repo.FindAll()
+                return await _repo.FindAll(x => x.Status)
                     .Where(x => x.StoreId == request.StoreId && x.KindId == request.KindId)
                     .Select(x => new ProductListDto
                     {
@@ -128,7 +128,7 @@ namespace Supermarket.Services
                         Description = x.Description
                     }).ToListAsync();
             if (request.StoreId > 0)
-                return await _repo.FindAll().Where(x => x.StoreId == request.StoreId).Select(x => new ProductListDto
+                return await _repo.FindAll(x=> x.Status).Where(x => x.StoreId == request.StoreId).Select(x => new ProductListDto
                 {
                     Id = x.Id,
                     Name = request.LangId == SystemLang.VI ? x.VietnameseName : request.LangId == SystemLang.EN ? x.EnglishName : x.ChineseName,
