@@ -112,12 +112,12 @@
                <span>{{data.name}}</span>
               </ng-template>
              </e-column>
-            <e-column field="description" textAlign='Left' headerText="Description">
+            <e-column field="description" textAlign='Left' headerText="Unit">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
             </e-column>
-             <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+             <e-column field="originalPrice" width="100" textAlign='Center' headerText="Ref. Price">
               <ng-template #editTemplate let-data>
                <span>{{data.originalPrice}} đ</span>
               </ng-template>
@@ -188,12 +188,12 @@
                 <span>{{data.name}}</span>
                 </ng-template>
               </e-column>
-              <e-column field="description" textAlign='Left' headerText="Description">
+              <e-column field="description" textAlign='Left' headerText="Unit">
                 <ng-template #editTemplate let-data>
                 <span style="text-align: left">{{data.description}}</span>
                 </ng-template>
               </e-column>
-              <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+              <e-column field="originalPrice" width="100" textAlign='Center' headerText="Ref. Price">
                 <ng-template #editTemplate let-data>
                 <span>{{data.originalPrice}} đ</span>
                 </ng-template>
@@ -283,13 +283,13 @@
                <span>{{data.name}}</span>
               </ng-template>
              </e-column>
-            <e-column field="description" textAlign='Left' headerText="Description">
+            <e-column field="description" textAlign='Left' headerText="Unit">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
             </e-column>
             <e-column field="quantity" width="80" textAlign='Center' headerText="Qty"> </e-column>
-            <e-column field="quantity" width="80" textAlign='Center' headerText="Status">
+            <e-column field="cancelStatus" width="80" textAlign='Center' headerText="Status">
               <ng-template #template let-data>
                 <ng-container *ngIf="data.cancelStatus; else elseTemplate">
                   <span class="badge badge-danger">Cancel</span>
@@ -404,12 +404,12 @@
           <span>{{data.name}}</span>
           </ng-template>
         </e-column>
-        <e-column field="description" textAlign='Left' headerText="Description">
+        <e-column field="description" textAlign='Left' headerText="Unit">
           <ng-template #editTemplate let-data>
           <span style="text-align: left">{{data.description}}</span>
           </ng-template>
         </e-column>
-        <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+        <e-column field="originalPrice" width="100" textAlign='Center' headerText="Ref. Price">
           <ng-template #editTemplate let-data>
           <span>{{data.originalPrice}} đ</span>
           </ng-template>
@@ -464,7 +464,7 @@
       </e-column>
 
       <e-column field="quantity" width="80" textAlign='Center' headerText="Qty"> </e-column>
-      <e-column field="originalPrice" width="80" textAlign='Center' headerText="Price"> </e-column>
+      <e-column field="originalPrice" width="80" textAlign='Center' headerText="Ref. Price"> </e-column>
       <e-column field="subtotalPrice" width="80" textAlign='Center' headerText="Subtotal"> </e-column>
       <e-column field="totalPrice" width="80" textAlign='Center' headerText="Total"> </e-column>
     </e-columns>

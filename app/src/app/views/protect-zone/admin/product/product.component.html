@@ -36,7 +36,7 @@
             </e-column>
             <e-column field='store_name' textAlign='Center' headerText="Store"></e-column>
             <e-column field='name' textAlign='Center' headerText="Product name"></e-column>
-            <e-column field='description' textAlign='Center' headerText="Description">
+            <e-column field='description' textAlign='Center' headerText="Unit">
               <ng-template #template let-data>
                 <ng-container *ngIf="data.description === 'null'; else elseTemplate">
                   N/A
@@ -48,7 +48,7 @@
               </ng-template>
 
             </e-column>
-            <e-column field='price' textAlign='Center' headerText="Price">
+            <e-column field='price' textAlign='Center' headerText="Ref. Price">
               <ng-template #template let-data>
                 {{data.price | number:'1.0-0'}} đ
               </ng-template>
@@ -108,7 +108,7 @@
             </div>
               <div class="col-md-12">
                   <div class="form-group">
-                    <label for="Price">Price</label>
+                    <label for="Price">Ref. Price</label>
                     <input [(ngModel)]="ProductCreate.originalPrice"  name="Price" type="text"  class="form-control Name" />
                   </div>
               </div>
@@ -141,7 +141,7 @@
               </div>
               <div class="col-md-12">
                   <div class="form-group">
-                      <label for="Description">Description:</label>
+                      <label for="Description">Unit:</label>
                       <textarea [(ngModel)]="ProductCreate.description"  name="description" class="form-control" rows="5" id="comment"></textarea>
                   </div>
               </div>
@@ -187,7 +187,7 @@
         </div>
           <div class="col-md-12">
               <div class="form-group">
-                <label for="Price">Price</label>
+                <label for="Price">Ref. Price</label>
                 <input [(ngModel)]="ProductCreate.originalPrice"  name="Price" type="text"  class="form-control Name" />
               </div>
           </div>
@@ -220,7 +220,7 @@
           </div>
           <div class="col-md-12">
               <div class="form-group">
-                  <label for="Description">Description:</label>
+                  <label for="Description">Unit:</label>
                   <textarea [(ngModel)]="ProductCreate.description"  name="description" class="form-control" rows="5" id="comment"></textarea>
               </div>
           </div>
