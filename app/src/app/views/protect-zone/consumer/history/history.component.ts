@@ -18,6 +18,7 @@ export class HistoryComponent implements OnInit {
   data: any;
   noImage = '/assets/img/photo1.png';
   base = environment.apiUrl.replace('/api','');
+  active = true;
   constructor(
     private service: OrderService,
     private utilitiesService: UtilitiesService,
@@ -25,15 +26,31 @@ export class HistoryComponent implements OnInit {
 
   ngOnInit() {
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
-    this.loadData();
-
+    this.loadDataByBuyingAndPenidngStatus();
+  }
+  onClickComplete() {
+    this.active = false;
+    this.loadDataByCompleteStatus();
+  }
+  onClickBuyingAndPenidngStatus() {
+    this.active = true;
+    this.loadDataByBuyingAndPenidngStatus();
   }
   loadData() {
     this.service.getProductsForCartStatus().subscribe(data => {
       this.data = data || [];
     });
   }
-
+  loadDataByCompleteStatus() {
+    this.service.getProductsForCartStatusByCompleteStatus().subscribe(data => {
+      this.data = data || [];
+    });
+  }
+  loadDataByBuyingAndPenidngStatus() {
+    this.service.getProductsForCartStatusByBuyingAndPenidngStatus().subscribe(data => {
+      this.data = data || [];
+    });
+  }
   NO(index) {
     return (this.grid.pageSettings.currentPage - 1) * this.pageSettings.pageSize + Number(index) + 1;
   }

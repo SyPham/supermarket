@@ -21,6 +21,9 @@ namespace Supermarket.Services
 {
     public interface IOrderService : IServiceBase<Order, OrderDto>
     {
+        Task<object> GetProductsForCartStatusByCompleteStatus(string langId);
+        Task<object> GetProductsForCartStatusByBuyingAndPenidngStatus(string langId);
+
         Task<object> GetProductsInOrder(string langId);
         Task<object> GetProductsInOrderByAdmin(string langId);
         Task<bool> Transfer(List<AddToBuyListDto> model);
@@ -330,6 +333,7 @@ namespace Supermarket.Services
                 itemDetail.ProductId = x.ProductId;
                 itemDetail.Quantity = x.Quantity;
                 itemDetail.Price = (decimal?)x.Product.OriginalPrice;
+
                 orderItem.OrderDetails.Add(itemDetail);
             }
             try
@@ -347,6 +351,7 @@ namespace Supermarket.Services
                     ByingQty = 0,
                     CompleteQty = 0,
                     ConsumerId = orderItem.ConsumerId,
+                    DispatchDate = DateTime.MinValue,
                     OrderDate = orderItem.CreatedTime
                 }).ToList();
                 _repoOrderHistory.AddRange(orderHistory);
@@ -751,6 +756,109 @@ namespace Supermarket.Services
             return (buf);
         }
 
-        
+        public async Task<object> GetProductsForCartStatusByCompleteStatus(string langId)
+        {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            var data = await _repo.FindAll().ToListAsync();
+            var model = await _repoOrderHistory.FindAll(x => accountItem.ConsumerId == x.ConsumerId)
+              .Select(x => new
+              {
+                  x.Consumer.FullName,
+                  StoreName = x.Product.Store.Name,
+                  KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
+                  ProductName = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                  x.Product.Avatar,
+                  x.Product.Description,
+                  x.PendingQty,
+                  x.ByingQty,
+                  x.CompleteQty,
+                  x.DispatchDate,
+                  x.OrderDate,
+                  OriginalPrice = x.Product.OriginalPrice,
+                  Price = x.Product.OriginalPrice,
+                  Quantity = x.PendingQty
+              }).ToListAsync();
+           
+            var complete = model.Where(x => x.CompleteQty > 0)
+          .Select(x => new
+          {
+              x.FullName,
+              x.StoreName,
+              x.KindName,
+              x.ProductName,
+              x.Avatar,
+              x.Description,
+              x.PendingQty,
+              x.DispatchDate,
+              x.OrderDate,
+              OriginalPrice = x.OriginalPrice.ToString("n0"),
+              Quantity = x.CompleteQty,
+              Amount = (x.CompleteQty * x.OriginalPrice).ToString("n0"),
+              Status = "Complete"
+          }).ToList();
+            return complete;
+        }
+
+        public async Task<object> GetProductsForCartStatusByBuyingAndPenidngStatus(string langId)
+        {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            var data = await _repo.FindAll().ToListAsync();
+            var model = await _repoOrderHistory.FindAll(x => accountItem.ConsumerId == x.ConsumerId)
+              .Select(x => new
+              {
+                  x.Consumer.FullName,
+                  StoreName = x.Product.Store.Name,
+                  KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
+                  ProductName = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                  x.Product.Avatar,
+                  x.Product.Description,
+                  x.PendingQty,
+                  x.ByingQty,
+                  x.CompleteQty,
+                  x.DispatchDate,
+                  x.OrderDate,
+                  OriginalPrice = x.Product.OriginalPrice,
+                  Price = x.Product.OriginalPrice,
+                  Quantity = x.PendingQty
+              }).ToListAsync();
+            var pending = model.Where(x => x.PendingQty > 0).Select(x => new
+            {
+                x.FullName,
+                x.StoreName,
+                x.KindName,
+                x.ProductName,
+                x.Avatar,
+                x.Description,
+                x.PendingQty,
+                x.DispatchDate,
+                x.OrderDate,
+                OriginalPrice = x.OriginalPrice.ToString("n0"),
+                Quantity = x.PendingQty,
+                Amount = (x.PendingQty * x.OriginalPrice).ToString("n0"),
+                Status = "Pending"
+            }).ToList();
+            var buying = model.Where(x => x.ByingQty > 0).Select(x => new
+            {
+                x.FullName,
+                x.StoreName,
+                x.KindName,
+                x.ProductName,
+                x.Avatar,
+                x.Description,
+                x.PendingQty,
+                x.DispatchDate,
+                x.OrderDate,
+                OriginalPrice = x.OriginalPrice.ToString("n0"),
+                Quantity = x.ByingQty,
+                Amount = (x.ByingQty * x.OriginalPrice).ToString("n0"),
+                Status = "Buying"
+            }).ToList();
+           
+            return pending.Concat(buying);
+        }
     }
 }

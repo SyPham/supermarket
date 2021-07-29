@@ -4,6 +4,14 @@
       <div class="card-header">
         <div class="card-title"> {{fullName}}'s Cart</div>
       </div>
+      <ul class="nav nav-pills justify-content-center py-2">
+        <li class="nav-item">
+          <a class="nav-link" [class.active] = "active"  (click)='onClickBuyingAndPenidngStatus()'>Pending and buying</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active] = "!active"  (click)='onClickComplete()'>Complete</a>
+        </li>
+      </ul>
       <div class="card-body table-responsive p-0">
         <ejs-grid #grid
           id='grid'
@@ -48,7 +56,7 @@
                <span>{{data.productName}}</span>
               </ng-template>
             </e-column>
-            <e-column field="description" textAlign='Left' headerText="Description">
+            <e-column field="description" textAlign='Left' headerText="Unit">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
@@ -86,7 +94,7 @@
 
            <e-column field="dispatchedDate" textAlign='Center' headerText="{{ 'Dispatched Date'}}">
               <ng-template #template let-data>
-               <span>{{data.dispatchDate | date: 'MM/dd'}}</span>
+               <span>{{data.dispatchDate === "0001-01-01T00:00:00" ? 'N/A' : data.dispatchDate  | date: 'MM/dd'}}</span>
               </ng-template>
             </e-column>
 

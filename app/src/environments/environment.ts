@@ -15,11 +15,11 @@ export const environment = {
   scalingHubLocal: 'http://localhost:5001/scalingHub',
 
   // apiUrlEC: 'http://10.4.5.132:1009/api/',
-  // apiUrl: 'http://10.4.5.174:108/api/',
-  // apiUrl2: 'http://10.4.5.174:108/api/',
+  // apiUrl: 'http://localhost:108/api/',
+  // apiUrl2: 'http://localhost:108/api/',
   // hub: 'http://10.4.5.132:1009/ec-hub',
   // scalingHub: 'http://10.4.5.132:1009/ec-hub',
-  // scalingHubLocal: 'http://10.4.5.174:5001/scalingHub',
+  // scalingHubLocal: 'http://localhost:5001/scalingHub',
   _mqtt: {
     server: 'mqtt.myweb.com',
     protocol: "wss",
