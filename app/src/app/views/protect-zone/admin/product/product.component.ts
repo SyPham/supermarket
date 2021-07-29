@@ -34,7 +34,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
     modifiedTime:  null,
     storeId: 0,
     file: null,
-    kindId: 0
+    kindId: 0,
+    status: false
   };
   ProductUpdate: Product;
   data: Product[] = [];
@@ -109,7 +110,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
       modifiedTime:  null,
       storeId: 0,
       kindId: 0,
-      file: null
+      file: null,
+      status: null
     }
   }
   getAllStore() {
@@ -162,6 +164,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.getAllKindByStore(data.store_ID);
     this.ProductCreate.kindId = data.kind_ID
     this.ProductCreate.originalPrice = data.price
+    this.ProductCreate.status = data.status
     this.img = this.base + data.avatar
   }
   openModalEdit(modal){

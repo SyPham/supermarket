@@ -11,7 +11,8 @@ export interface Product {
   modifiedTime: string | null;
   storeId: number;
   kindId: number,
-  file: null
+  file: null,
+  status: boolean
 }
 export interface FilterRequest {
   kindId: number

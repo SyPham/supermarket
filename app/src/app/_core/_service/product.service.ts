@@ -42,6 +42,7 @@ export class ProductService extends CURDService<Product> {
     formData.append('CreatedBy', model.createdBy.toString());
     formData.append('StoreId', model.storeId.toString());
     formData.append('KindId', model.kindId.toString());
+    formData.append('Status', model.status.toString());
     return this.http.post(this.base + 'Product/Updated', formData);
   }
 }
