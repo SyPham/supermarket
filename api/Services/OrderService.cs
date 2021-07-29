@@ -776,6 +776,7 @@ namespace Supermarket.Services
                   x.CompleteQty,
                   x.DispatchDate,
                   x.OrderDate,
+                  x.CancelStatus,
                   OriginalPrice = x.Product.OriginalPrice,
                   Price = x.Product.OriginalPrice,
                   Quantity = x.PendingQty
@@ -793,6 +794,7 @@ namespace Supermarket.Services
               x.PendingQty,
               x.DispatchDate,
               x.OrderDate,
+              CancelStatus = x.CancelStatus == true ? "Canceled by admin" : "",
               OriginalPrice = x.OriginalPrice.ToString("n0"),
               Quantity = x.CompleteQty,
               Amount = (x.CompleteQty * x.OriginalPrice).ToString("n0"),
