@@ -20,6 +20,12 @@ export class OrderService extends CURDService<Order> {
       catchError(this.handleError)
     );
   }
+  reportBuyPersion(){
+    return this.http.get(`${this.base}Order/ReportBuyPersion/${localStorage.getItem("lang")}`,{responseType: 'blob'});
+  }
+  download(url: string){
+    return this.http.get(url,{responseType: 'blob'})
+  }
   getProductsInOrder(): Observable<any> {
     return this.http.get<any>(`${this.base}Order/GetProductsInOrder?langId=${localStorage.getItem("lang")}`);
   }

@@ -26,12 +26,11 @@ namespace Supermarket.DTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string StoreName { get; set; }
-        public string KindName { get; set; }
         public string Description { get; set; }
         public string Avatar { get; set; }
         public string OriginalPrice { get; set; }
-
+        public string StoreName { get; set; }
+        public string KindName { get; set; }
         public int? Quantity { get; set; }
         public int StoreId { get; set; }
         public int KindId { get; set; }
@@ -42,6 +41,14 @@ namespace Supermarket.DTO
         public int ProductId { get; set; }
         public int AccountId { get; set; }
         public string Name { get; set; }
+        public string FullName { get; set; }
+        public int ConsumerId { get; set; }
+        public string StoreName { get; set; }
+        public int OderDetailId { get; set; }
+        public string KindName { get; set; }
+        public string SubtotalPrice { get; set; }
+        public string totalPrice { get; set; }
+        public string Date { get; set; }
         public string Description { get; set; }
         public string Avatar { get; set; }
         public string OriginalPrice { get; set; }
@@ -51,6 +58,24 @@ namespace Supermarket.DTO
         public int KindId { get; set; }
         public string Amount { get; set; }
         public decimal AmountValue { get; set; }
+
+    }
+    public class ProductBuyingDto
+    {
+        public string Name { get; set; }
+        public string FullName { get; set; }
+        public int ConsumerId { get; set; }
+        public string StoreName { get; set; }
+        public int OderDetailId { get; set; }
+        public string KindName { get; set; }
+        public string SubtotalPrice { get; set; }
+        public string totalPrice { get; set; }
+        public string Date { get; set; }
+        public string Description { get; set; }
+        public string OriginalPrice { get; set; }
+
+        public int Quantity { get; set; }
+      
 
     }
     public class ProductInOrderDto

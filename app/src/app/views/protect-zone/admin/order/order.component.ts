@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FilterRequest } from './../../../../_core/_model/product';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
@@ -17,11 +18,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 import imageToBase64 from 'image-to-base64/browser';
 import { ExportAsConfig, ExportAsService } from 'ngx-export-as';
 import { EmitType } from '@syncfusion/ej2-base';
-
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
-  styleUrls: ['./order.component.scss']
+  styleUrls: ['./order.component.scss'],
+  providers:[DatePipe]
 })
 export class OrderComponent extends BaseComponent implements OnInit {
   editSettings = { showDeleteConfirmDialog: false, allowEditing: false, allowAdding: false, allowDeleting: false, mode: 'Normal' };
@@ -84,6 +86,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     public modalService: NgbModal,
     private alertify: AlertifyService,
     private router: Router,
+    private datePipe: DatePipe,
     private utilitiesService: UtilitiesService,
     private route: ActivatedRoute,
   ) { super(); }
@@ -160,9 +163,17 @@ export class OrderComponent extends BaseComponent implements OnInit {
 
   }
   exportBuyPersion() {
-    this.exportAsService.save(this.configPersion, 'BuyingPerisonItem').subscribe(() => {
-      // save started
-    });
+    // this.exportAsService.save(this.configPersion, 'BuyingPerisonItem').subscribe(() => {
+    //   // save started
+    // });
+    this.spinner.show();
+    this.service.reportBuyPersion().subscribe(data =>{
+      (saveAs(data,'exportBuyPersion.xlsx'))
+      this.alertify.success(MessageConstants.CREATED_OK_MSG);
+      this.spinner.hide();
+      // setTimeout(() => {
+      // }, 2000);
+    })
   }
   onClickDefault() {
     this.startDate = new Date();
@@ -467,3 +478,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
 
 }
+// function saveAs(data: Blob, arg1: string) {
+//   throw new Error('Function not implemented.');
+// }
+

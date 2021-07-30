@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NetUtility;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using Supermarket.Constants;
 using Supermarket.Data;
 using Supermarket.DTO;
@@ -28,6 +30,7 @@ namespace Supermarket.Services
         Task<object> GetProductsInOrderByAdmin(string langId);
         Task<bool> Transfer(List<AddToBuyListDto> model);
         Task<bool> CancelBuyList(List<AddToBuyListDto> model);
+        Task<byte[]> ReportBuyPersion(string langId);
         Task<bool> CancelPendingList(List<AddToBuyListDto> model);
         Task<bool> TransferComplete(List<AddToCompleteListDto> model);
         Task<object> GetProductsInOrderPendingByAdmin(string langId);
@@ -73,6 +76,196 @@ namespace Supermarket.Services
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _configMapper = configMapper;
+        }
+        public async Task<byte[]> ReportBuyPersion(string langId)
+        {
+            var res = await GetBuyingBuyPersonExcel(langId);
+            return ReportBuyPersion(res);
+            //throw new NotImplementedException();
+        }
+        private Byte[] ReportBuyPersion(List<ProductBuyingDto> list)
+        {
+            try
+            {
+                ExcelPackage.LicenseContext = LicenseContext.Commercial;
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                var memoryStream = new MemoryStream();
+                using (ExcelPackage p = new ExcelPackage(memoryStream))
+                {
+                    // đặt tên người tạo file
+                    p.Workbook.Properties.Author = "Leo";
+
+                    // đặt tiêu đề cho file
+                    p.Workbook.Properties.Title = "ReportBuyPersion";
+                    //Tạo một sheet để làm việc trên đó
+                    var test = list.GroupBy(x => new
+                    {
+                        x.ConsumerId,
+                        x.FullName,
+                        x.StoreName,
+                        x.totalPrice
+                    }).GroupBy(y => y.First().StoreName).ToList();
+                    foreach (var items in test)
+                    {
+                        p.Workbook.Worksheets.Add(items.Key);
+                        // lấy sheet vừa add ra để thao tác
+                        ExcelWorksheet ws = p.Workbook.Worksheets[items.Key];
+
+                        // đặt tên cho sheet
+                        ws.Name = items.Key;
+                        // fontsize mặc định cho cả sheet
+                        ws.Cells.Style.Font.Size = 12;
+                        // font family mặc định cho cả sheet
+                        ws.Cells.Style.Font.Name = "Calibri";
+                        var headers = new string[]{
+                        "Name", "Product Name", "Qty", "Price",
+                        "Subtotal", "Total"
+                    };
+
+                        int headerRowIndex = 1;
+                        int headerColIndex = 1;
+                        foreach (var header in headers)
+                        {
+                            int col = headerRowIndex++;
+                            ws.Cells[headerColIndex, col].Value = header;
+                            ws.Cells[headerColIndex, col].Style.Font.Bold = true;
+                            ws.Cells[headerColIndex, col].Style.Font.Size = 12;
+                        }
+
+                        // end Style
+                        int colIndex = 1;
+                        int rowIndex = 1;
+                        // với mỗi item trong danh sách sẽ ghi trên 1 dòng
+                        
+
+                        int mergeFromColIndex = 1;
+                        int mergeToColIndex = 1;
+                        int mergeFromRowIndex = 2;
+                        int mergeToRowIndex = 1;
+
+
+                        foreach (var item in items)
+                        {
+                            foreach (var itemss in item)
+                            {
+                                // bắt đầu ghi từ cột 1. Excel bắt đầu từ 1 không phải từ 0 #c0514d
+                                colIndex = 1;
+
+                                // rowIndex tương ứng từng dòng dữ liệu
+                                rowIndex++;
+
+
+                                //gán giá trị cho từng cell                      
+                                ws.Cells[rowIndex, colIndex++].Value = itemss.FullName;
+                                ws.Cells[rowIndex, colIndex++].Value = itemss.Name;
+                                ws.Cells[rowIndex, colIndex++].Value = itemss.Quantity;
+                                ws.Cells[rowIndex, colIndex++].Value = itemss.OriginalPrice;
+                                ws.Cells[rowIndex, colIndex++].Value = itemss.SubtotalPrice;
+                                ws.Cells[rowIndex, colIndex++].Value = itemss.totalPrice;
+
+                            }
+                            mergeToRowIndex += item.Count();
+                            ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Merge = true;
+                            ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Merge = true;
+                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                            ws.Cells[mergeFromRowIndex, 6, mergeToRowIndex, 6].Merge = true;
+                            ws.Cells[mergeFromRowIndex, 6, mergeToRowIndex, 6].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, 6, mergeToRowIndex, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+
+
+                            mergeFromRowIndex = mergeToRowIndex + 1;
+                            //foreach (var itemss in item)
+                            //{
+                            //}
+                        }
+                        //make the borders of cell F6 thick
+                        ws.Cells[ws.Dimension.Address].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[ws.Dimension.Address].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[ws.Dimension.Address].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[ws.Dimension.Address].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                        foreach (var item in headers.Select((x, i) => new { Value = x, Index = i }))
+                        {
+                            var col = item.Index + 1;
+                            ws.Column(col).Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Column(col).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            if (col == 2 || col == 7)
+                            {
+                                ws.Column(col).AutoFit(30);
+                            }
+                            else
+                            {
+                                ws.Column(col).AutoFit();
+                            }
+                        }
+                    }
+                    
+
+                    //Lưu file lại
+                    Byte[] bin = p.GetAsByteArray();
+                    return bin;
+                }
+            }
+            catch (Exception ex)
+            {
+                var mes = ex.Message;
+                Console.Write(mes);
+                return new Byte[] { };
+            }
+        }
+        public async Task<List<ProductBuyingDto>> GetBuyingBuyPersonExcel(string langId)
+        {
+            var data = await _repoOrderHistory.FindAll().ToListAsync();
+            if (data == null) return new List<ProductBuyingDto>();
+            //{
+            //    TotalPrice = 0,
+            //    Data = new List<ProductCartDto> { }
+            //};v
+            var res = data.Where(x => x.ByingQty > 0).Select(x => new
+            {
+                Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                OriginalPrice = x.Product.OriginalPrice,
+                Quantity = x.ByingQty,
+                //Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
+                Description = x.Product.Description,
+                Amount = (x.ByingQty * x.Product.OriginalPrice),
+                StoreId = x.Product.StoreId,
+                KindId = x.Product.KindId,
+                ProductId = x.ProductId,
+                OderDetailId = x.OrderDetailId,
+                StoreName = x.Product.Store.Name,
+                FullName = x.Consumer.FullName,
+                Date = x.DispatchDate,
+                ConsumerId = x.Consumer.Id,
+                totalPrice = _repoOrderHistory.FindAll().Where(y => y.ConsumerId == x.Consumer.Id && y.ByingQty > 0).ToList().Select(x => (x.ByingQty * x.Product.OriginalPrice)).Sum(),
+                KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
+            }).ToList();
+            var item = new List<ProductBuyingDto>();
+
+            var result = res.GroupBy(x => new { x.Name, x.ConsumerId })
+                .Select(x => new ProductBuyingDto
+                {
+                    Name = x.First().Name,
+                    OriginalPrice = x.First().OriginalPrice.ToString("n0"),
+                    //Avatar = x.First().Avatar,
+                    Description = x.First().Description,
+                    FullName = x.First().FullName,
+                    ConsumerId = x.First().ConsumerId,
+                    StoreName = x.First().StoreName,
+                    OderDetailId = x.First().OderDetailId,
+                    KindName = x.First().KindName,
+                    SubtotalPrice = x.Sum(a => a.Amount).ToString("n0"),
+                    Quantity = x.Sum(a => a.Quantity),
+                    Date = Convert.ToDateTime(x.First().Date).ToString("dd/MM/yy"),
+                    totalPrice = x.First().totalPrice.ToString("n0")
+
+                }).ToList();
+            return result;
         }
         public async Task<bool> CancelBuyList(List<AddToBuyListDto> model)
         {
@@ -237,6 +430,7 @@ namespace Supermarket.Services
             };
             throw new NotImplementedException();
         }
+
         public async Task<bool> TransferComplete(List<AddToCompleteListDto> model)
         {
             try
@@ -491,7 +685,7 @@ namespace Supermarket.Services
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.PendingQty,
-                Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
+                Avatar = ConvertImageURLToBase64(host + x.Product.Avatar) ?? "",
                 Description = x.Product.Description,
                 Amount = (x.PendingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
@@ -864,5 +1058,7 @@ namespace Supermarket.Services
            
             return pending.Concat(buying);
         }
+
+        
     }
 }

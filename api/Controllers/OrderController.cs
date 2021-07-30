@@ -16,6 +16,13 @@ namespace Supermarket.Controllers
         {
             _service = service;
         }
+
+        [HttpGet("{langId}")]
+        public async Task<IActionResult> ReportBuyPersion(string langId)
+        {
+            var bin = await _service.ReportBuyPersion(langId);
+            return File(bin, "application/octet-stream", "ReportBuyPersion.xlsx");
+        }
         [HttpPut]
         public async Task<IActionResult> TransferBuyList(List<AddToBuyListDto> model)
         {
