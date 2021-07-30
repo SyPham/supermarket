@@ -28,5 +28,9 @@ export class Account2Service extends CURDService<Account> {
   getAccountType(): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}AccountType/GetAll`);
   }
-
+  changePassword(request): Observable<OperationResult> {
+    return this.http.put<OperationResult>(`${this.base}Account/changePassword`, request).pipe(
+      catchError(this.handleError)
+    );
+  }
 }

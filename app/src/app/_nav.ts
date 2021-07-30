@@ -320,6 +320,11 @@ export const navItems: INavData[] = [
     icon: 'icon-bell',
     children: [
       {
+        name: 'Change Password',
+        url: '/consumer/change-password',
+        icon: 'icon-bell'
+      },
+      {
         name: 'Product List',
         url: '/consumer/product-list',
         icon: 'icon-bell'
