@@ -86,10 +86,10 @@ export class ProductListComponent extends BaseComponent implements OnInit {
         kindId: this.kindId
       };
       this.getAllKindByStore(this.storeId)
-      // this.loadData();
+      this.loadData();
   }
   onChangeKind(args) {
-      this.kindId = args.itemData.id;
+    this.kindId = args.itemData?.id || 0;
       this.filterRequest = {
         storeId: this.storeId,
         langId: localStorage.getItem("lang"),

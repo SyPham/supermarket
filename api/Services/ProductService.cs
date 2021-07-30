@@ -121,6 +121,8 @@ namespace Supermarket.Services
                     .Select(x => new ProductListDto
                     {
                         Id = x.Id,
+                        StoreName = x.Store.Name,
+                        KindName = request.LangId == SystemLang.VI ? x.Kind.VietnameseName : request.LangId == SystemLang.EN ? x.Kind.EnglishName : x.Kind.ChineseName,
                         Name = request.LangId == SystemLang.VI ? x.VietnameseName : request.LangId == SystemLang.EN ? x.EnglishName : x.ChineseName,
                         Quantity = x.Carts.Any(a => accountId == a.AccountId && a.ProductId == x.Id) ? x.Carts.FirstOrDefault(a => accountId == a.AccountId && a.ProductId == x.Id).Quantity : 0,
                         Avatar = x.Avatar,
@@ -131,6 +133,8 @@ namespace Supermarket.Services
                 return await _repo.FindAll(x=> x.Status).Where(x => x.StoreId == request.StoreId).Select(x => new ProductListDto
                 {
                     Id = x.Id,
+                     StoreName = x.Store.Name,
+                        KindName = request.LangId == SystemLang.VI ? x.Kind.VietnameseName : request.LangId == SystemLang.EN ? x.Kind.EnglishName : x.Kind.ChineseName,
                     Name = request.LangId == SystemLang.VI ? x.VietnameseName : request.LangId == SystemLang.EN ? x.EnglishName : x.ChineseName,
                     Quantity = x.Carts.Any(a => accountId == a.AccountId && a.ProductId == x.Id) ? x.Carts.FirstOrDefault(a => accountId == a.AccountId && a.ProductId == x.Id).Quantity : 0,
                     Avatar = x.Avatar,

@@ -57,9 +57,16 @@
                 #
               </ng-template>
             </e-column>
+            
+            <e-column field="storeName" width="120" textAlign='Center' headerText="{{ 'Store'}}">
+            </e-column>
+
+              <e-column field="kindName" width="120" textAlign='Center' headerText="{{ 'Kind'}}">
+            </e-column>
+
             <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
              <ng-template #template let-data>
-               <img class='avatar' (mouseenter)='mouseenter($event,data)' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
+               <img class='avatar' (click)='mouseenter($event,data)' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
               </ng-template>
                <ng-template #editTemplate let-data>
                <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
@@ -70,7 +77,7 @@
                <span>{{data.name}}</span>
               </ng-template>
              </e-column>
-            <e-column field="description" textAlign='Left' headerText="Unit">
+            <e-column field="description" textAlign='Center' headerText="Unit">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
@@ -97,7 +104,7 @@
       <h4 class="modal-title">
           {{productName}}
       </h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <button type="button" class="btn bg-danger text-white" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
       </button>
   </div>
