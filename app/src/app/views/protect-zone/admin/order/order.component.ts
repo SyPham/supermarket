@@ -149,13 +149,17 @@ export class OrderComponent extends BaseComponent implements OnInit {
   getbuyingPersion(){
     this.service.GetBuyingBuyPerson().subscribe(res => {
       this.databuyingPersion = res.data || []
-      console.log(this.databuyingPersion);
     })
   }
   exportBuyItem() {
-    this.exportAsService.save(this.configItem, 'BuyingItem').subscribe(() => {
-      // save started
-    });
+    this.spinner.show();
+    this.service.reportBuyItem().subscribe(data =>{
+      (saveAs(data,'exportBuyItem.xlsx'))
+      this.alertify.success(MessageConstants.CREATED_OK_MSG);
+      this.spinner.hide();
+      // setTimeout(() => {
+      // }, 2000);
+    })
     // get the data as base64 or json object for json type - this will be helpful in ionic or SSR
     // this.exportAsService.get(this.config).subscribe(content => {
     //   console.log(content);
@@ -214,6 +218,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.data = [];
     this.service.getProductsInOrderByingByAdmin().subscribe(res => {
       this.data = res.data || [];
+      console.log(this.data);
       this.totalPrice = res.totalPrice || 0;
     });
   }
@@ -356,7 +361,6 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
   rowSelectedBuying(args){
     this.dataFake = this.gridBuying.getSelectedRecords();
-    console.log(this.dataFake);
     if (args.isHeaderCheckboxClicked) {
       for (const item of args.data) {
         for (const item2 of item.consumers) {

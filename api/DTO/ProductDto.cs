@@ -62,7 +62,7 @@ namespace Supermarket.DTO
     }
     public class ProductBuyingDto
     {
-        public string Name { get; set; }
+       public string Name { get; set; }
         public string FullName { get; set; }
         public int ConsumerId { get; set; }
         public string StoreName { get; set; }
@@ -71,6 +71,7 @@ namespace Supermarket.DTO
         public string SubtotalPrice { get; set; }
         public string totalPrice { get; set; }
         public string Date { get; set; }
+        public string Amount { get; set; }
         public string Description { get; set; }
         public string OriginalPrice { get; set; }
 

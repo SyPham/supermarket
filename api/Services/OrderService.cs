@@ -31,6 +31,8 @@ namespace Supermarket.Services
         Task<bool> Transfer(List<AddToBuyListDto> model);
         Task<bool> CancelBuyList(List<AddToBuyListDto> model);
         Task<byte[]> ReportBuyPersion(string langId);
+        Task<byte[]> ReportBuyItem(string langId);
+
         Task<bool> CancelPendingList(List<AddToBuyListDto> model);
         Task<bool> TransferComplete(List<AddToCompleteListDto> model);
         Task<object> GetProductsInOrderPendingByAdmin(string langId);
@@ -82,6 +84,208 @@ namespace Supermarket.Services
             var res = await GetBuyingBuyPersonExcel(langId);
             return ReportBuyPersion(res);
             //throw new NotImplementedException();
+        }
+        public async Task<byte[]> ReportBuyItem(string langId)
+        {
+            var res = await GetBuyingBuyItemExcel(langId);
+            return ReportBuyItem(res);
+            //throw new NotImplementedException();
+        }
+        public async Task<List<ProductBuyingDto>> GetBuyingBuyItemExcel(string langId)
+        {
+            var data = await _repoOrderHistory.FindAll().ToListAsync();
+            if (data == null) return new List<ProductBuyingDto>();
+            //{
+            //    TotalPrice = 0,
+            //    Data = new List<ProductCartDto> { }
+            //};v
+            var res = data.Where(x => x.ByingQty > 0).Select(x => new
+            {
+                Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                OriginalPrice = x.Product.OriginalPrice,
+                Quantity = x.ByingQty,
+                //Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
+                Description = x.Product.Description,
+                Amount = (x.ByingQty * x.Product.OriginalPrice),
+                StoreId = x.Product.StoreId,
+                KindId = x.Product.KindId,
+                ProductId = x.ProductId,
+                OderDetailId = x.OrderDetailId,
+                StoreName = x.Product.Store.Name,
+                FullName = x.Consumer.FullName,
+                Date = x.DispatchDate,
+                ConsumerId = x.Consumer.Id,
+                totalPrice = _repoOrderHistory.FindAll().Where(y => y.ConsumerId == x.Consumer.Id && y.ByingQty > 0).ToList().Select(x => (x.ByingQty * x.Product.OriginalPrice)).Sum(),
+                KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
+            }).ToList();
+            var item = new List<ProductBuyingDto>();
+
+            var result = res.GroupBy(x => new { x.Name, x.ConsumerId })
+                .Select(x => new ProductBuyingDto
+                {
+                    Name = x.First().Name,
+                    OriginalPrice = x.First().OriginalPrice.ToString("n0"),
+                    //Avatar = x.First().Avatar,
+                    Description = x.First().Description,
+                    FullName = x.First().FullName,
+                    ConsumerId = x.First().ConsumerId,
+                    StoreName = x.First().StoreName,
+                    OderDetailId = x.First().OderDetailId,
+                    KindName = x.First().KindName,
+                    SubtotalPrice = x.Sum(a => a.Amount).ToString("n0"),
+                    Date = Convert.ToDateTime(x.First().Date).ToString("dd/MM/yy"),
+                    Amount = x.First().Amount.ToString("n0"),
+                    Quantity = x.First().Quantity,
+
+                }).ToList();
+            return result;
+        }
+        private Byte[] ReportBuyItem(List<ProductBuyingDto> list)
+        {
+            try
+            {
+                ExcelPackage.LicenseContext = LicenseContext.Commercial;
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                var memoryStream = new MemoryStream();
+                using (ExcelPackage p = new ExcelPackage(memoryStream))
+                {
+                    // đặt tên người tạo file
+                    p.Workbook.Properties.Author = "Leo";
+                    // đặt tiêu đề cho file
+                    p.Workbook.Properties.Title = "ReportBuyPersion";
+                    //Tạo một sheet để làm việc trên đó
+                    var test = list.GroupBy(y => y.StoreName).ToList();
+                    foreach (var items in test)
+                    {
+                        p.Workbook.Worksheets.Add(items.Key);
+                        // lấy sheet vừa add ra để thao tác
+                        ExcelWorksheet ws = p.Workbook.Worksheets[items.Key];
+                        //ws.DefaultColWidth = 25;
+
+                        // đặt tên cho sheet
+                        ws.Name = items.Key;
+                        // fontsize mặc định cho cả sheet
+                        ws.Cells.Style.Font.Size = 12;
+                        // font family mặc định cho cả sheet
+                        ws.Cells.Style.Font.Name = "Calibri";
+                        var headers = new string[]{
+                        "Kind", "Product Name", "Unit", "Ref. Price", "Qty",
+                        "Amount", "Consumers"
+                    };
+
+                        int headerRowIndex = 1;
+                        int headerColIndex = 1;
+                        foreach (var header in headers)
+                        {
+                            int col = headerRowIndex++;
+                            ws.Cells[headerColIndex, col].Value = header;
+                            ws.Cells[headerColIndex, col].Style.Font.Bold = true;
+                            ws.Cells[headerColIndex, col].Style.Font.Size = 12;
+                            if ( col == 3)
+                            {
+                                ws.Column(col).Width = 25;
+                            }
+                            else
+                            {
+                                ws.Column(col).AutoFit();
+                            }
+                        }
+
+                        // end Style
+                        int colIndex = 1;
+                        int rowIndex = 1;
+                        // với mỗi item trong danh sách sẽ ghi trên 1 dòng
+                        foreach (var item in items)
+                        {
+                            // bắt đầu ghi từ cột 1. Excel bắt đầu từ 1 không phải từ 0 #c0514d
+                            colIndex = 1;
+
+                            // rowIndex tương ứng từng dòng dữ liệu
+                            rowIndex++;
+
+
+                            //gán giá trị cho từng cell                      
+                            ws.Cells[rowIndex, colIndex++].Value = item.KindName;
+                            ws.Cells[rowIndex, colIndex++].Value = item.Name;
+                            ws.Cells[rowIndex, colIndex++].Value = item.Description;
+                            ws.Cells[rowIndex, colIndex++].Value = item.OriginalPrice;
+                            ws.Cells[rowIndex, colIndex++].Value = item.Quantity;
+                            ws.Cells[rowIndex, colIndex++].Value = item.Amount;
+                            ws.Cells[rowIndex, colIndex++].Value = item.FullName;
+                        }
+
+                        int mergeFromColIndex = 1;
+                        int mergeToColIndex = 1;
+                        int mergeFromRowIndex = 2;
+                        int mergeToRowIndex = 1;
+
+                        foreach (var item in items.GroupBy(x =>  x.KindName).ToList())
+                        {
+
+
+                            mergeToRowIndex += item.Count();
+                            //foreach (var itemss in item)
+                            //{
+                            //}
+                            ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Merge = true;
+                            ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+
+
+                            // ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Merge = true;
+                            // ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            // ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                            // ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Merge = true;
+                            // ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            // ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                            // ws.Cells[mergeFromRowIndex, 3, mergeToRowIndex, 3].Merge = true;
+                            // ws.Cells[mergeFromRowIndex, 3, mergeToRowIndex, 3].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            // ws.Cells[mergeFromRowIndex, 3, mergeToRowIndex, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            // ws.Cells[mergeFromRowIndex, 4, mergeToRowIndex, 4].Merge = true;
+
+                            // ws.Cells[mergeFromRowIndex, 4, mergeToRowIndex, 4].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            // ws.Cells[mergeFromRowIndex, 4, mergeToRowIndex, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+
+
+                            mergeFromRowIndex = mergeToRowIndex + 1;
+                        }
+                        //make the borders of cell F6 thick
+                        ws.Cells[ws.Dimension.Address].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[ws.Dimension.Address].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[ws.Dimension.Address].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[ws.Dimension.Address].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                        foreach (var item in headers.Select((x, i) => new { Value = x, Index = i }))
+                        {
+                            var col = item.Index + 1;
+                            ws.Column(col).Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Column(col).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            if (col == 2 || col == 7 || col == 3)
+                            {
+                                ws.Column(col).AutoFit(30);
+                            }
+                            else
+                            {
+                                ws.Column(col).AutoFit();
+                            }
+                        }
+                    }
+
+
+                    //Lưu file lại
+                    Byte[] bin = p.GetAsByteArray();
+                    return bin;
+                }
+            }
+            catch (Exception ex)
+            {
+                var mes = ex.Message;
+                Console.Write(mes);
+                return new Byte[] { };
+            }
         }
         private Byte[] ReportBuyPersion(List<ProductBuyingDto> list)
         {
@@ -740,7 +944,7 @@ namespace Supermarket.Services
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.ByingQty,
-                Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
+                Avatar = ConvertImageURLToBase64(host + x.Product.Avatar) ?? "",
                 Description = x.Product.Description,
                 Amount = (x.ByingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
