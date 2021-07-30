@@ -18,6 +18,7 @@ namespace Supermarket.Services
     public interface IAccountService : IServiceBase<Account, AccountDto>
     {
         Task<OperationResult> LockAsync(int id);
+        Task<OperationResult> ChangePasswordAsync(ChangePasswordRequest request);
         Task<AccountDto> GetByUsername(string username);
     }
     public class AccountService : ServiceBase<Account, AccountDto>, IAccountService
@@ -152,6 +153,31 @@ namespace Supermarket.Services
             return result;
         }
 
-       
+        public async Task<OperationResult> ChangePasswordAsync(ChangePasswordRequest request)
+        {
+            var item = await _repo.FindByIdAsync(request.Id);
+            if (item == null)
+            {
+                return new OperationResult { StatusCode = HttpStatusCode.NotFound, Message = "Không tìm thấy tài khoản này! Not found the account", Success = false };
+            }
+            item.Password = request.NewPassword.ToEncrypt();
+            try
+            {
+                _repo.Update(item);
+                await _unitOfWork.SaveChangeAsync();
+                operationResult = new OperationResult
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Message = "Successfully 成功地!",
+                    Success = true,
+                    Data = item
+                };
+            }
+            catch (Exception ex)
+            {
+                operationResult = ex.GetMessageError();
+            }
+            return operationResult;
+        }
     }
 }

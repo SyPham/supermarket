@@ -24,7 +24,7 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetAllAsync());
         }
-        
+
 
         [HttpPost]
         public async Task<ActionResult> AddAsync([FromBody] AccountDto model)
@@ -61,5 +61,10 @@ namespace Supermarket.Controllers
             return Ok(await _service.GetWithPaginationsAsync(paramater));
         }
 
+        [HttpPut]
+        public async Task<ActionResult> ChangePasswordAsync(ChangePasswordRequest request)
+        {
+            return StatusCodeResult(await _service.ChangePasswordAsync(request));
+        }
     }
 }

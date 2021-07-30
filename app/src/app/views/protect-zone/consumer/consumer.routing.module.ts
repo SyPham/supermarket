@@ -1,3 +1,4 @@
+import { ChangePasswordComponent } from './change-password/change-password.component';
 import { BuyListComponent } from './buy-list/buy-list.component';
 import { ProductListComponent } from './product-list/product-list.component';
 import { NgModule } from '@angular/core'
@@ -72,6 +73,15 @@ const routes: Routes = [
           title: 'Cart Status',
           breadcrumb: 'Cart Status',
           functionCode: 'Cart Status'
+        }
+      },
+      {
+        path: 'change-password',
+        component: ChangePasswordComponent,
+        data: {
+          title: 'Change password',
+          breadcrumb: 'Change password',
+          functionCode: 'Change password'
         }
       },
     ]

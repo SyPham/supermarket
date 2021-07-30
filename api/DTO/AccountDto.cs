@@ -21,4 +21,11 @@ namespace Supermarket.DTO
         public DateTime CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
     }
+     public class ChangePasswordRequest
+    {
+        public int Id { get; set; }
+        public string NewPassword { get; set; }
+        public string ConfirmPassword { get; set; }
+      
+    }
 }
