@@ -27,7 +27,7 @@
                 #
               </ng-template>
             </e-column>
-            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
+            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Photo'}}">
              <ng-template #template let-data>
                <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
               </ng-template>
