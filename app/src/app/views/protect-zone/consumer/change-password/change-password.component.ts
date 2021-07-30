@@ -19,6 +19,14 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit() {
   }
   submit() {
+    if (!this.newPassword || !this.confirmPassword) {
+      this.alertify.warning("The new password and confirm password are empty! <br>Please try again!", true);
+      return;
+    }
+    if (this.newPassword !== this.confirmPassword) {
+      this.alertify.warning("The new password and confirm password are not the same! <br> Please try again!", true);
+      return;
+    }
     const request = {
       id: +JSON.parse(localStorage.getItem("user")).id,
       newPassword: this.newPassword,
