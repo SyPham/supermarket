@@ -199,6 +199,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
     return this.noImage;
   }
   mouseenter(args,data) {
+    this.grid.selectRows([+data.index]);
     this.avatar = data.avatar;
     this.productName = data.name;
     this.modalReference = this.modalService.open(this.previewModal, { size: 'lg'});

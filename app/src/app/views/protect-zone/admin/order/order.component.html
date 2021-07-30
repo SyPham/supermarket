@@ -99,6 +99,9 @@
                 #
               </ng-template>
             </e-column>
+            <e-column field="storeName" width="80" textAlign='Center' headerText="Store"> </e-column>
+            <e-column field="kindName" width="80" textAlign='Center' headerText="Kind"> </e-column>
+
             <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
              <ng-template #template let-data>
                <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
@@ -174,6 +177,8 @@
                   #
                 </ng-template>
               </e-column>
+              <e-column field="storeName" width="80" textAlign='Center' headerText="Store"> </e-column>
+              <e-column field="kindName" width="80" textAlign='Center' headerText="Kind"> </e-column>
               <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
               <ng-template #template let-data>
                 <img class='avatar' [src]="getSantizeUrl(data.avatar)" [alt]="getSantizeUrl(data.avatar)"  />
@@ -390,6 +395,8 @@
             #
           </ng-template>
         </e-column>
+        <e-column field="storeName" width="80" textAlign='Center' headerText="Store"> </e-column>
+        <e-column field="kindName" width="80" textAlign='Center' headerText="Kind"> </e-column>
         <!-- <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Avatar'}}">
         <ng-template #template let-data>
           <img class='avatar' [src]="getSantizeUrl(data.avatar)"  />
