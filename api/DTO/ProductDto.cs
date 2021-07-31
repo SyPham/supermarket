@@ -76,7 +76,7 @@ namespace Supermarket.DTO
         public string OriginalPrice { get; set; }
 
         public int Quantity { get; set; }
-      
+      public List<ConsumerOrderDto> Consumers { get; set; }
 
     }
     public class ProductInOrderDto

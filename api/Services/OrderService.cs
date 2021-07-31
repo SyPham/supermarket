@@ -104,7 +104,6 @@ namespace Supermarket.Services
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.ByingQty,
-                //Avatar = ConvertImageURLToBase64(host + x.Product.Avatar),
                 Description = x.Product.Description,
                 Amount = (x.ByingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
@@ -113,29 +112,27 @@ namespace Supermarket.Services
                 OderDetailId = x.OrderDetailId,
                 StoreName = x.Product.Store.Name,
                 FullName = x.Consumer.FullName,
-                Date = x.DispatchDate,
                 ConsumerId = x.Consumer.Id,
-                totalPrice = _repoOrderHistory.FindAll().Where(y => y.ConsumerId == x.Consumer.Id && y.ByingQty > 0).ToList().Select(x => (x.ByingQty * x.Product.OriginalPrice)).Sum(),
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
             }).ToList();
             var item = new List<ProductBuyingDto>();
 
-            var result = res.GroupBy(x => new { x.Name, x.ConsumerId })
+            var result = res.GroupBy(x => new { x.Name})
                 .Select(x => new ProductBuyingDto
                 {
                     Name = x.First().Name,
                     OriginalPrice = x.First().OriginalPrice.ToString("n0"),
-                    //Avatar = x.First().Avatar,
                     Description = x.First().Description,
-                    FullName = x.First().FullName,
-                    ConsumerId = x.First().ConsumerId,
                     StoreName = x.First().StoreName,
                     OderDetailId = x.First().OderDetailId,
                     KindName = x.First().KindName,
-                    SubtotalPrice = x.Sum(a => a.Amount).ToString("n0"),
-                    Date = Convert.ToDateTime(x.First().Date).ToString("dd/MM/yy"),
-                    Amount = x.First().Amount.ToString("n0"),
-                    Quantity = x.First().Quantity,
+                    Amount = x.Sum(a => a.Amount).ToString("n0"),
+                    Quantity = x.Sum(a => a.Quantity),
+                    Consumers = x.GroupBy(s => new { s.FullName, s.ConsumerId })
+                    .Select(a => new ConsumerOrderDto
+                    {
+                        FullName = a.First().FullName,
+                    }).ToList(),
 
                 }).ToList();
             return result;
@@ -197,13 +194,15 @@ namespace Supermarket.Services
                         // với mỗi item trong danh sách sẽ ghi trên 1 dòng
                         foreach (var item in items)
                         {
-                            // bắt đầu ghi từ cột 1. Excel bắt đầu từ 1 không phải từ 0 #c0514d
                             colIndex = 1;
 
                             // rowIndex tương ứng từng dòng dữ liệu
                             rowIndex++;
-
-
+                            string value = "";
+                            foreach (var itemss in item.Consumers)
+                            {
+                                value += itemss.FullName + ",";
+                            }
                             //gán giá trị cho từng cell                      
                             ws.Cells[rowIndex, colIndex++].Value = item.KindName;
                             ws.Cells[rowIndex, colIndex++].Value = item.Name;
@@ -211,48 +210,31 @@ namespace Supermarket.Services
                             ws.Cells[rowIndex, colIndex++].Value = item.OriginalPrice;
                             ws.Cells[rowIndex, colIndex++].Value = item.Quantity;
                             ws.Cells[rowIndex, colIndex++].Value = item.Amount;
-                            ws.Cells[rowIndex, colIndex++].Value = item.FullName;
+                            ws.Cells[rowIndex, colIndex++].Value = value.Substring(0, value.LastIndexOf(","));
+                            value = ""; 
+
                         }
 
                         int mergeFromColIndex = 1;
                         int mergeToColIndex = 1;
                         int mergeFromRowIndex = 2;
                         int mergeToRowIndex = 1;
-
                         foreach (var item in items.GroupBy(x =>  x.KindName).ToList())
                         {
-
-
                             mergeToRowIndex += item.Count();
-                            //foreach (var itemss in item)
-                            //{
-                            //}
+                            
+
                             ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Merge = true;
                             ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                             ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-
-
-                            // ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Merge = true;
-                            // ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                            // ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-                            // ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Merge = true;
-                            // ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                            // ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-                            // ws.Cells[mergeFromRowIndex, 3, mergeToRowIndex, 3].Merge = true;
-                            // ws.Cells[mergeFromRowIndex, 3, mergeToRowIndex, 3].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                            // ws.Cells[mergeFromRowIndex, 3, mergeToRowIndex, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                            // ws.Cells[mergeFromRowIndex, 4, mergeToRowIndex, 4].Merge = true;
-
-                            // ws.Cells[mergeFromRowIndex, 4, mergeToRowIndex, 4].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                            // ws.Cells[mergeFromRowIndex, 4, mergeToRowIndex, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-
+                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Merge = true;
+                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
                             mergeFromRowIndex = mergeToRowIndex + 1;
                         }
+
                         //make the borders of cell F6 thick
                         ws.Cells[ws.Dimension.Address].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                         ws.Cells[ws.Dimension.Address].Style.Border.Right.Style = ExcelBorderStyle.Thin;
