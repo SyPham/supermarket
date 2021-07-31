@@ -192,7 +192,7 @@ namespace Supermarket.Services
                         int colIndex = 1;
                         int rowIndex = 1;
                         // với mỗi item trong danh sách sẽ ghi trên 1 dòng
-                        foreach (var item in items)
+                        foreach (var item in items.OrderBy(x => x.KindName))
                         {
                             colIndex = 1;
 
@@ -219,18 +219,15 @@ namespace Supermarket.Services
                         int mergeToColIndex = 1;
                         int mergeFromRowIndex = 2;
                         int mergeToRowIndex = 1;
-                        foreach (var item in items.GroupBy(x =>  x.KindName).ToList())
+                        foreach (var item in items.OrderBy(x => x.KindName).GroupBy(x => x.KindName).ToList())
                         {
                             mergeToRowIndex += item.Count();
-                            
+
 
                             ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Merge = true;
                             ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                             ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Merge = true;
-                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
                             mergeFromRowIndex = mergeToRowIndex + 1;
                         }
