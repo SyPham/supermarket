@@ -42,6 +42,7 @@
           allowTextWrap='true'
           gridLines='Both'
           (actionBegin)="actionBegin($event)"
+          (rowSelected)="rowSelected($event)"
           (actionComplete)="actionComplete($event)"
           [pageSettings]='pageSettings'
           [allowExcelExport]='true'
@@ -57,7 +58,7 @@
                 #
               </ng-template>
             </e-column>
-            
+
             <e-column field="storeName" width="120" textAlign='Center' headerText="{{ 'Store'}}">
             </e-column>
 
@@ -77,7 +78,7 @@
                <span>{{data.name}}</span>
               </ng-template>
              </e-column>
-            <e-column field="description" textAlign='Center' headerText="Unit">
+            <e-column field="description" width="100" textAlign='Center' headerText="Unit">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
@@ -90,7 +91,24 @@
                <span>{{data.originalPrice}} đ</span>
               </ng-template>
             </e-column>
-            <e-column field="quantity" width="80" textAlign='Center' headerText="Quantity"> </e-column>
+            <e-column field="quantity" width="90" textAlign='Center' headerText="Quantity">
+              <ng-template #template let-data>
+                <div class="input-group mb-3" style="width: 120px;">
+                  <div class="input-group-prepend" style="cursor: pointer;" (click)="increaseQuantity(data)">
+                    <span class="input-group-text bg-success text-white">
+                      <i class="fa fa-minus"></i>
+                    </span>
+                  </div>
+                  <input type="text" (keyup.enter)="addCart()" (ngModelChange)='ngModelChange($event)' class="form-control text-center" [(ngModel)]="data.quantity">
+                  <div class="input-group-append" style="cursor: pointer;" (click)="decreaseQuantity(data)">
+                    <span class="input-group-text bg-danger text-white">
+                      <i class="fa fa-plus"></i>
+                    </span>
+                  </div>
+                </div>
+              </ng-template>
+            </e-column>
+
           </e-columns>
         </ejs-grid>
       </div>

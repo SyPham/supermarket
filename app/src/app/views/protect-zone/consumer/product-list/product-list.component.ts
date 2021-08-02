@@ -45,6 +45,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   productName: any;
   avatar: any;
   @ViewChild('preview', { static: true }) previewModal: TemplateRef<any>;
+  editSettings = { showDeleteConfirmDialog: false, allowEditing: false, allowAdding: false, allowDeleting: false, mode: 'Normal' };
 
   constructor(
     private service: ProductListService,
@@ -125,10 +126,22 @@ export class ProductListComponent extends BaseComponent implements OnInit {
         accountId: +JSON.parse(localStorage.getItem("user")).id,
         quantity: args.data.quantity,
       };
-      this.addCart();
+      //this.addCart();
     }
   }
-
+  rowSelected(args) {
+    console.log(args);
+    if (args.isInteracted) {
+      this.model = {
+        productId: args.data.id,
+        accountId: +JSON.parse(localStorage.getItem("user")).id,
+        quantity: args.data.quantity,
+      };
+    }
+  }
+  ngModelChange(value) {
+   this.model.quantity = value;
+  }
   toolbarClick(args) {
     switch (args.item.id) {
       case 'grid_excelexport':
@@ -168,7 +181,32 @@ export class ProductListComponent extends BaseComponent implements OnInit {
       this.cartTotal = data;
     });
   }
+  increaseQuantity(data) {
+    const index = +data.index;
+    const quantity = data.quantity;
+    if (quantity === 0 || quantity === 1) {
+      this.alertify.warning('The quantity must be a valid number greater than 0!', true);
+      return;
+    } else {
+      this.grid.updateCell(index, 'quantity', data.quantity--);
+      this.model.quantity = data.quantity;
+      this.model.productId = data.id;
+      this.addCart();
+
+    }
+  }
+  decreaseQuantity(data) {
+    const index = +data.index;
+    this.grid.updateCell(index, 'quantity', data.quantity++);
+    this.model.quantity = data.quantity;
+    this.model.productId = data.id;
+    this.addCart();
+  }
   addCart() {
+    if (!this.model || this.model.quantity === 0) {
+      this.alertify.warning('Can not submit!', true);
+      return;
+    }
     this.serviceCart.addToCart(this.model).subscribe(
       (res) => {
         if (res.success === true) {

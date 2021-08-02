@@ -36,7 +36,7 @@ export class CartComponent extends BaseComponent implements OnInit {
   deleteCartRequest: DeleteCartRequest;
   noImage = '/assets/img/photo1.png';
   fullName: any;
-
+  editSettings = { showDeleteConfirmDialog: false, allowEditing: false, allowAdding: false, allowDeleting: false, mode: 'Normal' };
   constructor(
     private service: CartService,
     private serviceOrder: OrderService,
@@ -58,7 +58,13 @@ export class CartComponent extends BaseComponent implements OnInit {
   }
   rowSelected(args) {
     console.log(args);
-
+    if (args.isInteracted) {
+      this.updateQuantityRequest = {
+        productId: args.data.productId,
+        accountId: args.data.accountId,
+        quantity: args.data.quantity
+      };
+    }
   }
   actionBegin(args) {
     if (args.requestType === 'save' && args.action === 'edit') {
@@ -206,6 +212,35 @@ export class CartComponent extends BaseComponent implements OnInit {
     }
     return this.noImage;
   }
+  increaseQuantity(data) {
+    const index = +data.index;
+    const quantity = data.quantity;
+    if (quantity === 0 || quantity === 1) {
+      this.alertify.warning('The quantity must be a valid number greater than 0!', true);
+      return;
+    } else {
+      this.grid.updateCell(index, 'quantity', data.quantity--);
+      this.updateQuantityRequest = {
+        productId: data.productId,
+        accountId: data.accountId,
+        quantity: data.quantity
+      };
+      this.updateQuantity();
 
+    }
+  }
+  decreaseQuantity(data) {
+    const index = +data.index;
+    this.grid.updateCell(index, 'quantity', data.quantity++);
+    this.updateQuantityRequest = {
+      productId: data.productId,
+      accountId: data.accountId,
+      quantity: data.quantity
+    };
+    this.updateQuantity();
+  }
+  ngModelChange(value) {
+   this.updateQuantityRequest.quantity = value;
+  }
 }
 

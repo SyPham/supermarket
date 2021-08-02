@@ -10,12 +10,6 @@
             </ng-template>
         </e-item>
 
-         <e-item id='edit' align='right' >
-             <ng-template #template>
-               <button type="button" class="btn btn-success" (click)='edit()'>Edit</button>
-            </ng-template>
-        </e-item>
-
          <e-item id='delete' align='right' >
              <ng-template #template>
                <button type="button" class="btn btn-success" (click)='delete()'>Delete</button>
@@ -79,7 +73,23 @@
                <span>{{data.originalPrice}} đ</span>
               </ng-template>
             </e-column>
-            <e-column field="quantity" width="80" textAlign='Center' headerText="Quantity"> </e-column>
+            <e-column field="quantity" width="80" textAlign='Center' headerText="Quantity">
+              <ng-template #template let-data>
+                <div class="input-group mb-3" style="width: 120px;">
+                  <div class="input-group-prepend" style="cursor: pointer;" (click)="increaseQuantity(data)">
+                    <span class="input-group-text bg-success text-white">
+                      <i class="fa fa-minus"></i>
+                    </span>
+                  </div>
+                  <input type="text" (keyup.enter)="updateQuantity()" (ngModelChange)='ngModelChange($event)' class="form-control text-center" [(ngModel)]="data.quantity">
+                  <div class="input-group-append" style="cursor: pointer;" (click)="decreaseQuantity(data)">
+                    <span class="input-group-text bg-danger text-white">
+                      <i class="fa fa-plus"></i>
+                    </span>
+                  </div>
+                </div>
+              </ng-template>
+            </e-column>
 
              <e-column field="amount" width="100" textAlign='Center' headerText="Amount">
               <ng-template #editTemplate let-data>
