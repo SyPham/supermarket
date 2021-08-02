@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NetUtility;
 using OfficeOpenXml;
+using OfficeOpenXml.Drawing;
 using OfficeOpenXml.Style;
 using Supermarket.Constants;
 using Supermarket.Data;
@@ -79,6 +80,21 @@ namespace Supermarket.Services
             _mapper = mapper;
             _configMapper = configMapper;
         }
+        private Bitmap Base64StringToBitmap(string base64String)
+        {
+            var bitmapData = Convert.FromBase64String(FixBase64ForImage(base64String));
+            var streamBitmap = new System.IO.MemoryStream(bitmapData);
+            var bitmap = new Bitmap((Bitmap)Image.FromStream(streamBitmap));
+            return bitmap;
+        }
+
+        private string FixBase64ForImage(string Image)
+        {
+            var sbText = new System.Text.StringBuilder(Image, Image.Length);
+            sbText.Replace("\r\n", String.Empty);
+            sbText.Replace(" ", String.Empty);
+            return sbText.ToString();
+        }
         public async Task<byte[]> ReportBuyPersion(string langId)
         {
             var res = await GetBuyingBuyPersonExcel(langId);
@@ -93,6 +109,8 @@ namespace Supermarket.Services
         }
         public async Task<List<ProductBuyingDto>> GetBuyingBuyItemExcel(string langId)
         {
+            string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
+                    _httpContextAccessor.HttpContext.Request.Host + "/api/";
             var data = await _repoOrderHistory.FindAll().ToListAsync();
             if (data == null) return new List<ProductBuyingDto>();
             //{
@@ -107,6 +125,7 @@ namespace Supermarket.Services
                 Description = x.Product.Description,
                 Amount = (x.ByingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
+                Avatar = ConvertImageURLToBase64ExportEcel(host + x.Product.Avatar) ?? "",
                 KindId = x.Product.KindId,
                 ProductId = x.ProductId,
                 OderDetailId = x.OrderDetailId,
@@ -124,6 +143,7 @@ namespace Supermarket.Services
                     OriginalPrice = x.First().OriginalPrice.ToString("n0"),
                     Description = x.First().Description,
                     StoreName = x.First().StoreName,
+                    Avatar = x.First().Avatar,
                     OderDetailId = x.First().OderDetailId,
                     KindName = x.First().KindName,
                     Amount = x.Sum(a => a.Amount).ToString("n0"),
@@ -157,7 +177,7 @@ namespace Supermarket.Services
                         p.Workbook.Worksheets.Add(items.Key);
                         // lấy sheet vừa add ra để thao tác
                         ExcelWorksheet ws = p.Workbook.Worksheets[items.Key];
-                        //ws.DefaultColWidth = 25;
+                        ws.DefaultColWidth = 25;
 
                         // đặt tên cho sheet
                         ws.Name = items.Key;
@@ -166,7 +186,7 @@ namespace Supermarket.Services
                         // font family mặc định cho cả sheet
                         ws.Cells.Style.Font.Name = "Calibri";
                         var headers = new string[]{
-                        "Kind", "Product Name", "Unit", "Ref. Price", "Qty",
+                        "Kind","Photo", "Product Name", "Unit", "Ref. Price", "Qty",
                         "Amount", "Consumers"
                     };
 
@@ -195,7 +215,16 @@ namespace Supermarket.Services
                         foreach (var item in items.OrderBy(x => x.KindName))
                         {
                             colIndex = 1;
+                            var base64String = item.Avatar;
+                            base64String = base64String.Replace(" ", "+");
+                            int mod4 = base64String.Length % 4;
+                            if (mod4 > 0)
+                            {
+                                base64String += new string('=', 4 - mod4);
+                            }
 
+                            var image = Base64StringToBitmap(base64String);
+                            ws.Row(rowIndex + 1).Height = 100;
                             // rowIndex tương ứng từng dòng dữ liệu
                             rowIndex++;
                             string value = "";
@@ -203,8 +232,15 @@ namespace Supermarket.Services
                             {
                                 value += itemss.FullName + ",";
                             }
+                           
                             //gán giá trị cho từng cell                      
                             ws.Cells[rowIndex, colIndex++].Value = item.KindName;
+                            var picture = ws.Drawings.AddPicture(rowIndex.ToString(), image);
+                            //picture.From.Column = (colIndex++) - 1;
+                            //picture.From.Row = rowIndex - 1;
+                            picture.SetPosition(rowIndex - 1, 20, (colIndex++) - 1, 30);
+                            picture.SetSize(150, 100);
+
                             ws.Cells[rowIndex, colIndex++].Value = item.Name;
                             ws.Cells[rowIndex, colIndex++].Value = item.Description;
                             ws.Cells[rowIndex, colIndex++].Value = item.OriginalPrice;
@@ -301,7 +337,7 @@ namespace Supermarket.Services
                         // font family mặc định cho cả sheet
                         ws.Cells.Style.Font.Name = "Calibri";
                         var headers = new string[]{
-                        "Name", "Product Name", "Qty", "Price",
+                        "EmployeeID","Name", "Product Name", "Qty", "Price",
                         "Subtotal", "Total"
                     };
 
@@ -339,6 +375,7 @@ namespace Supermarket.Services
 
 
                                 //gán giá trị cho từng cell                      
+                                ws.Cells[rowIndex, colIndex++].Value = itemss.EmployeeId;
                                 ws.Cells[rowIndex, colIndex++].Value = itemss.FullName;
                                 ws.Cells[rowIndex, colIndex++].Value = itemss.Name;
                                 ws.Cells[rowIndex, colIndex++].Value = itemss.Quantity;
@@ -352,13 +389,13 @@ namespace Supermarket.Services
                             ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                             ws.Cells[mergeFromRowIndex, mergeFromColIndex, mergeToRowIndex, mergeToColIndex].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Merge = true;
-                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                            ws.Cells[mergeFromRowIndex, 1, mergeToRowIndex, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Merge = true;
+                            ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, 2, mergeToRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                            ws.Cells[mergeFromRowIndex, 6, mergeToRowIndex, 6].Merge = true;
-                            ws.Cells[mergeFromRowIndex, 6, mergeToRowIndex, 6].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                            ws.Cells[mergeFromRowIndex, 6, mergeToRowIndex, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, 7, mergeToRowIndex, 7].Merge = true;
+                            ws.Cells[mergeFromRowIndex, 7, mergeToRowIndex, 7].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            ws.Cells[mergeFromRowIndex, 7, mergeToRowIndex, 7].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
 
 
@@ -421,6 +458,7 @@ namespace Supermarket.Services
                 KindId = x.Product.KindId,
                 ProductId = x.ProductId,
                 OderDetailId = x.OrderDetailId,
+                EmployeeId = x.Consumer.EmployeeId,
                 StoreName = x.Product.Store.Name,
                 FullName = x.Consumer.FullName,
                 Date = x.DispatchDate,
@@ -441,6 +479,7 @@ namespace Supermarket.Services
                     ConsumerId = x.First().ConsumerId,
                     StoreName = x.First().StoreName,
                     OderDetailId = x.First().OderDetailId,
+                    EmployeeId = x.First().EmployeeId,
                     KindName = x.First().KindName,
                     SubtotalPrice = x.Sum(a => a.Amount).ToString("n0"),
                     Quantity = x.Sum(a => a.Quantity),
@@ -1100,8 +1139,18 @@ namespace Supermarket.Services
 
             Byte[] _byte = this.GetImage(url);
 
+            //_sb.Append(Convert.ToBase64String(_byte, 0, _byte.Length));
             _sb.Append("data:image/png;base64, " + Convert.ToBase64String(_byte, 0, _byte.Length));
+            return _sb.ToString();
+        }
+        public String ConvertImageURLToBase64ExportEcel(String url)
+        {
+            StringBuilder _sb = new StringBuilder();
 
+            Byte[] _byte = this.GetImage(url);
+
+            _sb.Append(Convert.ToBase64String(_byte, 0, _byte.Length));
+            //_sb.Append("data:image/png;base64, " + Convert.ToBase64String(_byte, 0, _byte.Length));
             return _sb.ToString();
         }
         private byte[] GetImage(string url)

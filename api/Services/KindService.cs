@@ -52,12 +52,19 @@ namespace Supermarket.Services
                 Id = x.Id,
                 Name = x.VietnameseName
                 }).ToListAsync();
-            } else
+            } else  if (lang == "en")
             {
                 return await _repo.FindAll().Where(x => x.Store_ID == id).Select(x => new KindDto
                 {
                     Id = x.Id,
                     Name = x.EnglishName
+                }).ToListAsync();
+            }
+             else {
+                return await _repo.FindAll().Where(x => x.Store_ID == id).Select(x => new KindDto
+                {
+                    Id = x.Id,
+                    Name = x.ChineseName
                 }).ToListAsync();
             }
         }

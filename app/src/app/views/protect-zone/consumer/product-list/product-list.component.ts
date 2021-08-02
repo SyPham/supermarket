@@ -73,7 +73,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
     this.grid.search(this.name);
   }
   getAllKindByStore(id) {
-    this.serviceKind.getAllByStore(id, this.locale).subscribe(res => {
+    this.serviceKind.getAllByStore(id, localStorage.getItem("lang")).subscribe(res => {
       console.log(res);
       this.kinds = res
     })

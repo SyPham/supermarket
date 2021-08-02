@@ -51,8 +51,8 @@ export class OrderComponent extends BaseComponent implements OnInit {
   dataAdd: any
   dataBuyingAdd: any
   public enableVirtualization: boolean = true;
-  pendingTab: boolean =  true;
-  buyingTab: boolean = false;
+  pendingTab: boolean =  false;
+  buyingTab: boolean = true;
   completeTab: boolean = false;
   dispatchData: any
   @ViewChild('dispatchModal', { static: true })
@@ -60,8 +60,8 @@ export class OrderComponent extends BaseComponent implements OnInit {
   @ViewChild('gridDisPatch')
   gridDisPatch: GridComponent;
   ModelCreate: { productId: number; consumerId: number; qtyTamp: number; };
-  pendingTabClass: any = "btn btn-success"
-  buyingTabClass: any = "btn btn-default"
+  pendingTabClass: any = "btn btn-default"
+  buyingTabClass: any = "btn btn-success"
   completeTabClass: any = "btn btn-default"
   base = environment.apiUrl
   noImage = '/assets/img/photo1.png';
@@ -106,7 +106,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.removeLocalStore("dispatch")
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.wrapSettings = { wrapMode: 'Content' };
-    this.loadDataPending();
+    this.loadDataBuying();
   }
   CancelBuying() {
     if (this.dataPickedDitchPatch.length > 0) {

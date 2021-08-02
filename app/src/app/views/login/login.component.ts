@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     }
     const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId || 0;
-    this.uri = this.route.snapshot.queryParams.uri || accountTypeId === 1 ? '/admin/account' : '/consumer/product-list';
+    this.uri = this.route.snapshot.queryParams.uri || accountTypeId === 1 ? '/admin/order' : '/consumer/product-list';
   }
   role: number;
   ngOnInit(): void {
@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     if (accessToken && refreshToken && this.route.routeConfig.path === 'login') {
       const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
-      const uri = decodeURI(this.uri) || accountTypeId === 1 ? '/admin/account' : '/consumer/product-list';
+      const uri = decodeURI(this.uri) || accountTypeId === 1 ? '/admin/order' : '/consumer/product-list';
       
       this.router.navigate([uri]);
     }
@@ -128,7 +128,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
       if (accountTypeId === 1) {
-        this.router.navigate(['/admin/account']);
+        this.router.navigate(['/admin/order']);
       } else {
         this.router.navigate(['/consumer/product-list']);
       }
