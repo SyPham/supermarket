@@ -9,6 +9,7 @@
           [allowResizing]='true'
           [showColumnMenu]='true'
           gridLines='Both'
+          allowTextWrap='true'
           [locale]='locale'
           (actionBegin)="actionBegin($event)"
           (actionComplete)="actionComplete($event)"
@@ -17,6 +18,7 @@
           [allowExcelExport]='true'
           (recordDoubleClick)='onDoubleClick($event)'
           (toolbarClick)='toolbarClick($event)'
+          [textWrapSettings]="wrapSettings"
           [editSettings]='editSettings'
         >
           <e-columns>
@@ -35,10 +37,22 @@
                 ************
               </ng-template>
             </e-column>
+            <e-column field="group" textAlign='Center' headerText="Group">
+              <ng-template #template let-data>
+                <ng-container *ngIf="data.group === null || data.group === ''; else elseTemplate">
+                  N/A
+                </ng-container>
+                <ng-template #elseTemplate>
+                  {{data.group}}
+                </ng-template>
+
+              </ng-template>
+
+            </e-column>
             <e-column field="email" textAlign='Center' headerText="Email"> </e-column>
             <e-column field='accountType' headerText="{{'Account type'}}" width='150' textAlign='Center'>
                 <ng-template #editTemplate let-data>
-                  <ejs-dropdownlist [(ngModel)]='accountTypeId' [fields]="accountTypeFields" placeholder='Select account type' [dataSource]='accountTypes'></ejs-dropdownlist>
+                  <ejs-dropdownlist  [(ngModel)]='accountTypeId' [fields]="accountTypeFields" placeholder='Select account type' [dataSource]='accountTypes'></ejs-dropdownlist>
                 </ng-template>
               </e-column>
 

@@ -29,6 +29,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
   locale = localStorage.getItem('lang');
   accountTypes: any[];
   accountTypeId: any;
+  wrapSettings= { wrapMode: 'Content' };
   constructor(
     private service: Account2Service,
     public modalService: NgbModal,
@@ -58,6 +59,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
       createdBy: 0,
       createdTime: new Date().toLocaleDateString(),
       modifiedBy: 0,
+      group: null,
       modifiedTime: null,
       accountType: null,
     };
@@ -73,6 +75,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
         username: args.data.username ,
         password: args.data.password,
         fullName: args.data.fullName,
+        group: args.data.group,
         email: args.data.email,
         accountTypeId: this.accountTypeId,
         isLock: false,
@@ -95,12 +98,16 @@ export class AccountComponent extends BaseComponent implements OnInit {
       }
       this.create();
     }
+    if (args.requestType === 'beginEdit') {
+      this.accountTypeId =args.rowData.accountTypeId
+    }
     if (args.requestType === 'save' && args.action === 'edit') {
       this.accountUpdate = {
         id: args.data.id,
         username: args.data.username ,
         password: args.data.password,
         fullName: args.data.fullName,
+        group: args.data.group,
         email: args.data.email,
         isLock: args.data.isLock,
         accountTypeId: this.accountTypeId,

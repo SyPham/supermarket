@@ -51,7 +51,16 @@ export class StoreComponent extends BaseComponent implements OnInit {
       this.data = item
     })
   }
-
+  updateStatus(id) {
+    this.service.updateStatus(id).subscribe(res => {
+      if (res) {
+        this.alertify.success(MessageConstants.UPDATED_OK_MSG);
+        this.getAll();
+      } else {
+        this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+      }
+    })
+  }
   actionComplete(args) {
     if (args.requestType === 'add') {
       args.form.elements.namedItem('name').focus(); // Set focus to the Target element
@@ -73,6 +82,7 @@ export class StoreComponent extends BaseComponent implements OnInit {
         modifiedBy: 0,
         createdTime: new Date().toLocaleDateString(),
         modifiedTime: new Date().toLocaleDateString(),
+        status: true
       };
 
       // if (args.data.vietnameseName || args.data.chineseName || args.data.englishName  === undefined) {
@@ -89,7 +99,8 @@ export class StoreComponent extends BaseComponent implements OnInit {
         createdBy: args.data.createdBy,
         modifiedBy: args.data.modifiedBy,
         createdTime: args.data.createdTime,
-        modifiedTime: args.data.modifiedTime
+        modifiedTime: args.data.modifiedTime,
+        status: args.data.status
       };
       this.update();
     }
@@ -137,7 +148,7 @@ export class StoreComponent extends BaseComponent implements OnInit {
       modifiedBy: 0,
       modifiedTime: null,
       createdTime: new Date().toLocaleDateString(),
-
+      status: true
     };
 
   }

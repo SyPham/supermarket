@@ -14,7 +14,11 @@ namespace Supermarket.Controllers
         {
             _service = service;
         }
-
+        [HttpPost("{id}")]
+        public async Task<ActionResult> UpdateStatus(int id)
+        {
+            return Ok(await _service.UpdateStatus(id));
+        }
         [HttpGet]
         public async Task<ActionResult> GetAllAsync()
         {
@@ -24,6 +28,7 @@ namespace Supermarket.Controllers
         [HttpPost]
         public async Task<ActionResult> AddAsync([FromBody] StoreDto model)
         {
+            //model.Status = true;
             return StatusCodeResult(await _service.AddAsync(model));
         }
 

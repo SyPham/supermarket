@@ -32,6 +32,14 @@
             <e-column field='name' textAlign='Center' headerText="Name">
 
             </e-column>
+            <e-column field='status' textAlign='Center' width='80' headerText="Public">
+              <ng-template #template let-data>
+                <ejs-switch onLabel="ON" offLabel="OFF" (click)="updateStatus(data.id)" cssClass="e-success" #switch [(ngModel)]="data.status"  ></ejs-switch>
+              </ng-template>
+              <ng-template #editTemplate let-data>
+
+              </ng-template>
+            </e-column>
           </e-columns>
         </ejs-grid>
       </div>

@@ -14,4 +14,8 @@ export class StoreService extends CURDService<Store> {
     super(http,"Store", utilitiesService);
   }
 
+  updateStatus(id) {
+    return this.http.post(this.base + `Store/UpdateStatus/${id}` ,{});
+  }
+
 }

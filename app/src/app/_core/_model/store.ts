@@ -5,4 +5,5 @@ export interface Store {
   modifiedBy: number | null;
   createdTime: string;
   modifiedTime: string | null;
+  status: boolean
 }
