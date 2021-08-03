@@ -260,40 +260,40 @@ export const navItems: INavData[] = [
     }
   },
   {
-    name: 'admin',
+    name: '管理員',
     url: '/admin',
     icon: 'icon-puzzle',
     children: [
       {
-        name: 'Account',
+        name: '帳號管理',
         url: '/admin/account',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Store',
+        name: '商店管理',
         url: '/admin/store',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Kind',
+        name: '商品種類設定',
         url: '/admin/kind',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Product',
+        name: '商品維護',
         url: '/admin/product',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Buy List',
+        name: '統購清單',
         url: '/admin/order',
         icon: 'icon-puzzle'
       },
-      {
-        name: 'Delivery',
-        url: '/admin/delivery',
-        icon: 'icon-puzzle'
-      }
+      // {
+      //   name: 'Delivery',
+      //   url: '/admin/delivery',
+      //   icon: 'icon-puzzle'
+      // }
     ]
   },
   {
@@ -335,27 +335,27 @@ export const navItemsVI: INavData[] = [
     icon: 'icon-puzzle',
     children: [
       {
-        name: 'Account',
+        name: 'Tài khoản',
         url: '/admin/account',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Store',
+        name: 'Cửa hàng',
         url: '/admin/store',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Kind',
+        name: 'Loại',
         url: '/admin/kind',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Product',
+        name: 'Sản phẩm',
         url: '/admin/product',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Buy List',
+        name: 'Danh sách mua',
         url: '/admin/order',
         icon: 'icon-puzzle'
       },

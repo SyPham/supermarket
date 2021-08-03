@@ -51,15 +51,15 @@
 
               </ng-template>
             </e-column>
-            <e-column field='name' textAlign='Center' headerText="Photo">
+            <e-column field='name' textAlign='Center' headerText="{{ 'Photo' | translate}}">
               <ng-template #template let-data>
                 <td> <img [src]="imagePath(data.avatar) | image: 'url'" class="img-fluid" alt="" width="50%" height="50%"></td>
               </ng-template>
 
             </e-column>
-            <e-column field='store_name' textAlign='Center' headerText="Store"></e-column>
-            <e-column field='name' textAlign='Center' headerText="Product name"></e-column>
-            <e-column field='description' textAlign='Center' headerText="Unit">
+            <e-column field='store_name' textAlign='Center' headerText="{{ 'Store' | translate}}"></e-column>
+            <e-column field='name' textAlign='Center' headerText="{{ 'Product Name' | translate}}"></e-column>
+            <e-column field='description' textAlign='Center' headerText="{{'Unit' | translate}}">
               <ng-template #template let-data>
                 <ng-container *ngIf="data.description === 'null'; else elseTemplate">
                   N/A
@@ -71,13 +71,13 @@
               </ng-template>
 
             </e-column>
-            <e-column field='price' textAlign='Center' headerText="Ref. Price">
+            <e-column field='price' textAlign='Center' headerText="{{'Price'  | translate}}">
               <ng-template #template let-data>
                 {{data.price | number:'1.0-0'}} đ
               </ng-template>
 
             </e-column>
-            <e-column field='kind_name' textAlign='Center' headerText="Kind"></e-column>
+            <e-column field='kind_name' textAlign='Center' headerText="{{ 'Kind' | translate}}"></e-column>
             <e-column field='status' textAlign='Center' width='80' headerText="Public">
               <ng-template #template let-data>
                 <ejs-switch onLabel="ON" offLabel="OFF" (click)="updateStatus(data.id)" cssClass="e-success" #switch [(ngModel)]="data.status"  ></ejs-switch>
