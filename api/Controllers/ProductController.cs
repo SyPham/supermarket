@@ -45,7 +45,11 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetAllAsync());
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetProductsForAdmin([FromQuery] FilterRequest request)
+        {
+            return Ok(await _service.GetProductsForAdmin(request));
+        }
         [HttpPost]
         public async Task<ActionResult> AddAsync([FromBody] ProductDto model)
         {

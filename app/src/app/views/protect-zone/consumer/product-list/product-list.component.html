@@ -16,7 +16,7 @@
         </e-item>
         <e-item id='buy-list' >
             <ng-template #template>
-               <button type="button" class="btn btn-success" (click)='gotocart()'>My buy list ({{cartTotal}} {{cartTotal > 0 ? "items" : "item"}})</button>
+               <button type="button" class="btn btn-success" (click)='gotocart()'>{{'My buy list' | translate}} ({{cartTotal}} {{cartTotal > 0 ? "items" : "item"}})</button>
             </ng-template>
         </e-item>
           <e-item align='right'>
@@ -59,13 +59,13 @@
               </ng-template>
             </e-column>
 
-            <e-column field="storeName" width="120" textAlign='Center' headerText="{{ 'Store'}}">
+            <e-column field="storeName" width="120" textAlign='Center' headerText="{{ 'Store' | translate}}">
             </e-column>
 
-              <e-column field="kindName" width="120" textAlign='Center' headerText="{{ 'Kind'}}">
+              <e-column field="kindName" width="120" textAlign='Center' headerText="{{ 'Kind' | translate}}">
             </e-column>
 
-            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Photo'}}">
+            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Photo' | translate}}">
              <ng-template #template let-data>
                <img class='avatar' (click)='mouseenter($event,data)' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
               </ng-template>
@@ -73,17 +73,17 @@
                <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
               </ng-template>
             </e-column>
-            <e-column field="name" textAlign='Center' headerText="{{ 'Product Name'}}">
+            <e-column field="name" textAlign='Center' headerText="{{ 'Product Name' | translate}}">
               <ng-template #editTemplate let-data>
                <span>{{data.name}}</span>
               </ng-template>
              </e-column>
-            <e-column field="description" width="100" textAlign='Center' headerText="Unit">
+            <e-column field="description" width="100" textAlign='Center' headerText="{{'Unit' | translate}}">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
             </e-column>
-             <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+             <e-column field="originalPrice" width="100" textAlign='Center' headerText="{{'Price' | translate}}">
               <ng-template #editTemplate let-data>
                <span>{{data.originalPrice}} đ</span>
               </ng-template>
@@ -91,7 +91,7 @@
                <span>{{data.originalPrice}} đ</span>
               </ng-template>
             </e-column>
-            <e-column field="quantity" width="90" textAlign='Center' headerText="Quantity">
+            <e-column field="quantity" width="90" textAlign='Center' headerText="{{'Quantity' | translate}}">
               <ng-template #template let-data>
                 <div class="input-group mb-3" style="width: 120px;">
                   <div class="input-group-prepend" style="cursor: pointer;" (click)="increaseQuantity(data)">

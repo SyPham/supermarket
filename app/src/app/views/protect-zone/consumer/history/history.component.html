@@ -6,10 +6,10 @@
       </div>
       <ul class="nav nav-pills justify-content-center py-2">
         <li class="nav-item">
-          <a class="nav-link" [class.active] = "active"  (click)='onClickBuyingAndPenidngStatus()'>Pending and buying</a>
+          <a class="nav-link" [class.active] = "active"  (click)='onClickBuyingAndPenidngStatus()'>{{'Pending and buying' | translate}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [class.active] = "!active"  (click)='onClickComplete()'>Complete</a>
+          <a class="nav-link" [class.active] = "!active"  (click)='onClickComplete()'>{{'Complete Tab' | translate}}</a>
         </li>
       </ul>
       <div class="card-body table-responsive p-0">
@@ -36,29 +36,29 @@
               </ng-template>
             </e-column>
 
-            <e-column field="storeName" textAlign='Center' headerText="{{ 'Store'}}">
+            <e-column field="storeName" textAlign='Center' headerText="{{ 'Store' | translate}}">
             </e-column>
 
-              <e-column field="kindName" textAlign='Center' headerText="{{ 'Kind'}}">
+              <e-column field="kindName" textAlign='Center' headerText="{{ 'Kind' | translate}}">
             </e-column>
 
-            <e-column field="avatar" width="120" textAlign='Center' headerText="{{ 'Photo'}}">
+            <e-column field="avatar" width="120" textAlign='Center' headerText="{{ 'Photo' | translate}}">
              <ng-template #template let-data>
               <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
               </ng-template>
             </e-column>
 
-            <e-column field="productName" textAlign='Center' headerText="{{ 'Product Name'}}">
+            <e-column field="productName" textAlign='Center' headerText="{{ 'Product Name' | translate}}">
               <ng-template #template let-data>
                <span>{{data.productName}}</span>
               </ng-template>
             </e-column>
-            <e-column field="description" textAlign='Left' headerText="Unit">
+            <e-column field="description" textAlign='Left' headerText="{{'Unit' | translate}}">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
             </e-column>
-             <e-column field="originalPrice" width="100" textAlign='Center' headerText="Price">
+             <e-column field="originalPrice" width="100" textAlign='Center' headerText="{{'Price'  | translate}}">
               <ng-template #editTemplate let-data>
                <span>{{data.originalPrice}} đ</span>
               </ng-template>
@@ -66,9 +66,9 @@
                <span>{{data.originalPrice}} đ</span>
               </ng-template>
             </e-column>
-            <e-column field="quantity" width="90" textAlign='Center' headerText="Quantity"> </e-column>
+            <e-column field="quantity" width="90" textAlign='Center' headerText="{{'Quantity' | translate}}"> </e-column>
 
-             <e-column field="amount" width="100" textAlign='Center' headerText="Amount">
+             <e-column field="amount" width="100" textAlign='Center' headerText="{{'Amount' | translate}}">
               <ng-template #editTemplate let-data>
                <span>{{data.amount}} đ</span>
               </ng-template>
@@ -77,21 +77,21 @@
               </ng-template>
             </e-column>
 
-            <e-column field="orderDate" textAlign='Center' headerText="{{ 'Placing Order Date'}}">
+            <e-column field="orderDate" textAlign='Center' headerText="{{ 'Placing Order Date' | translate}}">
               <ng-template #template let-data>
                <span>{{data.orderDate | date: 'MM/dd'}}</span>
               </ng-template>
             </e-column>
 
-            <e-column field="status" textAlign='Center' width="100" headerText="{{ 'Status'}}">
+            <e-column field="status" textAlign='Center' width="100" headerText="{{ 'Status' | translate}}">
               <ng-template #template let-data>
-               <span *ngIf='data.cancelStatus' class="badge badge-danger">{{data.status}}</span>
-               <span *ngIf='!data.cancelStatus' class="badge badge-success">{{data.status}}</span>
+               <span *ngIf='data.cancelStatus' class="badge badge-danger">{{data.status | translate}}</span>
+               <span *ngIf='!data.cancelStatus' class="badge badge-success">{{data.status | translate}}</span>
 
               </ng-template>
             </e-column>
 
-           <e-column field="dispatchedDate" textAlign='Center' headerText="{{ 'Dispatched Date'}}">
+           <e-column field="dispatchedDate" textAlign='Center' headerText="{{ 'Dispatched Date' | translate}}">
               <ng-template #template let-data>
                <span>{{data.dispatchDate === "0001-01-01T00:00:00" ? 'N/A' : data.dispatchDate  | date: 'MM/dd'}}</span>
               </ng-template>

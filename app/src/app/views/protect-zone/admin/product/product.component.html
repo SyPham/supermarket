@@ -1,7 +1,30 @@
 <div class="row">
   <div class="col-md-12">
+
     <div class="card">
       <div class="card-body table-responsive p-0">
+        <div class="row my-3">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-1">
+                <div class="font-weight-bold">{{'FILTER_LABEL' | translate}}:</div>
+              </div>
+              <div class="col-md-2">
+                <ejs-dropdownlist [dataSource]='dataStore' [fields]='storeFields' [allowFiltering]='true'
+                  [value]="storeId" (change)='onChangeStoreData($event)'
+                  placeholder="Select a store">
+                </ejs-dropdownlist>
+              </div>
+              <div class="col-md-2">
+                <ejs-dropdownlist [dataSource]='dataKind' [fields]='kindFields' [allowFiltering]='true'
+                  [value]="kindId" (change)='onChangeKindData($event)'
+                  placeholder="Select a Kind">
+                </ejs-dropdownlist>
+              </div>
+
+            </div>
+          </div>
+        </div>
         <ejs-grid #grid
           id='grid'
           [dataSource]="data"

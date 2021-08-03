@@ -2,7 +2,7 @@ import { environment } from 'src/environments/environment';
 import { StoreService } from './../../../../_core/_service/store.service';
 import { KindService } from './../../../../_core/_service/kind.service';
 import { ProductService } from './../../../../_core/_service/product.service';
-import { Product } from './../../../../_core/_model/product';
+import { FilterRequest, Product } from './../../../../_core/_model/product';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { GridComponent } from '@syncfusion/ej2-angular-grids';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
@@ -57,6 +57,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
   kindFields: object = { text: 'name', value: 'id' };
   img: string | ArrayBuffer;
   noImage = '/assets/img/photo1.png';
+  filterRequest: FilterRequest;
 
   constructor(
     private service: ProductService,
@@ -120,12 +121,12 @@ export class ProductComponent extends BaseComponent implements OnInit {
     })
   }
   getAllKind() {
-    this.service_kind.getAll().subscribe(res => {
+    this.service_kind.getAllByLang().subscribe(res => {
       this.dataKindAll = res
     })
   }
   getAllProduct() {
-    this.service.getAll().subscribe((item: any) => {
+    this.service.getProductsForAdmin(this.filterRequest).subscribe((item: any) => {
       this.data = item.map((item: any) => {
         return {
           id: item.id,
@@ -136,7 +137,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
           store_ID: item.storeId,
           kind_ID: item.kindId,
           store_name: this.dataStore.filter((a) => a.id === item.storeId)[0]?.name,
-          kind_name: this.dataKindAll.filter((a) => a.id === item.kindId)[0]?.englishName,
+          kind_name: this.dataKindAll.filter((a) => a.id === item.kindId)[0]?.name,
           avatar: item.avatar,
           price: item.originalPrice,
           status: item.status,
@@ -190,19 +191,39 @@ export class ProductComponent extends BaseComponent implements OnInit {
       this.img = reader.result
     }
   }
-  onChangeStore(args) {
-    this.storeId = args.value
-    this.ProductCreate.storeId = args.value
-    this.getAllKindByStore(this.storeId)
-  }
+
   getAllKindByStore(id) {
     this.service_kind.getAllByStore(id, this.locale).subscribe(res => {
       this.dataKind = res
     })
   }
+  onChangeStore(args) {
+    this.storeId = args.value
+    this.ProductCreate.storeId = args.value
+    this.getAllKindByStore(this.storeId)
+  }
   onChangeKind(args) {
     this.ProductCreate.kindId = args.value
     this.kindId = args.value
+  }
+  onChangeStoreData(args) {
+    this.storeId = args.value
+    this.filterRequest = {
+      storeId: this.storeId ?? 0,
+      langId: localStorage.getItem("lang"),
+      kindId: this.kindId ?? 0
+    };
+    this.getAllKindByStore(this.storeId)
+    this.getAllProduct();
+  }
+  onChangeKindData(args) {
+    this.kindId = args.itemData?.id || 0;
+      this.filterRequest = {
+        storeId: this.storeId ?? 0,
+        langId: localStorage.getItem("lang"),
+        kindId: this.kindId ?? 0
+      };
+      this.getAllProduct();
   }
   preview() {
     const mimeType = this.file.type;

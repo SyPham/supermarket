@@ -1,4 +1,26 @@
 {
+    "Dispatched Date" :"Dispatched Date",
+    "Placing Order Date" :"Placing Order Date",
+    "Cart Status": "Cart Status",
+    "Product List": "Product List",
+    "Consumer": "Consumer",
+    "Change Password": "Change Password",
+    "New Password": "New Password",
+    "Confirm Password": "Confirm Password",
+    "Submit": "Submit",
+    "Pending and buying": "Pending and buying",
+    "Complete Tab": "Complete",
+    "My buy list": "My buy list",
+    "Quantity": "Quantity",
+    "Store": "Store",
+    "Kind": "Kind",
+    "Photo": "Photo",
+    "Product Name" :"Product Name",
+    "Unit": "Unit",
+    "Price" :"Price",
+    "Pending": "Pending",
+    "Buying": "Buying",
+    "Complete": "Complete",
     "SETTING": "Setting",
     "Setting": "Setting",
     "ESTABLISH": "Establish",
@@ -20,7 +42,6 @@
     "INGREDIENT": "Chemical",
     "Ingredient": "Chemical",
     "KIND": "Kind",
-    "Kind": "Kind",
     "PART": "Part",
     "Part": "Part",
     "MATERIAL": "Material",
@@ -291,5 +312,6 @@
     "Addition2": "Addition",
     "Created Time": "Created time",
     "Create Report Time": "Create Report Time"
+
 
 }

@@ -101,19 +101,19 @@ export class ConsumerModule {
       setTimeout(() => {
         L10n.load(require('../../../../assets/ej2-lang/vi.json'));
         setCulture('vi');
-      });
+      }, 500);
     } else if (lang === 'en') {
       defaultLang = 'en';
       setTimeout(() => {
         L10n.load(require('../../../../assets/ej2-lang/en.json'));
         setCulture('en');
-      });
+      },500);
     }else{
       defaultLang = 'zh';
       setTimeout(() => {
         L10n.load(require('../../../../assets/ej2-lang/zh.json'));
         setCulture('zh');
-      });
+      },500);
     }
   }
 }

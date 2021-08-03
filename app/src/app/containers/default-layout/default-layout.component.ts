@@ -16,7 +16,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 declare var require: any;
 import * as signalr from '../../../assets/js/ec-client.js';
 import { HubConnectionState } from '@microsoft/signalr';
-import { navItems } from 'src/app/_nav';
+import { navItems, navItemsEN, navItemsVI } from 'src/app/_nav';
 import { Authv2Service } from 'src/app/_core/_service/authv2.service';
 
 @Component({
@@ -79,48 +79,39 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     this.userName = user?.fullName;
     this.userID = user?.id;
     const accountTypeId = JSON.parse(localStorage.getItem('user')).accountTypeId;
+    const navs = this.value == 'vi'? navItemsVI : this.value === 'en'? navItemsEN : navItems;  
     if (accountTypeId === 1) {
-      this.navItems = this.navItems.filter(x=> x.name === 'admin' || x.name === 'Dashboard');
+      this.navItems = navs.filter(x=> x.url.includes('admin') || x.url.includes('dashboard'));
     } else {
-      this.navItems = this.navItems.filter(x=> x.name === 'Consumer' || x.name === 'Dashboard');
+      this.navItems = navs.filter(x=> x.url.includes('consumer') || x.url.includes('dashboard') );
+    }
+   
+
+  }
+  translates(item): void {
+    if ('name' in item) {
+      const trans = this.translate.instant(`${item.name}`);
+      if (trans !== `${item.name}`) {
+        item.name = trans;
+      }
+    }
+    if (item.children && item.children.length > 0) {
+      item.children.map((child: any) => this.translates(child));
     }
   }
   toggleMinimize(e) {
     this.sidebarMinimized = e;
   }
   ngOnInit(): void {
-    if (signalr.CONNECTION_HUB.state === HubConnectionState.Connected) {
-      signalr.CONNECTION_HUB
-        .invoke('CheckOnline', this.userID, this.userName)
-        .catch(error => {
-          console.log(`CheckOnline error: ${error}`);
-        }
-        );
-      signalr.CONNECTION_HUB.on('Online', (users) => {
-        this.online = users;
-      });
-
-      signalr.CONNECTION_HUB.on('UserOnline', (userNames: any) => {
-        const userNameList = JSON.stringify(userNames);
-        localStorage.setItem('userOnline', userNameList);
-      });
-    }
-    // this.versionService.getAllVersion().subscribe((item: any) => {
-    //   this.data = item;
-    //   this.firstItem = item[0] || {};
-    // });
-
     this.langsData = [{ id: 'vi', name: 'VI' }, { id: 'en', name: 'EN' }, { id: 'zh', name: 'ZH' }];
-    this.navAdmin = new Nav().getNavAdmin();
-    this.navClient = new Nav().getNavClient();
-    this.navEc = new Nav().getNavEc();
 
-    // this.getAvatar();
+    
     this.currentUser = JSON.parse(localStorage.getItem('user')).fullName;
     this.page = 1;
     this.pageSize = 10;
 
     this.userid = JSON.parse(localStorage.getItem('user')).id;
+    
     // this.getMenu();
     this.onService();
     this.currentTime = moment().format('hh:mm:ss A');
@@ -128,27 +119,10 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
     // this.getBuilding();
+  
   }
 
   getMenu() {
-    // const navs = JSON.parse(localStorage.getItem('navs'));
-    // if (navs === null) {
-    //   this.spinner.show();
-    //   console.log('Header ------- Begin getMenuByUserPermission');
-    //   const langID = localStorage.getItem('lang');
-    //   this.permissionService.getMenuByLangID(this.userid, langID).subscribe((navsData: []) => {
-    //     this.navItems = navsData;
-    //     localStorage.setItem('navs', JSON.stringify(navsData));
-    //     this.spinner.hide();
-
-    //   }, (err) => {
-    //     this.spinner.hide();
-    //   });
-    //   console.log('Header ------- end getMenuByUserPermission');
-    // } else {
-    //   console.log('Header ------- Begin getlocalstore menu');
-    //   this.navItems = navs;
-    // }
   }
   home() {
     return '/ec/execution/todolist-2';
@@ -160,16 +134,6 @@ export class DefaultLayoutComponent implements OnInit, AfterViewInit {
     localStorage.setItem('lang', lang);
     this.dataService.setValueLocale(lang);
     window.location.reload();
-
-    // this.permissionService.getMenuByLangID(this.userid, lang).subscribe((navs: []) => {
-    //   this.navItems = navs;
-    //   localStorage.setItem('navs', JSON.stringify(navs));
-    //   this.spinner.hide();
-    //   window.location.reload();
-
-    // }, (err) => {
-    //   this.spinner.hide();
-    // });
   }
   getBuilding() {
     const userID = JSON.parse(localStorage.getItem('user')).user.id;

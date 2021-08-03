@@ -22,6 +22,7 @@ namespace Supermarket.Services
     {
         Task<OperationResult> UploadAvatar(UploadAvatarRequest request);
         Task<object> GetProductsForConsumer(FilterRequest request);
+        Task<object> GetProductsForAdmin(FilterRequest request);
         Task<bool> UpdateStatus(int id);
 
     }
@@ -55,7 +56,22 @@ namespace Supermarket.Services
             _currentEnvironment = currentEnvironment;
             _configMapper = configMapper;
         }
-
+        public async Task<object> GetProductsForAdmin(FilterRequest request)
+        {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var item = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            if (item == null)
+                return new List<ProductListDto>();
+            if (request.StoreId == 0 && request.KindId == 0)
+                return await _repo.FindAll().ToListAsync();
+            if (request.StoreId > 0 && request.KindId > 0)
+                return await _repo.FindAll().Where(x => x.StoreId == request.StoreId && x.KindId == request.KindId).ToListAsync();
+            if (request.StoreId > 0)
+                return await _repo.FindAll(x => x.Status).Where(x => x.StoreId == request.StoreId).ToListAsync();
+            //return new List<ProductListDto>();
+            throw new NotImplementedException();
+        }
         public async Task<OperationResult> UploadAvatar(UploadAvatarRequest request)
         {
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
