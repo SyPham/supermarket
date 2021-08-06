@@ -16,7 +16,7 @@
                 </ejs-dropdownlist>
               </div>
               <div class="col-md-2">
-                <ejs-dropdownlist [dataSource]='dataKind' [fields]='kindFields' [allowFiltering]='true'
+                <ejs-dropdownlist id='ddlelement' #ddlelement [dataSource]='dataKind' [fields]='kindFields' [allowFiltering]='true'
                   [value]="kindId" (change)='onChangeKindData($event)'
                   placeholder="Select a Kind">
                 </ejs-dropdownlist>

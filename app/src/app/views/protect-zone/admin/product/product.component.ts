@@ -10,6 +10,7 @@ import { AlertifyService } from 'src/app/_core/_service/alertify.service';
 import { MessageConstants } from 'src/app/_core/_constants/system';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
+import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 
 @Component({
   selector: 'app-product',
@@ -58,7 +59,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
   img: string | ArrayBuffer;
   noImage = '/assets/img/photo1.png';
   filterRequest: FilterRequest;
-
+  @ViewChild('ddlelement')
+  public dropDownListObject: DropDownListComponent;
   constructor(
     private service: ProductService,
     private service_kind: KindService,
@@ -207,6 +209,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.kindId = args.value
   }
   onChangeStoreData(args) {
+    this.dropDownListObject.value = null;
     this.storeId = args.value
     this.filterRequest = {
       storeId: this.storeId ?? 0,
