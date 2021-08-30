@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs'
 import { catchError } from 'rxjs/operators'
 import { HttpClient } from '@angular/common/http';
-import { Order } from '../_model/order';
+import { DeleteCartOrderRequest, Order, UpdateQuantityOrderRequest } from '../_model/order';
 import { UtilitiesService } from './utilities.service';
 @Injectable({
   providedIn: 'root'
@@ -73,4 +73,26 @@ export class OrderService extends CURDService<Order> {
   getProductsForCartStatusByBuyingAndPenidngStatus(): Observable<any> {
     return this.http.get<any>(`${this.base}Order/GetProductsForCartStatusByBuyingAndPenidngStatus?langId=${localStorage.getItem("lang")}`);
   }
+
+  getProductsInCart(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}Order/GetProductsInCart?langId=${localStorage.getItem("lang")}`);
+  }
+
+  updateQuantity(res: UpdateQuantityOrderRequest): Observable<OperationResult> {
+    return this.http.put<OperationResult>(`${this.base}Order/UpdateQuantity`, res).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  deleteCart(res: DeleteCartOrderRequest): Observable<OperationResult> {
+    const query = this.utilitiesService.serialize(res);
+    return this.http.delete<OperationResult>(`${this.base}Order/deleteCart?${query}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+  clearCart(): Observable<OperationResult> {
+    return this.http.delete<OperationResult>(`${this.base}Order/ClearCart`).pipe(
+      catchError(this.handleError)
+    );
+}
 }

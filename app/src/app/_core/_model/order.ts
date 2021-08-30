@@ -11,3 +11,17 @@ export interface Order {
   createdTime: string;
   modifiedTime: string | null;
 }
+export interface UpdateQuantityOrderRequest {
+  accountId: number;
+  productId: number;
+  detailId: number;
+  historyId: number;
+  quantity: number;
+}
+
+export interface DeleteCartOrderRequest {
+  accountId: number;
+  productId: number;
+  detailId: number;
+  historyId: number;
+}

@@ -20,6 +20,7 @@ import { TreeGridAllModule } from '@syncfusion/ej2-angular-treegrid'
 
 import { ConsumerRoutingModule } from './consumer.routing.module'
 import { ImagePipe } from 'src/app/_core/pipes/image.pipe';
+import { PendingComponent } from './history/pending/pending.component';
 
 // import { PeriodComponent } from './period/period.component';
 export function HttpLoaderFactory(http: HttpClient) {
@@ -66,6 +67,7 @@ loadCldr(
     BuyListComponent,
     HistoryComponent,
     ChangePasswordComponent,
+    PendingComponent,
     ...PIPE
   ],
   imports: [

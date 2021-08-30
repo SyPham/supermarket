@@ -40,7 +40,12 @@
 @import "font-awesome/css/font-awesome.min.css";
 @import "simple-line-icons/dist/styles/simple-line-icons.css";
 @import '~@fortawesome/fontawesome-free/css/all.css';
-
+body.noscroll
+{
+    position: fixed;
+    overflow-y: scroll;
+    width: 100%;
+}
 .modal-xxl {
     min-width: 95%!important;
 }

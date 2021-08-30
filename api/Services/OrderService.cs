@@ -44,6 +44,12 @@ namespace Supermarket.Services
         Task<object> GetBuyingBuyPerson(string langId);
 
         Task<OperationResult> PlaceOrder();
+
+        Task<OperationResult> UpdateQuantity(UpdateQuantityOrderRequest request);
+        Task<OperationResult> DeleteCart(DeleteCartOrderRequest request);
+        Task<OperationResult> ClearCart();
+
+        Task<object> GetProductsInCart(string langId);
     }
     public class OrderService : ServiceBase<Order, OrderDto>, IOrderService
     {
@@ -52,6 +58,7 @@ namespace Supermarket.Services
         private readonly IRepositoryBase<Order> _repo;
         private readonly IRepositoryBase<OrderDetailHistory> _repoOrderHistory;
         private readonly IRepositoryBase<Cart> _repoCart;
+        private readonly IRepositoryBase<OrderDetail> _repoDetail;
         private readonly IRepositoryBase<Product> _repoProduct;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -61,6 +68,7 @@ namespace Supermarket.Services
             IRepositoryBase<Account> repoAccount,
             IRepositoryBase<Order> repo,
             IRepositoryBase<OrderDetailHistory> repohistory,
+            IRepositoryBase<OrderDetail> repoDetail,
             IRepositoryBase<Cart> repoCart,
             IRepositoryBase<Product> repoProduct,
             IUnitOfWork unitOfWork,
@@ -73,6 +81,7 @@ namespace Supermarket.Services
             _repoAccount = repoAccount;
             _repo = repo;
             _repoCart = repoCart;
+            _repoDetail = repoDetail;
             _repoOrderHistory = repohistory;
             _repoProduct = repoProduct;
             _unitOfWork = unitOfWork;
@@ -136,7 +145,7 @@ namespace Supermarket.Services
             }).ToList();
             var item = new List<ProductBuyingDto>();
 
-            var result = res.GroupBy(x => new { x.Name})
+            var result = res.GroupBy(x => new { x.Name })
                 .Select(x => new ProductBuyingDto
                 {
                     Name = x.First().Name,
@@ -198,7 +207,7 @@ namespace Supermarket.Services
                             ws.Cells[headerColIndex, col].Value = header;
                             ws.Cells[headerColIndex, col].Style.Font.Bold = true;
                             ws.Cells[headerColIndex, col].Style.Font.Size = 12;
-                            if ( col == 3)
+                            if (col == 3)
                             {
                                 ws.Column(col).Width = 25;
                             }
@@ -232,7 +241,7 @@ namespace Supermarket.Services
                             {
                                 value += itemss.FullName + ",";
                             }
-                           
+
                             //gán giá trị cho từng cell                      
                             ws.Cells[rowIndex, colIndex++].Value = item.KindName;
                             var picture = ws.Drawings.AddPicture(rowIndex.ToString(), image);
@@ -247,7 +256,7 @@ namespace Supermarket.Services
                             ws.Cells[rowIndex, colIndex++].Value = item.Quantity;
                             ws.Cells[rowIndex, colIndex++].Value = item.Amount;
                             ws.Cells[rowIndex, colIndex++].Value = value.Substring(0, value.LastIndexOf(","));
-                            value = ""; 
+                            value = "";
 
                         }
 
@@ -355,7 +364,7 @@ namespace Supermarket.Services
                         int colIndex = 1;
                         int rowIndex = 1;
                         // với mỗi item trong danh sách sẽ ghi trên 1 dòng
-                        
+
 
                         int mergeFromColIndex = 1;
                         int mergeToColIndex = 1;
@@ -424,7 +433,7 @@ namespace Supermarket.Services
                             }
                         }
                     }
-                    
+
 
                     //Lưu file lại
                     Byte[] bin = p.GetAsByteArray();
@@ -587,9 +596,9 @@ namespace Supermarket.Services
                     SubtotalPrice = x.Sum(a => a.Amount).ToString("n0"),
                     Quantity = x.Sum(a => a.Quantity),
                     Date = Convert.ToDateTime(x.First().Date).ToString("dd/MM/yy"),
-                    totalPrice  = x.First().totalPrice.ToString("n0")
+                    totalPrice = x.First().totalPrice.ToString("n0")
 
-                }) ;
+                });
             var totalPrice = res.Sum(x => x.Amount).ToString("n0");
             return new
             {
@@ -606,7 +615,7 @@ namespace Supermarket.Services
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var res = data.Where(x => x.ByingQty > 0 ).Select(x => new
+            var res = data.Where(x => x.ByingQty > 0).Select(x => new
             {
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
@@ -622,7 +631,7 @@ namespace Supermarket.Services
                 FullName = x.Consumer.FullName,
                 Date = x.DispatchDate,
                 ConsumerId = x.Consumer.Id,
-                totalPrice = _repoOrderHistory.FindAll().Where(y => y.ConsumerId == x.Consumer.Id && y.ByingQty > 0 ).ToList().Select(x => (x.ByingQty * x.Product.OriginalPrice)).Sum(),
+                totalPrice = _repoOrderHistory.FindAll().Where(y => y.ConsumerId == x.Consumer.Id && y.ByingQty > 0).ToList().Select(x => (x.ByingQty * x.Product.OriginalPrice)).Sum(),
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
             }).ToList();
 
@@ -896,7 +905,7 @@ namespace Supermarket.Services
             //var data = await _repo.FindAll().ToListAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().ToListAsync() ;
+            var data = await _repoOrderHistory.FindAll().ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
@@ -932,7 +941,7 @@ namespace Supermarket.Services
                     KindName = x.First().KindName,
                     Amount = x.Sum(a => a.Amount).ToString("n0"),
                     Quantity = x.Sum(a => a.Quantity),
-                    Consumers = x.GroupBy(s => new { s.FullName, s.ConsumerId}).Select(a => new
+                    Consumers = x.GroupBy(s => new { s.FullName, s.ConsumerId }).Select(a => new
                     {
                         FullName = a.First().FullName,
                         ProductId = a.First().ProductId,
@@ -949,7 +958,7 @@ namespace Supermarket.Services
         }
         public async Task<object> GetProductsInOrderBuyingByAdmin(string langId)
         {
-            string host = _httpContextAccessor.HttpContext.Request.Scheme +"://" +
+            string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
             var data = await _repoOrderHistory.FindAll().ToListAsync();
             if (data == null) return new
@@ -1083,37 +1092,37 @@ namespace Supermarket.Services
                   Quantity = x.PendingQty
               }).ToListAsync();
             var pending = model.Where(x => x.PendingQty > 0).Select(x => new
-                {
-                    x.FullName,
-                    x.StoreName,
-                    x.KindName,
-                    x.ProductName,
-                    x.Avatar,
-                    x.Description,
-                    x.PendingQty,
-                    x.DispatchDate,
-                    x.OrderDate,
-                    x.OriginalPrice,
-                    Quantity = x.PendingQty,
-                    Amount = (x.PendingQty * x.OriginalPrice).ToString("n0"),
-                    Status = "Pending"
-                }).ToList();
+            {
+                x.FullName,
+                x.StoreName,
+                x.KindName,
+                x.ProductName,
+                x.Avatar,
+                x.Description,
+                x.PendingQty,
+                x.DispatchDate,
+                x.OrderDate,
+                x.OriginalPrice,
+                Quantity = x.PendingQty,
+                Amount = (x.PendingQty * x.OriginalPrice).ToString("n0"),
+                Status = "Pending"
+            }).ToList();
             var buying = model.Where(x => x.ByingQty > 0).Select(x => new
-              {
-                  x.FullName,
-                  x.StoreName,
-                  x.KindName,
-                  x.ProductName,
-                  x.Avatar,
-                  x.Description,
-                  x.PendingQty,
-                  x.DispatchDate,
-                  x.OrderDate,
-                  x.OriginalPrice,
-                  Quantity = x.ByingQty,
-                  Amount = (x.ByingQty * x.OriginalPrice).ToString("n0"),
-                  Status = "Buying"
-              }).ToList();
+            {
+                x.FullName,
+                x.StoreName,
+                x.KindName,
+                x.ProductName,
+                x.Avatar,
+                x.Description,
+                x.PendingQty,
+                x.DispatchDate,
+                x.OrderDate,
+                x.OriginalPrice,
+                Quantity = x.ByingQty,
+                Amount = (x.ByingQty * x.OriginalPrice).ToString("n0"),
+                Status = "Buying"
+            }).ToList();
             var complete = model.Where(x => x.CompleteQty > 0)
           .Select(x => new
           {
@@ -1209,7 +1218,7 @@ namespace Supermarket.Services
                   Price = x.Product.OriginalPrice,
                   Quantity = x.PendingQty
               }).ToListAsync();
-           
+
             var complete = model.Where(x => x.CompleteQty > 0)
           .Select(x => new
           {
@@ -1287,10 +1296,179 @@ namespace Supermarket.Services
                 Amount = (x.ByingQty * x.OriginalPrice).ToString("n0"),
                 Status = "Buying"
             }).ToList();
-           
+
             return pending.Concat(buying);
         }
 
-        
+
+
+        public async Task<OperationResult> UpdateQuantity(UpdateQuantityOrderRequest request)
+        {
+            var detailItem = await _repoDetail.FindAll(x => x.Id == request.DetailId).FirstOrDefaultAsync();
+            var historyItem = await _repoOrderHistory.FindAll(x => x.Id == request.HistoryId).FirstOrDefaultAsync();
+            if (detailItem == null)
+            {
+                return new OperationResult { StatusCode = HttpStatusCode.NotFound, Message = "Not Found", Success = false };
+            }
+            if (historyItem.ByingQty > 0 || historyItem.CompleteQty > 0)
+            {
+                historyItem.PendingQty = request.Quantity;
+                detailItem.Quantity = request.Quantity + historyItem.ByingQty + historyItem.CompleteQty;
+            }
+            else
+            {
+                detailItem.Quantity = request.Quantity;
+                historyItem.PendingQty = request.Quantity;
+            }
+
+            try
+            {
+                _repoDetail.Update(detailItem);
+                _repoOrderHistory.Update(historyItem);
+                await _unitOfWork.SaveChangeAsync();
+                operationResult = new OperationResult
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Message = MessageReponse.UpdateSuccess,
+                    Success = true,
+                    Data = historyItem
+                };
+            }
+            catch (Exception ex)
+            {
+                operationResult = ex.GetMessageError();
+            }
+            return operationResult;
+        }
+
+        public async Task<OperationResult> DeleteCart(DeleteCartOrderRequest request)
+        {
+            var detailItem = await _repoDetail.FindAll(x => x.Id == request.DetailId).FirstOrDefaultAsync();
+            var historyItem = await _repoOrderHistory.FindAll(x => x.Id == request.HistoryId).FirstOrDefaultAsync();
+
+            try
+            {
+                if (historyItem.ByingQty > 0 || historyItem.CompleteQty > 0)
+                {
+                    historyItem.PendingQty = 0;
+                    detailItem.Quantity = historyItem.ByingQty + historyItem.CompleteQty;
+                    _repoOrderHistory.Update(historyItem);
+                    _repoDetail.Update(detailItem);
+                    await _unitOfWork.SaveChangeAsync();
+                }
+                else
+                {
+                    var orderId = detailItem.OrderId;
+                    _repoOrderHistory.Remove(historyItem);
+                    _repoDetail.Remove(detailItem);
+                    await _unitOfWork.SaveChangeAsync();
+
+                    var orderItem = await _repo.FindAll(x => x.Id == orderId).FirstOrDefaultAsync();
+                    if (orderItem.OrderDetails.Count == 0)
+                    {
+                        _repo.Remove(orderItem);
+                        await _unitOfWork.SaveChangeAsync();
+                    }
+
+
+                }
+
+
+                operationResult = new OperationResult
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Message = MessageReponse.DeleteSuccess,
+                    Success = true,
+                    Data = historyItem
+                };
+            }
+            catch (Exception ex)
+            {
+                operationResult = ex.GetMessageError();
+            }
+            return operationResult;
+        }
+
+        public async Task<OperationResult> ClearCart()
+        {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var data = await _repo.FindAll(x => x.CreatedBy == accountId).SelectMany(x => x.OrderDetails).Select(x => new
+            {
+                DetailId = x.Id,
+                HistoryId = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).Id,
+                PendingQty = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).PendingQty
+            }).Where(x => x.PendingQty > 0).ToListAsync();
+            var results = new List<OperationResult>();
+            foreach (var item in data)
+            {
+                var detailItem = await _repoDetail.FindAll(x => x.Id == item.DetailId).FirstOrDefaultAsync();
+                var historyItem = await _repoOrderHistory.FindAll(x => x.Id == item.HistoryId).FirstOrDefaultAsync();
+
+                try
+                {
+                    if (historyItem.ByingQty > 0 || historyItem.CompleteQty > 0)
+                    {
+                        historyItem.PendingQty = 0;
+                        detailItem.Quantity = historyItem.ByingQty + historyItem.CompleteQty;
+                        _repoOrderHistory.Update(historyItem);
+                        _repoDetail.Update(detailItem);
+                        await _unitOfWork.SaveChangeAsync();
+                    }
+                    else
+                    {
+                        var orderId = detailItem.OrderId;
+                        _repoOrderHistory.Remove(historyItem);
+                        _repoDetail.Remove(detailItem);
+                        await _unitOfWork.SaveChangeAsync();
+
+                        var orderItem = await _repo.FindAll(x => x.Id == orderId).FirstOrDefaultAsync();
+                        if (orderItem.OrderDetails.Count == 0)
+                        {
+                            _repo.Remove(orderItem);
+                            await _unitOfWork.SaveChangeAsync();
+                        }
+
+                    }
+
+                    results.Add(new OperationResult
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Message = MessageReponse.DeleteSuccess,
+                        Success = true,
+                        Data = historyItem
+                    });
+                }
+                catch (Exception ex)
+                {
+                    operationResult = ex.GetMessageError();
+                }
+                results.Add(operationResult);
+            }
+            return results.FirstOrDefault();
+        }
+
+        public async Task<object> GetProductsInCart(string langId)
+        {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+
+            return await _repo.FindAll(x => x.CreatedBy == accountId).SelectMany(x => x.OrderDetails).Select(x => new
+            {
+                ProductId = x.ProductId,
+                AccountId = x.Orders.CreatedBy.Value,
+                Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                OriginalPrice = x.Product.OriginalPrice.ToString("n0"),
+                Quantity = x.Quantity,
+                Avatar = x.Product.Avatar,
+                Description = x.Product.Description,
+                Amount = (x.Quantity.Value * x.Product.OriginalPrice).ToString("n0"),
+                AmountValue = (x.Quantity.Value * x.Product.OriginalPrice),
+                DetailId = x.Id,
+                HistoryId = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).Id,
+                PendingQty = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).PendingQty
+            }).Where(x => x.PendingQty > 0).ToListAsync();
+        }
+
     }
 }

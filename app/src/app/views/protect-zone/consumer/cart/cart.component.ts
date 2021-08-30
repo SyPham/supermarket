@@ -19,7 +19,7 @@ import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
 })
 export class CartComponent extends BaseComponent implements OnInit {
   base = environment.apiUrl.replace('/api','');
-  data: Account[] = [];
+  data: any[] = [];
   password = '';
   modalReference: NgbModalRef;
   fields: object = { text: 'name', value: 'id' };
@@ -117,7 +117,20 @@ export class CartComponent extends BaseComponent implements OnInit {
       (res) => {
         if (res.success === true) {
           this.alertify.success(MessageConstants.UPDATED_OK_MSG);
-          this.loadData();
+            // this.loadData();
+            for (var i in this.data) {
+              if (this.data[i].id == res.data.productId) {
+                this.data[i].quantity = res.data.quantity;
+                 break; //Stop this loop, we found it!
+              }
+            }
+            this.service.getProductsInCart().subscribe(data => {
+              if (data.length > 0) {
+                this.totalPrice = data.map(x=> x.amountValue).reduce((previousValue,currentValue)=>previousValue + currentValue).toLocaleString();
+              } else {
+                this.totalPrice = 0;
+              }
+            });
         } else {
           this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
         }
@@ -226,7 +239,6 @@ export class CartComponent extends BaseComponent implements OnInit {
         quantity: data.quantity
       };
       this.updateQuantity();
-
     }
   }
   decreaseQuantity(data) {

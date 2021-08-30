@@ -1,0 +1,109 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+         <ejs-toolbar #toolbarTodo>
+        <e-items>
+        <e-item id='back' >
+             <ng-template #template>
+               <button type="button" class="btn btn-success" (click)='back()'>{{ 'Back' | translate}}</button>
+            </ng-template>
+        </e-item>
+
+         <e-item id='delete' align='right' >
+             <ng-template #template>
+               <button type="button" class="btn btn-success" (click)='delete()'>{{ 'Delete' | translate}}</button>
+            </ng-template>
+        </e-item>
+
+         <e-item id='clear' align='right' >
+             <ng-template #template>
+               <button type="button" class="btn btn-success" (click)='clear()'>{{ 'Clear All' | translate}}</button>
+            </ng-template>
+        </e-item>
+
+        </e-items>
+      </ejs-toolbar>
+        <ejs-grid #grid
+          id='grid'
+          [dataSource]="data"
+          [allowResizing]='true'
+          [showColumnMenu]='true'
+          allowTextWrap='true'
+          gridLines='Both'
+          (rowSelected)="rowSelected($event)"
+          (actionBegin)="actionBegin($event)"
+          (actionComplete)="actionComplete($event)"
+          [allowExcelExport]='true'
+           [textWrapSettings]="wrapSettings"
+          [editSettings]='editSettings'
+        >
+          <e-columns>
+            <e-column field="Id" textAlign='Center' width="50" isPrimaryKey="true" headerText="#">
+              <ng-template #template let-data>
+                {{NO(data.index)}}
+              </ng-template>
+              <ng-template #editTemplate let-data>
+                #
+              </ng-template>
+            </e-column>
+            <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Photo' | translate}}">
+             <ng-template #template let-data>
+               <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
+              </ng-template>
+               <ng-template #editTemplate let-data>
+               <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
+              </ng-template>
+            </e-column>
+            <e-column field="name" textAlign='Center' headerText="{{ 'Product Name' | translate}}">
+              <ng-template #editTemplate let-data>
+               <span>{{data.name}}</span>
+              </ng-template>
+             </e-column>
+            <e-column field="description" textAlign='Left' headerText="{{'Unit' | translate}}">
+              <ng-template #editTemplate let-data>
+               <span style="text-align: left">{{data.description}}</span>
+              </ng-template>
+            </e-column>
+             <e-column field="originalPrice" width="100" textAlign='Center' headerText="{{'Price' | translate}}">
+              <ng-template #editTemplate let-data>
+               <span>{{data.originalPrice}} đ</span>
+              </ng-template>
+                <ng-template #template let-data>
+               <span>{{data.originalPrice}} đ</span>
+              </ng-template>
+            </e-column>
+            <e-column field="quantity" width="80" textAlign='Center' headerText="{{'Quantity' | translate}}">
+              <ng-template #template let-data>
+                <div class="input-group mb-3" style="width: 120px;">
+                  <div class="input-group-prepend" style="cursor: pointer;" (click)="increaseQuantity(data)">
+                    <span class="input-group-text bg-success text-white">
+                      <i class="fa fa-minus"></i>
+                    </span>
+                  </div>
+                  <input type="text" (keyup.enter)="updateQuantity()" (ngModelChange)='ngModelChange($event)' class="form-control text-center" [(ngModel)]="data.quantity">
+                  <div class="input-group-append" style="cursor: pointer;" (click)="decreaseQuantity(data)">
+                    <span class="input-group-text bg-danger text-white">
+                      <i class="fa fa-plus"></i>
+                    </span>
+                  </div>
+                </div>
+              </ng-template>
+            </e-column>
+
+             <e-column field="amount" width="100" textAlign='Center' headerText="{{'Amount' | translate}}">
+              <ng-template #editTemplate let-data>
+               <span>{{data.amount}} đ</span>
+              </ng-template>
+                <ng-template #template let-data>
+               <span>{{data.amount}} đ</span>
+              </ng-template>
+            </e-column>
+          </e-columns>
+        </ejs-grid>
+      </div>
+      <!-- /.card-body -->
+    </div>
+  </div>
+</div>
+

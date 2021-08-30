@@ -11,7 +11,7 @@
           </e-item>
         <e-item id='kind' >
             <ng-template #template>
-              <ejs-dropdownlist #kind [value]='kindId' (change)="onChangeKind($event)" [fields]="fields" placeholder='Select a kind' [dataSource]='kinds'></ejs-dropdownlist>
+              <ejs-dropdownlist #kind [value]='kindId' (change)="onChangeKind($event)" [fields]="fields" placeholder="{{storeId > 0 ?('All' | translate ): 'Select a kind'}}" [dataSource]='kinds'></ejs-dropdownlist>
             </ng-template>
         </e-item>
         <e-item id='buy-list' >

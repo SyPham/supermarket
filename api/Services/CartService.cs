@@ -111,7 +111,7 @@ namespace Supermarket.Services
                         StatusCode = HttpStatusCode.OK,
                         Message = MessageReponse.AddSuccess,
                         Success = true,
-                        Data = item
+                        Data = add
                     };
                 }
                 catch (Exception ex)

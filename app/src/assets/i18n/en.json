@@ -311,7 +311,12 @@
     "Kilogram": "Kilogram",
     "Addition2": "Addition",
     "Created Time": "Created time",
-    "Create Report Time": "Create Report Time"
+    "Create Report Time": "Create Report Time",
+    "All": "All",
+    "Clear All": "Clear All",
+    "Back": "Back",
+    "Place Order": "Place Orrder",
+    "Delete": "Delete"
 
 
 }

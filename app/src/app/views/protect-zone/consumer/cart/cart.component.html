@@ -6,19 +6,19 @@
         <e-items>
         <e-item id='back' >
              <ng-template #template>
-               <button type="button" class="btn btn-success" (click)='back()'>Back</button>
+               <button type="button" class="btn btn-success" (click)='back()'>{{ 'Back' | translate}}</button>
             </ng-template>
         </e-item>
 
          <e-item id='delete' align='right' >
              <ng-template #template>
-               <button type="button" class="btn btn-success" (click)='delete()'>Delete</button>
+               <button type="button" class="btn btn-success" (click)='delete()'>{{ 'Delete' | translate}}</button>
             </ng-template>
         </e-item>
 
          <e-item id='clear' align='right' >
              <ng-template #template>
-               <button type="button" class="btn btn-success" (click)='clear()'>Clear all</button>
+               <button type="button" class="btn btn-success" (click)='clear()'>{{ 'Clear All' | translate}}</button>
             </ng-template>
         </e-item>
 
@@ -107,7 +107,7 @@
         <div style="font-weight:bold; font-size: 16px"> Total: {{totalPrice}} đ</div>
        </div>
          <div class="card-footer d-flex flex-row-reverse" *ngIf="data.length > 0">
-               <button type="button" class="btn btn-success" (click)='placeOrder()'>Place Order</button>
+               <button type="button" class="btn btn-success" (click)='placeOrder()'>{{ 'Place Order' | translate}}</button>
        </div>
     </div>
   </div>

@@ -144,5 +144,27 @@ namespace Supermarket.Controllers
             return Ok(await _service.GetProductsForCartStatusByBuyingAndPenidngStatus(langId));
         }
 
+
+  [HttpPut]
+        public async Task<ActionResult> UpdateQuantity([FromBody] UpdateQuantityOrderRequest request)
+        {
+            return StatusCodeResult(await _service.UpdateQuantity(request));
+        }
+    
+        [HttpDelete]
+        public async Task<ActionResult> DeleteCart([FromQuery]DeleteCartOrderRequest request)
+        {
+            return StatusCodeResult(await _service.DeleteCart(request));
+        }
+        [HttpDelete]
+        public async Task<ActionResult> ClearCart()
+        {
+            return StatusCodeResult(await _service.ClearCart());
+        }
+          [HttpGet]
+        public async Task<ActionResult> GetProductsInCart(string langId)
+        {
+            return Ok(await _service.GetProductsInCart(langId));
+        }
     }
 }

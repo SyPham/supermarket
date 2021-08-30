@@ -23,7 +23,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductListComponent extends BaseComponent implements OnInit {
   base = environment.apiUrl.replace('/api','');
-  data: Account[] = [];
+  data: any[] = [];
   password = '';
   modalReference: NgbModalRef;
   fields: object = { text: 'name', value: 'id' };
@@ -76,7 +76,19 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   getAllKindByStore(id) {
     this.serviceKind.getAllByStore(id, localStorage.getItem("lang")).subscribe(res => {
       console.log(res);
-      this.kinds = res
+      this.kinds = res;
+      this.kinds.unshift({
+        id:0,
+      chineseName: null,
+      createdBy: 0,
+      createdTime: "0001-01-01T00:00:00",
+      englishName: null,
+      modifiedBy: null,
+      modifiedTime: null,
+      name:  localStorage.getItem("lang") == "en"? "All":  localStorage.getItem("lang") == 'vi' ? 'Tất cả' : '所有類別',
+      store_ID: 0,
+      vietnameseName: null,
+      })
     })
   }
   onChangeStore(args) {
@@ -211,7 +223,13 @@ export class ProductListComponent extends BaseComponent implements OnInit {
       (res) => {
         if (res.success === true) {
           this.alertify.success(MessageConstants.CREATED_OK_MSG);
-          this.loadData();
+          // this.loadData();
+          for (var i in this.data) {
+            if (this.data[i].id == res.data.productId) {
+              this.data[i].quantity = res.data.quantity;
+               break; //Stop this loop, we found it!
+            }
+          }
           this.getCartTotal();
         } else {
           this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);

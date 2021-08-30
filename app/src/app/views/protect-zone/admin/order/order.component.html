@@ -80,6 +80,8 @@
           gridLines='Both'
           isPrimaryKey='true'
           [showColumnChooser]='true'
+          [allowPaging]='true'
+          [pageSettings]='pageSettings'
           (actionBegin)="actionBegin($event)"
           (actionComplete)="actionComplete($event)"
           [allowExcelExport]='true'
@@ -160,6 +162,8 @@
             isPrimaryKey='true'
             [showColumnChooser]='true'
             [allowExcelExport]='true'
+            [allowPaging]='true'
+            [pageSettings]='pageSettings'
             (rowDeselected)='rowDeselectedBuying($event)'
             (rowSelected)='rowSelectedBuying($event)'
             [selectionSettings]="{ checkboxMode: 'ResetOnRowClick'}"
@@ -253,7 +257,9 @@
           [allowResizing]='true'
           [showColumnMenu]='true'
           gridLines='Both'
+          [allowPaging]='true'
           isPrimaryKey='true'
+          [pageSettings]='pageSettings'
           (actionBegin)="actionBegin($event)"
           (actionComplete)="actionComplete($event)"
           [allowExcelExport]='true'

@@ -21,5 +21,22 @@ namespace Supermarket.DTO
         public DateTime CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
     }
-   
+     public class UpdateQuantityOrderRequest
+    {
+        public int AccountId { get; set; }
+        public int ProductId { get; set; }
+        public int DetailId { get; set; }
+        public int HistoryId { get; set; }
+        public int Quantity { get; set; }
+    }
+        public class DeleteCartOrderRequest
+    {
+        public int AccountId { get; set; }
+        public int ProductId { get; set; }
+        
+        public int DetailId { get; set; }
+        public int HistoryId { get; set; }
+
+    }
+    
 }

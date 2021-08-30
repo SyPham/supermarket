@@ -18,23 +18,31 @@ export class HistoryComponent implements OnInit {
   data: any;
   noImage = '/assets/img/photo1.png';
   base = environment.apiUrl.replace('/api','');
-  active = true;
+  active = 1;
+  showPending: boolean;
   constructor(
     private service: OrderService,
     private utilitiesService: UtilitiesService,
   ) { }
 
   ngOnInit() {
+    this.showPending = true;
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.loadDataByBuyingAndPenidngStatus();
   }
   onClickComplete() {
-    this.active = false;
+    this.active = 3;
+    this.showPending = false;
     this.loadDataByCompleteStatus();
   }
   onClickBuyingAndPenidngStatus() {
-    this.active = true;
+    this.active = 2;
+    this.showPending = false;
     this.loadDataByBuyingAndPenidngStatus();
+  }
+  onClickPenidng() {
+    this.active = 1;
+    this.showPending = true;
   }
   loadData() {
     this.service.getProductsForCartStatus().subscribe(data => {

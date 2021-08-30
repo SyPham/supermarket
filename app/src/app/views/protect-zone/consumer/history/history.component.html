@@ -6,13 +6,16 @@
       </div>
       <ul class="nav nav-pills justify-content-center py-2">
         <li class="nav-item">
-          <a class="nav-link" [class.active] = "active"  (click)='onClickBuyingAndPenidngStatus()'>{{'Pending and buying' | translate}}</a>
+          <a class="nav-link" [class.active] = "active == 1" style="cursor: pointer;" (click)='onClickPenidng()'>{{'Pending' | translate}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [class.active] = "!active"  (click)='onClickComplete()'>{{'Complete Tab' | translate}}</a>
+          <a class="nav-link" [class.active] = "active == 2"  style="cursor: pointer;" (click)='onClickBuyingAndPenidngStatus()'>{{'Buying' | translate}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active] = "active == 3"  style="cursor: pointer;" (click)='onClickComplete()'>{{'Complete Tab' | translate}}</a>
         </li>
       </ul>
-      <div class="card-body table-responsive p-0">
+      <div class="card-body table-responsive p-0" *ngIf="!showPending">
         <ejs-grid #grid
           id='grid'
           [dataSource]="data"
@@ -99,6 +102,9 @@
 
           </e-columns>
         </ejs-grid>
+      </div>
+      <div class="card-body table-responsive p-0" *ngIf="showPending">
+       <app-pending></app-pending>
       </div>
       <!-- /.card-body -->
     </div>
