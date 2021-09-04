@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Supermarket.Data;
 
 namespace Supermarket.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210904104746_updateaccounttable")]
+    partial class updateaccounttable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,10 +68,6 @@ namespace Supermarket.Migrations
                     b.HasIndex("AccountTypeId");
 
                     b.HasIndex("ConsumerId");
-
-                    b.HasIndex("Group_ID");
-
-                    b.HasIndex("Team_ID");
 
                     b.ToTable("Accounts");
                 });
@@ -482,21 +480,9 @@ namespace Supermarket.Migrations
                         .WithMany()
                         .HasForeignKey("ConsumerId");
 
-                    b.HasOne("Supermarket.Models.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("Group_ID");
-
-                    b.HasOne("Supermarket.Models.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("Team_ID");
-
                     b.Navigation("AccountType");
 
                     b.Navigation("Consumer");
-
-                    b.Navigation("Group");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("Supermarket.Models.Cart", b =>

@@ -118,9 +118,12 @@ namespace Supermarket.Services
         }
         public async Task<List<ProductBuyingDto>> GetBuyingBuyItemExcel(string langId)
         {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().ToListAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
             if (data == null) return new List<ProductBuyingDto>();
             //{
             //    TotalPrice = 0,
@@ -451,7 +454,10 @@ namespace Supermarket.Services
         }
         public async Task<List<ProductBuyingDto>> GetBuyingBuyPersonExcel(string langId)
         {
-            var data = await _repoOrderHistory.FindAll().ToListAsync();
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
             if (data == null) return new List<ProductBuyingDto>();
             //{
             //    TotalPrice = 0,
@@ -897,9 +903,9 @@ namespace Supermarket.Services
 
         public async Task<object> GetProductsInOrderPendingByAdmin(string langId)
         {
-            //string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            //var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
-            //var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
             //if (accountItem == null) return new
             //{
             //    TotalPrice = 0,
@@ -908,7 +914,7 @@ namespace Supermarket.Services
             //var data = await _repo.FindAll().ToListAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().ToListAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
@@ -961,9 +967,12 @@ namespace Supermarket.Services
         }
         public async Task<object> GetProductsInOrderBuyingByAdmin(string langId)
         {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().ToListAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
@@ -1018,9 +1027,12 @@ namespace Supermarket.Services
         }
         public async Task<object> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate)
         {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().ToListAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,

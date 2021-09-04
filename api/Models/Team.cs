@@ -18,7 +18,5 @@ namespace Supermarket.Models
         public DateTime CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
 
-        public virtual ICollection<Account> Accounts { get; set; }
-
     }
 }

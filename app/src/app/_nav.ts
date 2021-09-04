@@ -270,6 +270,16 @@ export const navItems: INavData[] = [
         icon: 'icon-puzzle'
       },
       {
+        name: '團體',
+        url: '/admin/group',
+        icon: 'icon-puzzle'
+      },
+      {
+        name: '團隊',
+        url: '/admin/team',
+        icon: 'icon-puzzle'
+      },
+      {
         name: '商店管理',
         url: '/admin/store',
         icon: 'icon-puzzle'
@@ -337,6 +347,16 @@ export const navItemsVI: INavData[] = [
       {
         name: 'Tài khoản',
         url: '/admin/account',
+        icon: 'icon-puzzle'
+      },
+      {
+        name: 'Group',
+        url: '/admin/group',
+        icon: 'icon-puzzle'
+      },
+      {
+        name: 'Team',
+        url: '/admin/team',
         icon: 'icon-puzzle'
       },
       {
