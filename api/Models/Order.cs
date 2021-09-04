@@ -31,7 +31,9 @@ namespace Supermarket.Models
         public int? CreatedBy { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
-
+        public int? TeamId { get; set; }
+        [ForeignKey(nameof(TeamId))]
+        public virtual Team Team { get; set; }
         [ForeignKey(nameof(ConsumerId))]
         public virtual Consumer Consumer { get; set; }
 

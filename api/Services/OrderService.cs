@@ -751,6 +751,7 @@ namespace Supermarket.Services
                 EmployeeId = accountItem.Consumer.EmployeeId,
                 ConsumerId = accountItem.ConsumerId.Value,
                 Status = 1,
+                TeamId = cartList.Count > 0 ? cartList.FirstOrDefault().TeamId : null,
                 CreatedBy = accountId,
                 TotalPrice = totalPrice
             };

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Supermarket.Data;
 
 namespace Supermarket.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210904090041_updateCartTbl")]
+    partial class updateCartTbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -260,17 +262,12 @@ namespace Supermarket.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TeamId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ConsumerId");
-
-                    b.HasIndex("TeamId");
 
                     b.ToTable("Orders");
                 });
@@ -534,13 +531,7 @@ namespace Supermarket.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Supermarket.Models.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId");
-
                     b.Navigation("Consumer");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("Supermarket.Models.OrderDetail", b =>

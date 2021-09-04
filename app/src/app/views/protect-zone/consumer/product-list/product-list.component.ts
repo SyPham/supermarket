@@ -134,6 +134,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
       productId: 0,
       accountId: +JSON.parse(localStorage.getItem("user")).id,
       quantity: 0,
+      teamId: this.teamId
     };
 
   }
@@ -146,6 +147,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
         productId: args.data.id,
         accountId: +JSON.parse(localStorage.getItem("user")).id,
         quantity: args.data.quantity,
+        teamId: this.teamId
       };
       //this.addCart();
     }
@@ -157,6 +159,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
         productId: args.data.id,
         accountId: +JSON.parse(localStorage.getItem("user")).id,
         quantity: args.data.quantity,
+        teamId: this.teamId
       };
     }
   }
@@ -216,6 +219,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
       this.grid.updateCell(index, 'quantity', data.quantity--);
       this.model.quantity = data.quantity;
       this.model.productId = data.id;
+      this.model.teamId = this.teamId;
       this.addCart();
 
     }
@@ -225,6 +229,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
     this.grid.updateCell(index, 'quantity', data.quantity++);
     this.model.quantity = data.quantity;
     this.model.productId = data.id;
+    this.model.teamId = this.teamId;
     this.addCart();
   }
   addCart() {
