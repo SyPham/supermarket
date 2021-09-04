@@ -17,7 +17,9 @@ namespace Supermarket.Models
         public bool PendingStatus { get; set; }
         public bool ByingStatus { get; set; }
         public bool CompleteStatus { get; set; }
-
+        public int? TeamId { get; set; }
+        [ForeignKey(nameof(TeamId))]
+        public virtual Team Team { get; set; }
         [ForeignKey(nameof(OrderId))]
         public virtual Order Orders { get; set; }
 

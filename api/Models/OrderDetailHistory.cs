@@ -27,10 +27,14 @@ namespace Supermarket.Models
         public DateTime OrderDate { get; set; }
         public DateTime DispatchDate { get; set; }
         public int CompleteQty { get; set; }
+        public int? TeamId { get; set; }
+        [ForeignKey(nameof(TeamId))]
+        public virtual Team Team { get; set; }
         [ForeignKey(nameof(ConsumerId))]
         public virtual Consumer Consumer { get; set; }
 
         [ForeignKey(nameof(ProductId))]
         public virtual Product Product { get; set; }
+     
     }
 }

@@ -751,7 +751,6 @@ namespace Supermarket.Services
                 EmployeeId = accountItem.Consumer.EmployeeId,
                 ConsumerId = accountItem.ConsumerId.Value,
                 Status = 1,
-                TeamId = cartList.Count > 0 ? cartList.FirstOrDefault().TeamId : null,
                 CreatedBy = accountId,
                 TotalPrice = totalPrice
             };
@@ -763,7 +762,7 @@ namespace Supermarket.Services
                 itemDetail.ProductId = x.ProductId;
                 itemDetail.Quantity = x.Quantity;
                 itemDetail.Price = (decimal?)x.Product.OriginalPrice;
-
+                itemDetail.TeamId = x.TeamId;
                 orderItem.OrderDetails.Add(itemDetail);
             }
             try
@@ -782,7 +781,8 @@ namespace Supermarket.Services
                     CompleteQty = 0,
                     ConsumerId = orderItem.ConsumerId,
                     DispatchDate = DateTime.MinValue,
-                    OrderDate = orderItem.CreatedTime
+                    OrderDate = orderItem.CreatedTime,
+                    TeamId = x.TeamId
                 }).ToList();
                 _repoOrderHistory.AddRange(orderHistory);
                 await _unitOfWork.SaveChangeAsync();
