@@ -6,6 +6,7 @@ namespace Supermarket.Models
     public class Cart
     {
         public int AccountId { get; set; }
+        //public int TeamId { get; set; }
         public int ProductId { get; set; }
         public int? Quantity { get; set; }
         public DateTime CreatedTime { get; set; }

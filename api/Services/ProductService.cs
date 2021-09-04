@@ -140,7 +140,7 @@ namespace Supermarket.Services
                         StoreName = x.Store.Name,
                         KindName = request.LangId == SystemLang.VI ? x.Kind.VietnameseName : request.LangId == SystemLang.EN ? x.Kind.EnglishName : x.Kind.ChineseName,
                         Name = request.LangId == SystemLang.VI ? x.VietnameseName : request.LangId == SystemLang.EN ? x.EnglishName : x.ChineseName,
-                        Quantity = x.Carts.Any(a => accountId == a.AccountId && a.ProductId == x.Id) ? x.Carts.FirstOrDefault(a => accountId == a.AccountId && a.ProductId == x.Id).Quantity : 0,
+                        Quantity = x.Carts.Any(a =>  accountId == a.AccountId && a.ProductId == x.Id) ? x.Carts.FirstOrDefault(a => accountId == a.AccountId && a.ProductId == x.Id).Quantity : 0,
                         Avatar = x.Avatar,
                         OriginalPrice = x.OriginalPrice.ToString("n0"),
                         Description = x.Description

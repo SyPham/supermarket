@@ -16,8 +16,8 @@ namespace Supermarket.Models
         public string Username { get; set; }
         [MaxLength(255)]
         public string Password { get; set; }
-        public int? Group_ID { get; set; }
-        public int? Team_ID { get; set; }
+        public int? Group_ID { get; set; } // Đặt tên theo quy tắc QUỳnh ơi đừng thêm dầu _ vào nữa ????
+        public int? Team_ID { get; set; } // Đặt tên theo quy tắc QUỳnh ơi đừng thêm dầu _ vào nữa ????
         public bool IsLock { get; set; }
         public int? ConsumerId { get; set; }
         public int? AccountTypeId { get; set; }
@@ -30,9 +30,9 @@ namespace Supermarket.Models
 
         [ForeignKey(nameof(AccountTypeId))]
         public virtual AccountType AccountType { get; set; }
-        [ForeignKey(nameof(Group_ID))]
+        [ForeignKey(nameof(Group_ID))] // Đặt tên theo quy tắc QUỳnh ơi đừng thêm dầu _ vào nữa ????
         public virtual Group Group { get; set; }
-        [ForeignKey(nameof(Team_ID))]
+        [ForeignKey(nameof(Team_ID))] // Đặt tên theo quy tắc QUỳnh ơi đừng thêm dầu _ vào nữa ????
         public virtual Team Team { get; set; }
         [ForeignKey(nameof(ConsumerId))]
         public virtual Consumer Consumer { get; set; }

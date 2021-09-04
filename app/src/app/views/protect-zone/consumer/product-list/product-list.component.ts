@@ -16,6 +16,7 @@ import { Store } from 'src/app/_core/_model/store';
 import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
 import { environment } from 'src/environments/environment';
+import { TeamService } from 'src/app/_core/_service/team.service';
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
@@ -46,9 +47,12 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   avatar: any;
   @ViewChild('preview', { static: true }) previewModal: TemplateRef<any>;
   editSettings = { showDeleteConfirmDialog: false, allowEditing: false, allowAdding: false, allowDeleting: false, mode: 'Normal' };
+  teams: any[];
+  teamId: any;
 
   constructor(
     private service: ProductListService,
+    private serviceTeam: TeamService,
     private serviceCart: CartService,
     private serviceStore: StoreService,
     private serviceKind: KindService,
@@ -58,7 +62,9 @@ export class ProductListComponent extends BaseComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
   ) { super();
+    this.teamId = 1;
     this.initialModel();
+    this.loadTeamData();
     this.loadKindData();
     this.loadStoreData();
     this.loadData();
@@ -100,6 +106,9 @@ export class ProductListComponent extends BaseComponent implements OnInit {
       };
       this.getAllKindByStore(this.storeId)
       this.loadData();
+  }
+  onChangeTeam(args) {
+    this.teamId = args.itemData?.id || 0;
   }
   onChangeKind(args) {
     this.kindId = args.itemData?.id || 0;
@@ -172,7 +181,11 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   // end life cycle ejs-grid
 
   // api
-
+  loadTeamData() {
+    this.serviceTeam.getAll().subscribe(data => {
+      this.teams = data;
+    });
+  }
   loadData() {
     this.service.getProductsForConsumer(this.filterRequest).subscribe(data => {
       this.data = data;
