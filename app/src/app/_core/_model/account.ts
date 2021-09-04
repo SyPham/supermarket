@@ -11,8 +11,8 @@ export interface Account {
   createdBy: number;
   modifiedBy: number | null;
   createdTime: string;
-  group: string;
-  team: string;
+  group_id: number;
+  team_id: number;
   modifiedTime: string | null;
   accountType: AccountType;
 }

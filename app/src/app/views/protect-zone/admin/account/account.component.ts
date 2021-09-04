@@ -1,3 +1,5 @@
+import { Group } from './../../../../_core/_model/group';
+import { TeamService } from './../../../../_core/_service/team.service';
 import { BaseComponent } from 'src/app/_core/_component/base.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AlertifyService } from 'src/app/_core/_service/alertify.service';
@@ -7,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Account2Service } from 'src/app/_core/_service/account2.service';
 import { Account } from 'src/app/_core/_model/account';
 import { MessageConstants } from 'src/app/_core/_constants/system';
+import { GroupService } from 'src/app/_core/_service/group.service';
 @Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
@@ -28,10 +31,16 @@ export class AccountComponent extends BaseComponent implements OnInit {
   setFocus: any;
   locale = localStorage.getItem('lang');
   accountTypes: any[];
+  groupData: any[];
+  teamData: any[];
   accountTypeId: any;
+  group_ID: any;
+  team_ID: any;
   wrapSettings= { wrapMode: 'Content' };
   constructor(
     private service: Account2Service,
+    private teamService: TeamService,
+    private groupService: GroupService,
     public modalService: NgbModal,
     private alertify: AlertifyService,
     private route: ActivatedRoute,
@@ -41,6 +50,8 @@ export class AccountComponent extends BaseComponent implements OnInit {
     // this.Permission(this.route);
     this.loadData();
     this.getAccountType();
+    this.getAllGroup();
+    this.getAllTeam();
   }
   // life cycle ejs-grid
 
@@ -59,14 +70,15 @@ export class AccountComponent extends BaseComponent implements OnInit {
       createdBy: 0,
       createdTime: new Date().toLocaleDateString(),
       modifiedBy: 0,
-      group: null,
-      team: null,
+      group_id: 0,
+      team_id: 0,
       modifiedTime: null,
       accountType: null,
     };
 
   }
   actionBegin(args) {
+    console.log(args);
     if (args.requestType === 'add') {
       this.initialModel();
     }
@@ -76,8 +88,8 @@ export class AccountComponent extends BaseComponent implements OnInit {
         username: args.data.username ,
         password: args.data.password,
         fullName: args.data.fullName,
-        group: args.data.group,
-        team: args.data.team,
+        group_id: this.group_ID,
+        team_id: this.team_ID,
         email: args.data.email,
         accountTypeId: this.accountTypeId,
         isLock: false,
@@ -102,6 +114,8 @@ export class AccountComponent extends BaseComponent implements OnInit {
     }
     if (args.requestType === 'beginEdit') {
       this.accountTypeId =args.rowData.accountTypeId
+      this.group_ID =args.rowData.group_ID
+      this.team_ID =args.rowData.team_ID
     }
     if (args.requestType === 'save' && args.action === 'edit') {
       this.accountUpdate = {
@@ -109,8 +123,8 @@ export class AccountComponent extends BaseComponent implements OnInit {
         username: args.data.username ,
         password: args.data.password,
         fullName: args.data.fullName,
-        group: args.data.group,
-        team: args.data.team,
+        group_id: this.group_ID,
+        team_id: this.team_ID,
         email: args.data.email,
         isLock: args.data.isLock,
         accountTypeId: this.accountTypeId,
@@ -144,7 +158,16 @@ export class AccountComponent extends BaseComponent implements OnInit {
   getAccountType() {
     this.service.getAccountType().subscribe(data => {
       this.accountTypes = data;
-      console.log('getAccountType',data);
+    });
+  }
+  getAllGroup() {
+    this.groupService.getAll().subscribe(data => {
+      this.groupData = data;
+    });
+  }
+  getAllTeam() {
+    this.teamService.getAll().subscribe(data => {
+      this.teamData = data;
     });
   }
   // end life cycle ejs-grid
@@ -168,6 +191,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
 
   loadData() {
     this.service.getAll().subscribe((data: any) => {
+      console.log(data);
       this.data = data;
     });
   }

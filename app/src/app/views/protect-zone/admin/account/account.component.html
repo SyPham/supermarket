@@ -38,26 +38,14 @@
               </ng-template>
             </e-column>
             <e-column field="group" textAlign='Center' headerText="Group">
-              <ng-template #template let-data>
-                <ng-container *ngIf="data.group === null || data.group === ''; else elseTemplate">
-                  N/A
-                </ng-container>
-                <ng-template #elseTemplate>
-                  {{data.group}}
-                </ng-template>
-
+              <ng-template #editTemplate let-data>
+                <ejs-dropdownlist  [(ngModel)]='group_ID' [fields]="fields" placeholder='Select Group' [dataSource]='groupData'></ejs-dropdownlist>
               </ng-template>
 
             </e-column>
             <e-column field="team" textAlign='Center' headerText="Team">
-              <ng-template #template let-data>
-                <ng-container *ngIf="data.team === null || data.team === ''; else elseTemplate">
-                  N/A
-                </ng-container>
-                <ng-template #elseTemplate>
-                  {{data.team}}
-                </ng-template>
-
+              <ng-template #editTemplate let-data>
+                <ejs-dropdownlist  [(ngModel)]='team_ID' [fields]="fields" placeholder='Select Team' [dataSource]='teamData'></ejs-dropdownlist>
               </ng-template>
 
             </e-column>

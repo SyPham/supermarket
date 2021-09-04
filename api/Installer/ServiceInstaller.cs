@@ -13,6 +13,9 @@ namespace Supermarket.Installer
             services.AddScoped<IAuthService, AuthService>();
 
             services.AddScoped<IStoreService, StoreService>();
+            services.AddScoped<IGroupService, GroupService>();
+            services.AddScoped<ITeamService, TeamService>();
+            services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IKindService, KindService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderService, OrderService>();

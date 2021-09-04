@@ -20,6 +20,8 @@ namespace Supermarket.Helpers.AutoMapper
             CreateMap<UserForDetailDto, Account>();
 
             CreateMap<StoreDto, Store>();
+            CreateMap<TeamDto, Team>();
+            CreateMap<GroupDto, Group>();
             CreateMap<KindDto, Kind>();
             CreateMap<ProductDto, Product>();
             CreateMap<ConsumerDto, Consumer>();

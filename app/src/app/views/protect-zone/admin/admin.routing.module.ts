@@ -1,3 +1,5 @@
+import { TeamComponent } from './team/team.component';
+import { GroupComponent } from './Group/Group.component';
 import { DeliveryComponent } from './delivery/delivery.component';
 import { OrderComponent } from './order/order.component';
 import { ProductComponent } from './product/product.component';
@@ -21,6 +23,26 @@ const routes: Routes = [
       {
         path: 'account',
         component: AccountComponent,
+        data: {
+          title: 'Account',
+          breadcrumb: 'Account',
+          functionCode: 'account'
+        },
+        // canActivate: [AuthGuard]
+      },
+      {
+        path: 'group',
+        component: GroupComponent,
+        data: {
+          title: 'Account',
+          breadcrumb: 'Account',
+          functionCode: 'account'
+        },
+        // canActivate: [AuthGuard]
+      },
+      {
+        path: 'team',
+        component: TeamComponent,
         data: {
           title: 'Account',
           breadcrumb: 'Account',

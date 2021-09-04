@@ -16,8 +16,8 @@ namespace Supermarket.Models
         public string Username { get; set; }
         [MaxLength(255)]
         public string Password { get; set; }
-        public string Group { get; set; }
-        public string Team { get; set; }
+        public int? Group_ID { get; set; }
+        public int? Team_ID { get; set; }
         public bool IsLock { get; set; }
         public int? ConsumerId { get; set; }
         public int? AccountTypeId { get; set; }
@@ -30,6 +30,10 @@ namespace Supermarket.Models
 
         [ForeignKey(nameof(AccountTypeId))]
         public virtual AccountType AccountType { get; set; }
+        [ForeignKey(nameof(Group_ID))]
+        public virtual Group Group { get; set; }
+        [ForeignKey(nameof(Team_ID))]
+        public virtual Team Team { get; set; }
         [ForeignKey(nameof(ConsumerId))]
         public virtual Consumer Consumer { get; set; }
 

@@ -99,8 +99,8 @@ namespace Supermarket.Services
                         item.Password = model.Password.ToEncrypt();
                 item.Username = model.Username;
                 item.AccountTypeId = model.AccountTypeId;
-                item.Group = model.Group;
-                item.Team = model.Team;
+                item.Group_ID = model.Group_ID;
+                item.Team_ID = model.Team_ID;
                 item.Consumer.EmployeeId = model.Username;
                 item.Consumer.Email = model.Email;
                 item.Consumer.FullName= model.FullName;

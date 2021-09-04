@@ -1,3 +1,5 @@
+import { TeamComponent } from './team/team.component';
+import { GroupComponent } from './Group/Group.component';
 import { DeliveryComponent } from './delivery/delivery.component';
 import { ProductComponent } from './product/product.component';
 import { KindComponent } from './kind/kind.component';
@@ -71,6 +73,8 @@ const PIPE = [
     KindComponent,
     OrderComponent,
     ProductComponent,
+    GroupComponent,
+    TeamComponent,
     DeliveryComponent,
     ...PIPE
   ],

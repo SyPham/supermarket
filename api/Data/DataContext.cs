@@ -16,6 +16,8 @@ namespace Supermarket.Data
         public DbSet<AccountType> AccountTypes { get; set; }
     
         public DbSet<Store> Stores { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Team> Teams { get; set; }
         public DbSet<Kind> Kinds { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Consumer> Consumers { get; set; }

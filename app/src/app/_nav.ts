@@ -410,6 +410,16 @@ export const navItemsEN: INavData[] = [
         icon: 'icon-puzzle'
       },
       {
+        name: 'Group',
+        url: '/admin/group',
+        icon: 'icon-puzzle'
+      },
+      {
+        name: 'Team',
+        url: '/admin/team',
+        icon: 'icon-puzzle'
+      },
+      {
         name: 'Store',
         url: '/admin/store',
         icon: 'icon-puzzle'
