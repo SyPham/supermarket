@@ -29,7 +29,7 @@ const routes: Routes = [
             component: CartComponent,
           },
           {
-            path: ':storeId/:kindId/cart',
+            path: ':teamId/:storeId/:kindId/cart',
             component: CartComponent,
             data: {
               title: 'Cart',
@@ -40,7 +40,7 @@ const routes: Routes = [
         ]
       },
       {
-        path: ':storeId/:kindId/cart',
+        path: ':teamId/:storeId/:kindId/cart',
         component: CartComponent,
         data: {
           title: 'Cart',
@@ -49,7 +49,7 @@ const routes: Routes = [
         },
       },
       {
-        path: 'product-list/:storeId/:kindId',
+        path: 'product-list/:teamId/:storeId/:kindId',
         component: ProductListComponent,
         data: {
           title: 'Product List',

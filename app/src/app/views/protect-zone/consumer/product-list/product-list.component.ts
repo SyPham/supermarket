@@ -122,6 +122,8 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   initialModel() {
     const storeId = +this.route.snapshot.params.storeId || 0;
     const kindId = +this.route.snapshot.params.kindId || 0;
+    const teamId = +this.route.snapshot.params.teamId || 0;
+    this.teamId = teamId;
     this.storeId = storeId;
     this.kindId = kindId;
     this.filterRequest = {
@@ -139,7 +141,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
 
   }
   gotocart() {
-    return this.router.navigate([`/consumer/${this.storeId}/${this.kindId}/cart`]);
+    return this.router.navigate([`/consumer/${this.teamId}/${this.storeId}/${this.kindId}/cart`]);
   }
   actionBegin(args) {
     if (args.requestType === 'save' && args.action === 'edit') {

@@ -79,7 +79,8 @@ export class CartComponent extends BaseComponent implements OnInit {
   back() {
     const storeId = +this.route.snapshot.params.storeId || 0;
     const kindId = +this.route.snapshot.params.kindId || 0;
-    return this.router.navigate([`/consumer/product-list/${storeId}/${kindId}`]);
+    const teamId = +this.route.snapshot.params.teamId || 0;
+    return this.router.navigate([`/consumer/product-list/${teamId}/${storeId}/${kindId}`]);
 
   }
   toolbarClick(args) {
