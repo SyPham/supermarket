@@ -49,7 +49,29 @@
               </ng-template>
 
             </e-column>
-            <e-column field="email" textAlign='Center' headerText="Email"> </e-column>
+            <e-column field="team" textAlign='Center' headerText="Team">
+              <ng-template #template let-data>
+                <ng-container *ngIf="data.team === null || data.team === ''; else elseTemplate">
+                  N/A
+                </ng-container>
+                <ng-template #elseTemplate>
+                  {{data.team}}
+                </ng-template>
+
+              </ng-template>
+
+            </e-column>
+            <e-column field="email" textAlign='Center' headerText="Email">
+              <ng-template #template let-data>
+                <ng-container *ngIf="data.email === 'Null' || data.email === ''; else elseTemplate">
+                  N/A
+                </ng-container>
+                <ng-template #elseTemplate>
+                  {{data.email}}
+                </ng-template>
+
+              </ng-template>
+            </e-column>
             <e-column field='accountType' headerText="{{'Account type'}}" width='150' textAlign='Center'>
                 <ng-template #editTemplate let-data>
                   <ejs-dropdownlist  [(ngModel)]='accountTypeId' [fields]="accountTypeFields" placeholder='Select account type' [dataSource]='accountTypes'></ejs-dropdownlist>

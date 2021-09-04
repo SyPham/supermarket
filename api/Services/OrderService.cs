@@ -161,6 +161,7 @@ namespace Supermarket.Services
                     .Select(a => new ConsumerOrderDto
                     {
                         FullName = a.First().FullName,
+                        Quantity = a.Sum(b => b.Quantity),
                     }).ToList(),
 
                 }).ToList();
@@ -239,7 +240,7 @@ namespace Supermarket.Services
                             string value = "";
                             foreach (var itemss in item.Consumers)
                             {
-                                value += itemss.FullName + ",";
+                                value += itemss.FullName +":" + itemss.Quantity + "," + "\n";
                             }
 
                             //gán giá trị cho từng cell                      
@@ -287,9 +288,10 @@ namespace Supermarket.Services
                             var col = item.Index + 1;
                             ws.Column(col).Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                             ws.Column(col).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                            if (col == 2 || col == 7 || col == 3)
+                            if (col == 2 || col == 8 || col == 3)
                             {
                                 ws.Column(col).AutoFit(30);
+                                ws.Column(col).Style.WrapText = true;
                             }
                             else
                             {
@@ -1264,22 +1266,22 @@ namespace Supermarket.Services
                   Price = x.Product.OriginalPrice,
                   Quantity = x.PendingQty
               }).ToListAsync();
-            var pending = model.Where(x => x.PendingQty > 0).Select(x => new
-            {
-                x.FullName,
-                x.StoreName,
-                x.KindName,
-                x.ProductName,
-                x.Avatar,
-                x.Description,
-                x.PendingQty,
-                x.DispatchDate,
-                x.OrderDate,
-                OriginalPrice = x.OriginalPrice.ToString("n0"),
-                Quantity = x.PendingQty,
-                Amount = (x.PendingQty * x.OriginalPrice).ToString("n0"),
-                Status = "Pending"
-            }).ToList();
+            // var pending = model.Where(x => x.PendingQty > 0).Select(x => new
+            // {
+            //     x.FullName,
+            //     x.StoreName,
+            //     x.KindName,
+            //     x.ProductName,
+            //     x.Avatar,
+            //     x.Description,
+            //     x.PendingQty,
+            //     x.DispatchDate,
+            //     x.OrderDate,
+            //     OriginalPrice = x.OriginalPrice.ToString("n0"),
+            //     Quantity = x.PendingQty,
+            //     Amount = (x.PendingQty * x.OriginalPrice).ToString("n0"),
+            //     Status = "Pending"
+            // }).ToList();
             var buying = model.Where(x => x.ByingQty > 0).Select(x => new
             {
                 x.FullName,
@@ -1297,7 +1299,8 @@ namespace Supermarket.Services
                 Status = "Buying"
             }).ToList();
 
-            return pending.Concat(buying);
+            // return pending.Concat(buying);
+            return buying;
         }
 
 

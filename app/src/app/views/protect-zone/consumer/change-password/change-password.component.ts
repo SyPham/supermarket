@@ -2,6 +2,7 @@ import { Account2Service } from 'src/app/_core/_service/account2.service';
 import { Component, OnInit } from '@angular/core';
 import { MessageConstants } from 'src/app/_core/_constants/system';
 import { AlertifyService } from 'src/app/_core/_service/alertify.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-change-password',
@@ -13,7 +14,8 @@ export class ChangePasswordComponent implements OnInit {
   newPassword: any;
   constructor(
     private alertify: AlertifyService,
-    private service: Account2Service
+    private service: Account2Service,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -34,10 +36,20 @@ export class ChangePasswordComponent implements OnInit {
     }
     this.service.changePassword(request).subscribe( res => {
       if (res.success === true) {
-        this.alertify.success(MessageConstants.CREATED_OK_MSG);
+        const lang = localStorage.getItem('lang')  ;
+        const message = lang == 'vi' ? 'Chỉnh sửa thành công!' : lang === 'en' ? 'Revised Successfully' : '修改成功';
+        const close = lang == 'vi' ? 'Đóng' : lang === 'en' ? 'Close' : '關閉';
+        const viewProductList = lang == 'vi' ? 'Về trang sản phẩm' : lang === 'en' ? 'View Product List' : '去逛逛';
+        this.alertify.confirm3('',message, close, viewProductList, () => {
+
+        }, () => {
+          this.router.navigate(['/consumer/product-list']);
+          return;
+        })
         this.newPassword = '';
         this.confirmPassword = '';
       } else {
+
          this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
       }
     }, err => {

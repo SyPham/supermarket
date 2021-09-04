@@ -60,6 +60,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
       createdTime: new Date().toLocaleDateString(),
       modifiedBy: 0,
       group: null,
+      team: null,
       modifiedTime: null,
       accountType: null,
     };
@@ -76,6 +77,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
         password: args.data.password,
         fullName: args.data.fullName,
         group: args.data.group,
+        team: args.data.team,
         email: args.data.email,
         accountTypeId: this.accountTypeId,
         isLock: false,
@@ -108,6 +110,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
         password: args.data.password,
         fullName: args.data.fullName,
         group: args.data.group,
+        team: args.data.team,
         email: args.data.email,
         isLock: args.data.isLock,
         accountTypeId: this.accountTypeId,

@@ -82,6 +82,23 @@ export class AlertifyService {
       }
     });
   }
+  confirm3(title: string, message: string, confirmButtonText: string, cancelButtonText: string, okCallback: () => void, cancelCallback: () => void) {
+    Swal.fire({
+      title,
+      html: message,
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonText: confirmButtonText,
+      cancelButtonText: cancelButtonText,
+      allowOutsideClick: false
+    }).then((result) => {
+      if (result.value) {
+        okCallback();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        cancelCallback();
+      }
+    });
+  }
 
   valid(title: string, message: string): Promise<boolean> {
     return new Promise((res, rejects) => {

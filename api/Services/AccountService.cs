@@ -100,6 +100,7 @@ namespace Supermarket.Services
                 item.Username = model.Username;
                 item.AccountTypeId = model.AccountTypeId;
                 item.Group = model.Group;
+                item.Team = model.Team;
                 item.Consumer.EmployeeId = model.Username;
                 item.Consumer.Email = model.Email;
                 item.Consumer.FullName= model.FullName;

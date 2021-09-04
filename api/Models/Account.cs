@@ -17,7 +17,7 @@ namespace Supermarket.Models
         [MaxLength(255)]
         public string Password { get; set; }
         public string Group { get; set; }
-
+        public string Team { get; set; }
         public bool IsLock { get; set; }
         public int? ConsumerId { get; set; }
         public int? AccountTypeId { get; set; }
