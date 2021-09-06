@@ -90,7 +90,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
     // this.dropDownListObject1.value = null
   }
   actionBegin(args) {
-    console.log(args);
+    console.log('actionBegin',args);
     if (args.requestType === 'add') {
       this.initialModel();
     }
@@ -174,6 +174,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
     }
   }
   actionComplete(args) {
+    console.log('actionComplete', args);
     if (args.requestType === 'add') {
       args.form.elements.namedItem('username').focus(); // Set focus to the Target element
     }
