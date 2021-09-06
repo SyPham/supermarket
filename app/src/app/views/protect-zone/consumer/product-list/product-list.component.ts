@@ -48,7 +48,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   @ViewChild('preview', { static: true }) previewModal: TemplateRef<any>;
   editSettings = { showDeleteConfirmDialog: false, allowEditing: false, allowAdding: false, allowDeleting: false, mode: 'Normal' };
   teams: any[];
-  teamId: any;
+  teamId: any = 1;
 
   constructor(
     private service: ProductListService,
@@ -203,7 +203,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   }
   loadStoreData() {
     this.serviceStore.getAll().subscribe(data => {
-      this.stores = data;
+      this.stores = data.filter(x => x.status == true);
     });
   }
   getCartTotal() {

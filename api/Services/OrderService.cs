@@ -744,72 +744,174 @@ namespace Supermarket.Services
             var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
 
             var cartList = await _repoCart.FindAll(x => x.AccountId == accountId).ToListAsync();
+
             decimal totalPrice = 0;
             foreach (var item in cartList)
             {
                 var price = item.Quantity.Value * item.Product.OriginalPrice;
                 totalPrice += price;
             }
-            var orderItem = new Order
+            // user demand: If user place order the same product, the same date, the same team then just update the [quantity]  and [order time] in card page/pending tab . No need to insert another record in db
+            var order = await _repo.FindAll()
+                .FirstOrDefaultAsync(x => x.CreatedBy == accountId && x.ConsumerId == accountItem.ConsumerId && x.CreatedTime.Date == DateTime.Now.Date);
+           if (order == null)
             {
-                Code = DateTime.Now.Millisecond.ToString() + accountId,
-                FullName = accountItem.Consumer.FullName,
-                EmployeeId = accountItem.Consumer.EmployeeId,
-                ConsumerId = accountItem.ConsumerId.Value,
-                Status = 1,
-                CreatedBy = accountId,
-                TotalPrice = totalPrice
-            };
-            orderItem.OrderDetails = new List<OrderDetail>();
-            foreach (var x in cartList)
-            {
-                OrderDetail itemDetail = new OrderDetail();
-                itemDetail.OrderId = orderItem.Id;
-                itemDetail.ProductId = x.ProductId;
-                itemDetail.Quantity = x.Quantity;
-                itemDetail.Price = (decimal?)x.Product.OriginalPrice;
-                itemDetail.TeamId = x.TeamId;
-                orderItem.OrderDetails.Add(itemDetail);
-            }
-            try
-            {
-
-                _repo.Add(orderItem);
-                await _unitOfWork.SaveChangeAsync();
-
-                var orderHistory = orderItem.OrderDetails.Select(x => new OrderDetailHistory
+                var orderItem = new Order
                 {
-                    Id = 0,
-                    OrderDetailId = x.Id,
-                    ProductId = x.ProductId,
-                    PendingQty = x.Quantity.Value,
-                    ByingQty = 0,
-                    CompleteQty = 0,
-                    ConsumerId = orderItem.ConsumerId,
-                    DispatchDate = DateTime.MinValue,
-                    OrderDate = orderItem.CreatedTime,
-                    TeamId = x.TeamId
-                }).ToList();
-                _repoOrderHistory.AddRange(orderHistory);
-                await _unitOfWork.SaveChangeAsync();
-                // Đặt hàng xong thì xóa giỏ hàng
-                var cartRemove = await _repoCart.FindAll(x => x.AccountId == accountId).ToListAsync();
-                _repoCart.RemoveMultiple(cartRemove);
-                await _unitOfWork.SaveChangeAsync();
-                operationResult = new OperationResult
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Message = MessageReponse.AddSuccess,
-                    Success = true,
-                    Data = null
+                    Code = DateTime.Now.Millisecond.ToString() + accountId,
+                    FullName = accountItem.Consumer.FullName,
+                    EmployeeId = accountItem.Consumer.EmployeeId,
+                    ConsumerId = accountItem.ConsumerId.Value,
+                    Status = 1,
+                    CreatedBy = accountId,
+                    TotalPrice = totalPrice
                 };
-            }
-            catch (Exception ex)
+                orderItem.OrderDetails = new List<OrderDetail>();
+                foreach (var x in cartList)
+                {
+                    OrderDetail itemDetail = new OrderDetail();
+                    itemDetail.OrderId = orderItem.Id;
+                    itemDetail.ProductId = x.ProductId;
+                    itemDetail.Quantity = x.Quantity;
+                    itemDetail.Price = (decimal?)x.Product.OriginalPrice;
+                    itemDetail.TeamId = x.TeamId;
+                    orderItem.OrderDetails.Add(itemDetail);
+                }
+                try
+                {
+
+                    _repo.Add(orderItem);
+                    await _unitOfWork.SaveChangeAsync();
+
+                    var orderHistory = orderItem.OrderDetails.Select(x => new OrderDetailHistory
+                    {
+                        Id = 0,
+                        OrderDetailId = x.Id,
+                        ProductId = x.ProductId,
+                        PendingQty = x.Quantity.Value,
+                        ByingQty = 0,
+                        CompleteQty = 0,
+                        ConsumerId = orderItem.ConsumerId,
+                        DispatchDate = DateTime.MinValue,
+                        OrderDate = orderItem.CreatedTime,
+                        TeamId = x.TeamId
+                    }).ToList();
+                    _repoOrderHistory.AddRange(orderHistory);
+                    await _unitOfWork.SaveChangeAsync();
+                    // Đặt hàng xong thì xóa giỏ hàng
+                    var cartRemove = await _repoCart.FindAll(x => x.AccountId == accountId).ToListAsync();
+                    _repoCart.RemoveMultiple(cartRemove);
+                    await _unitOfWork.SaveChangeAsync();
+                    operationResult = new OperationResult
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Message = MessageReponse.AddSuccess,
+                        Success = true,
+                        Data = null
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Không thêm được thì xóa file vừa tạo đi
+                    operationResult = ex.GetMessageError();
+                }
+                return operationResult;
+            } else
             {
-                // Không thêm được thì xóa file vừa tạo đi
-                operationResult = ex.GetMessageError();
+                var orderDetails = order.OrderDetails;
+                order.CreatedTime = DateTime.Now;
+                order.ModifiedTime = DateTime.Now;
+
+                var adddetails = new List<OrderDetail>();
+                // Tao moi nhung san pham chua co trong order details
+                var newProducts = cartList.Where(x =>  orderDetails.Any(b=> b.ProductId == x.ProductId && x.TeamId == b.TeamId) == false).ToList();
+                foreach (var item in newProducts)
+                {
+                        OrderDetail itemDetail = new OrderDetail();
+                        itemDetail.OrderId = order.Id;
+                        itemDetail.ProductId = item.ProductId;
+                        itemDetail.Quantity = item.Quantity;
+                        itemDetail.Price = (decimal?)item.Product.OriginalPrice;
+                        itemDetail.TeamId = item.TeamId;
+                    adddetails.Add(itemDetail);
+                }
+
+                var updateProducts = cartList.Where(x => orderDetails.Any(b => b.ProductId == x.ProductId && x.TeamId == b.TeamId) == true).ToList();
+
+                var updateDetails = new List<OrderDetail>();
+                foreach (var x in updateProducts)
+                {
+                    foreach (var itemDetail in orderDetails)
+                    {
+                        if (x.ProductId == itemDetail.ProductId && x.TeamId == itemDetail.TeamId)
+                        {
+                            itemDetail.Quantity += x.Quantity;
+                            itemDetail.Price = (decimal?)x.Product.OriginalPrice;
+                            itemDetail.TeamId = x.TeamId;
+                            updateDetails.Add(itemDetail);
+                        }
+                    }
+                 
+                }
+                try
+                {
+                    _repoDetail.UpdateRange(updateDetails);
+                    _repoDetail.AddRange(adddetails);
+                    _repo.Update(order);
+                    await _unitOfWork.SaveChangeAsync();
+
+                    var orderHistory = adddetails.Select(x => new OrderDetailHistory
+                    {
+                        Id = 0,
+                        OrderDetailId = x.Id,
+                        ProductId = x.ProductId,
+                        PendingQty = x.Quantity.Value,
+                        ByingQty = 0,
+                        CompleteQty = 0,
+                        ConsumerId = order.ConsumerId,
+                        DispatchDate = DateTime.MinValue,
+                        OrderDate = order.CreatedTime,
+                        TeamId = x.TeamId
+                    }).ToList();
+                    _repoOrderHistory.AddRange(orderHistory);
+
+                    var updateHistory = await _repoOrderHistory.FindAll(x => updateDetails.Select(a=>a.Id).Contains(x.OrderDetailId)).ToListAsync();
+                    var updateHistories = new List<OrderDetailHistory>();
+                    foreach (var x in updateDetails)
+                    {
+                        foreach (var itemDetail in updateHistory)
+                        {
+                            if (x.Id == itemDetail.OrderDetailId && x.TeamId == itemDetail.TeamId)
+                            {
+                                itemDetail.PendingQty = x.Quantity.Value;
+                                updateHistories.Add(itemDetail);
+                            }
+                        }
+
+                    }
+                    _repoOrderHistory.UpdateRange(updateHistories);
+
+                    await _unitOfWork.SaveChangeAsync();
+                    // Đặt hàng xong thì xóa giỏ hàng
+                    var cartRemove = await _repoCart.FindAll(x => x.AccountId == accountId).ToListAsync();
+                    _repoCart.RemoveMultiple(cartRemove);
+                    await _unitOfWork.SaveChangeAsync();
+                    operationResult = new OperationResult
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Message = MessageReponse.AddSuccess,
+                        Success = true,
+                        Data = null
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Không thêm được thì xóa file vừa tạo đi
+                    operationResult = ex.GetMessageError();
+                }
+                return operationResult;
             }
-            return operationResult;
+          
         }
         public async Task<object> GetProductsInOrder(string langId)
         {
@@ -821,13 +923,13 @@ namespace Supermarket.Services
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var data = await _repo.FindAll(x => x.ConsumerId == accountItem.ConsumerId.Value).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+            var data = await _repo.FindAll(x => x.ConsumerId == accountItem.ConsumerId.Value && x.CreatedTime.Date == DateTime.Now.Date).FirstOrDefaultAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
                 Data = new List<ProductCartDto> { }
             };
-            var res = data.OrderDetails.Select(x => new ProductCartDto
+            var res = data.OrderDetails.OrderByDescending(x=>x.Id).Select(x => new ProductCartDto
             {
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice.ToString("n0"),
@@ -1490,8 +1592,8 @@ namespace Supermarket.Services
                 DetailId = x.Id,
                 OrderDate = x.Orders.CreatedTime.ToString("MM/dd/yyyy HH:mm:ss"),
                 HistoryId = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).Id,
-                PendingQty = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).PendingQty
-            }).Where(x => x.PendingQty > 0).ToListAsync();
+                    PendingQty = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).PendingQty
+            }).Where(x => x.PendingQty > 0).OrderBy(x=>x.ProductId).ToListAsync();
         }
 
     }

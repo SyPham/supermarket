@@ -81,9 +81,8 @@ export class PendingComponent extends BaseComponent implements OnInit {
     }
   }
   back() {
-    const storeId = +this.route.snapshot.params.storeId || 0;
-    const kindId = +this.route.snapshot.params.kindId || 0;
-    return this.router.navigate([`/consumer/product-list/${storeId}/${kindId}`]);
+
+    return this.router.navigate([`/consumer/product-list`]);
 
   }
   toolbarClick(args) {

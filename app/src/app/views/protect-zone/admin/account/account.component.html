@@ -37,6 +37,11 @@
                 ************
               </ng-template>
             </e-column>
+            <e-column field='accountType' headerText="{{'Account type'}}" width='150' textAlign='Center'>
+              <ng-template #editTemplate let-data>
+                <ejs-dropdownlist  [(ngModel)]='accountTypeId' [fields]="accountTypeFields" placeholder='Select account type' [dataSource]='accountTypes'></ejs-dropdownlist>
+              </ng-template>
+            </e-column>
             <e-column field="group" textAlign='Center' headerText="Group">
               <ng-template #editTemplate let-data>
                 <ejs-dropdownlist [allowFiltering]='true' [(ngModel)]='group_ID' [fields]="fields" placeholder='Select Group' [dataSource]='groupData'></ejs-dropdownlist>
@@ -66,11 +71,7 @@
 
               </ng-template>
             </e-column>
-            <e-column field='accountType' headerText="{{'Account type'}}" width='150' textAlign='Center'>
-                <ng-template #editTemplate let-data>
-                  <ejs-dropdownlist  [(ngModel)]='accountTypeId' [fields]="accountTypeFields" placeholder='Select account type' [dataSource]='accountTypes'></ejs-dropdownlist>
-                </ng-template>
-              </e-column>
+
 
             <e-column field="option" width="100" textAlign='Center' headerText="{{ 'Option'}}">
               <ng-template #template let-data>
