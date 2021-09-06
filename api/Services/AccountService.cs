@@ -60,6 +60,8 @@ namespace Supermarket.Services
                 }    
                 var item = _mapper.Map<Account>(model);
                 item.Password = item.Password.ToEncrypt();
+                if (model.Team_ID == 0)
+                    item.Team_ID = null;
                 item.Consumer = new Consumer
                 {
                     EmployeeId = model.Username,

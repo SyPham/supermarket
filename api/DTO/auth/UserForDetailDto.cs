@@ -12,5 +12,6 @@ namespace Supermarket.DTO.auth
         public string FullName { get; set; }
         public string Email { get; set; }
         public int? AccountTypeId { get; set; }
+        public int? TeamId { get; set; }
     }
 }

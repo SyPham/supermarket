@@ -21,6 +21,13 @@
                 <button type="button" (click)="TabComplete()" [ngClass]="completeTabClass" >{{ 'Complete' | translate}} </button>
               </ng-template>
             </e-item>
+
+            <e-item id='options' *ngIf="teamIdStore === 'null' || teamId === '0'">
+              <ng-template #template>
+                <ejs-dropdownlist  (change)='teamChange($event)' [fields]="fields" placeholder='Select Team' [dataSource]='teamData'></ejs-dropdownlist>
+                <!-- <button type="button" (click)="TabComplete()" [ngClass]="completeTabClass" >{{ 'Complete' | translate}} </button> -->
+              </ng-template>
+            </e-item>
           </e-items>
         </ejs-toolbar>
       </div>

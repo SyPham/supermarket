@@ -31,15 +31,15 @@ namespace Supermarket.Services
         Task<object> GetProductsInOrderByAdmin(string langId);
         Task<bool> Transfer(List<AddToBuyListDto> model);
         Task<bool> CancelBuyList(List<AddToBuyListDto> model);
-        Task<byte[]> ReportBuyPersion(string langId);
-        Task<byte[]> ReportBuyItem(string langId);
+        Task<byte[]> ReportBuyPersion(string langId , int teamId);
+        Task<byte[]> ReportBuyItem(string langId , int teamId);
 
         Task<bool> CancelPendingList(List<AddToBuyListDto> model);
         Task<bool> TransferComplete(List<AddToCompleteListDto> model);
-        Task<object> GetProductsInOrderPendingByAdmin(string langId);
+        Task<object> GetProductsInOrderPendingByAdmin(string langId , int teamId);
         Task<object> GetUserDelevery(string langId, DateTime startDate, DateTime endDate);
-        Task<object> GetProductsInOrderBuyingByAdmin(string langId);
-        Task<object> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate);
+        Task<object> GetProductsInOrderBuyingByAdmin(string langId, int teamId);
+        Task<object> GetProductsInOrderCompleteByAdmin(string langId, int teamId, DateTime startDate, DateTime endDate);
         Task<object> GetProductsForCartStatus(string langId);
         Task<object> GetBuyingBuyPerson(string langId);
 
@@ -104,26 +104,26 @@ namespace Supermarket.Services
             sbText.Replace(" ", String.Empty);
             return sbText.ToString();
         }
-        public async Task<byte[]> ReportBuyPersion(string langId)
+        public async Task<byte[]> ReportBuyPersion(string langId, int teamId)
         {
-            var res = await GetBuyingBuyPersonExcel(langId);
+            var res = await GetBuyingBuyPersonExcel(langId, teamId);
             return ReportBuyPersion(res);
             //throw new NotImplementedException();
         }
-        public async Task<byte[]> ReportBuyItem(string langId)
+        public async Task<byte[]> ReportBuyItem(string langId, int teamId)
         {
-            var res = await GetBuyingBuyItemExcel(langId);
+            var res = await GetBuyingBuyItemExcel(langId, teamId);
             return ReportBuyItem(res);
             //throw new NotImplementedException();
         }
-        public async Task<List<ProductBuyingDto>> GetBuyingBuyItemExcel(string langId)
+        public async Task<List<ProductBuyingDto>> GetBuyingBuyItemExcel(string langId, int teamId)
         {
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
             var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
+            var data = await _repoOrderHistory.FindAll(x => x.TeamId == teamId).ToListAsync();
             if (data == null) return new List<ProductBuyingDto>();
             //{
             //    TotalPrice = 0,
@@ -452,12 +452,12 @@ namespace Supermarket.Services
                 return new Byte[] { };
             }
         }
-        public async Task<List<ProductBuyingDto>> GetBuyingBuyPersonExcel(string langId)
+        public async Task<List<ProductBuyingDto>> GetBuyingBuyPersonExcel(string langId, int teamId)
         {
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
             var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
-            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == teamId).ToListAsync();
             if (data == null) return new List<ProductBuyingDto>();
             //{
             //    TotalPrice = 0,
@@ -901,7 +901,7 @@ namespace Supermarket.Services
             };
         }
 
-        public async Task<object> GetProductsInOrderPendingByAdmin(string langId)
+        public async Task<object> GetProductsInOrderPendingByAdmin(string langId , int teamId)
         {
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
@@ -914,7 +914,7 @@ namespace Supermarket.Services
             //var data = await _repo.FindAll().ToListAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == teamId).ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
@@ -965,14 +965,14 @@ namespace Supermarket.Services
                 Data = result
             };
         }
-        public async Task<object> GetProductsInOrderBuyingByAdmin(string langId)
+        public async Task<object> GetProductsInOrderBuyingByAdmin(string langId, int teamId)
         {
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
             var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == teamId).ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,
@@ -1025,14 +1025,14 @@ namespace Supermarket.Services
                 Data = result
             };
         }
-        public async Task<object> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate)
+        public async Task<object> GetProductsInOrderCompleteByAdmin(string langId, int teamId, DateTime startDate, DateTime endDate)
         {
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
             var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
             string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
                     _httpContextAccessor.HttpContext.Request.Host + "/api/";
-            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == accountItem.Team_ID).ToListAsync();
+            var data = await _repoOrderHistory.FindAll().Where(x => x.TeamId == teamId).ToListAsync();
             if (data == null) return new
             {
                 TotalPrice = 0,

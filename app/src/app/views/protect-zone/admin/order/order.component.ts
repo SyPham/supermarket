@@ -19,6 +19,7 @@ import imageToBase64 from 'image-to-base64/browser';
 import { ExportAsConfig, ExportAsService } from 'ngx-export-as';
 import { EmitType } from '@syncfusion/ej2-base';
 import { saveAs } from 'file-saver';
+import { TeamService } from 'src/app/_core/_service/team.service';
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -70,6 +71,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   databuyingPersion: any
   startDate = new Date();
   endDate = new Date();
+  teamId: any
   configItem: ExportAsConfig = {
     type: 'xlsx',
     elementIdOrContent: 'buyItem',
@@ -78,10 +80,13 @@ export class OrderComponent extends BaseComponent implements OnInit {
     type: 'xlsx',
     elementIdOrContent: 'byPerson',
   };
+  teamData: any[];
+  teamIdStore: string;
   constructor(
     private service: OrderService,
     private spinner: NgxSpinnerService,
     private exportAsService: ExportAsService,
+    private teamService: TeamService,
     private sanitizer: DomSanitizer,
     public modalService: NgbModal,
     private alertify: AlertifyService,
@@ -104,9 +109,31 @@ export class OrderComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     // this.Permission(this.route);
     this.removeLocalStore("dispatch")
+    this.teamIdStore = localStorage.getItem("teamId")
+    this.teamId = localStorage.getItem("teamId")
+    console.log(this.teamId);
+    this.getAllTeam();
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.wrapSettings = { wrapMode: 'Content' };
     this.loadDataBuying();
+  }
+  getAllTeam() {
+    this.teamService.getAll().subscribe(data => {
+      this.teamData = data;
+    });
+  }
+  teamChange(args) {
+    this.teamId = args.value
+    if(this.completeTab) {
+      this.loadDataComplete()
+    }
+    if(this.buyingTab) {
+      this.loadDataBuying()
+    }
+    if(this.pendingTab) {
+      this.loadDataPending()
+    }
+
   }
   CancelBuying() {
     if (this.dataPickedDitchPatch.length > 0) {
@@ -153,12 +180,12 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
   exportBuyItem() {
     this.spinner.show();
-    this.service.reportBuyItem().subscribe(data =>{
+    console.log(this.teamId);
+    this.service.reportBuyItem(this.teamId).subscribe(data =>{
       (saveAs(data,'exportBuyItem.xlsx'))
       this.alertify.success(MessageConstants.CREATED_OK_MSG);
       this.spinner.hide();
-      // setTimeout(() => {
-      // }, 2000);
+
     })
     // get the data as base64 or json object for json type - this will be helpful in ionic or SSR
     // this.exportAsService.get(this.config).subscribe(content => {
@@ -171,7 +198,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     //   // save started
     // });
     this.spinner.show();
-    this.service.reportBuyPersion().subscribe(data =>{
+    this.service.reportBuyPersion(this.teamId).subscribe(data =>{
       (saveAs(data,'exportBuyPersion.xlsx'))
       this.alertify.success(MessageConstants.CREATED_OK_MSG);
       this.spinner.hide();
@@ -196,7 +223,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
   loadDataComplete() {
     this.data = [];
-    this.service.getProductsInOrderCompleteByAdmin(this.startDate.toDateString() , this.endDate.toDateString()).subscribe(res => {
+    this.service.getProductsInOrderCompleteByAdmin(this.teamId,this.startDate.toDateString() , this.endDate.toDateString()).subscribe(res => {
       this.data = res.data || [];
       this.totalPrice = res.totalPrice || 0;
     });
@@ -216,7 +243,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
   loadDataBuying() {
     this.data = [];
-    this.service.getProductsInOrderByingByAdmin().subscribe(res => {
+    this.service.getProductsInOrderByingByAdmin(this.teamId).subscribe(res => {
       this.data = res.data || [];
       console.log(this.data);
       this.totalPrice = res.totalPrice || 0;
@@ -461,7 +488,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
   loadDataPending() {
     this.data = [];
-    this.service.getProductsInOrderPendingByAdmin().subscribe(res => {
+    this.service.getProductsInOrderPendingByAdmin(this.teamId).subscribe(res => {
       this.data = res.data || [];
       this.totalPrice = res.totalPrice || 0;
     });

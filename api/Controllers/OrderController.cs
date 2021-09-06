@@ -17,16 +17,16 @@ namespace Supermarket.Controllers
             _service = service;
         }
 
-        [HttpGet("{langId}")]
-        public async Task<IActionResult> ReportBuyPersion(string langId)
+        [HttpGet("{langId}/{teamId}")]
+        public async Task<IActionResult> ReportBuyPersion(string langId, int teamId)
         {
-            var bin = await _service.ReportBuyPersion(langId);
+            var bin = await _service.ReportBuyPersion(langId, teamId);
             return File(bin, "application/octet-stream", "ReportBuyPersion.xlsx");
         }
-        [HttpGet("{langId}")]
-        public async Task<IActionResult> ReportBuyItem(string langId)
+        [HttpGet("{langId}/{teamId}")]
+        public async Task<IActionResult> ReportBuyItem(string langId, int teamId)
         {
-            var bin = await _service.ReportBuyItem(langId);
+            var bin = await _service.ReportBuyItem(langId, teamId);
             return File(bin, "application/octet-stream", "ReportBuyItem.xlsx");
         }
         [HttpPut]
@@ -102,9 +102,9 @@ namespace Supermarket.Controllers
             return Ok(await _service.GetProductsForCartStatus(langId));
         }
         [HttpGet]
-        public async Task<ActionResult> GetProductsInOrderPendingByAdmin(string langId)
+        public async Task<ActionResult> GetProductsInOrderPendingByAdmin(string langId , int teamId)
         {
-            return Ok(await _service.GetProductsInOrderPendingByAdmin(langId));
+            return Ok(await _service.GetProductsInOrderPendingByAdmin(langId, teamId));
         }
         [HttpGet("{langId}/{startDate}/{endDate}")]
         public async Task<ActionResult> GetUserDelevery(string langId , DateTime startDate, DateTime endDate)
@@ -117,14 +117,14 @@ namespace Supermarket.Controllers
             return Ok(await _service.GetBuyingBuyPerson(langId));
         }
         [HttpGet]
-        public async Task<ActionResult> GetProductsInOrderBuyingByAdmin(string langId)
+        public async Task<ActionResult> GetProductsInOrderBuyingByAdmin(string langId ,int teamId)
         {
-            return Ok(await _service.GetProductsInOrderBuyingByAdmin(langId));
+            return Ok(await _service.GetProductsInOrderBuyingByAdmin(langId, teamId));
         }
-        [HttpGet("{langId}/{startDate}/{endDate}")]
-        public async Task<ActionResult> GetProductsInOrderCompleteByAdmin(string langId, DateTime startDate, DateTime endDate)
+        [HttpGet("{langId}/{teamId}/{startDate}/{endDate}")]
+        public async Task<ActionResult> GetProductsInOrderCompleteByAdmin(string langId, int teamId, DateTime startDate, DateTime endDate)
         {
-            return Ok(await _service.GetProductsInOrderCompleteByAdmin(langId, startDate, endDate));
+            return Ok(await _service.GetProductsInOrderCompleteByAdmin(langId, teamId, startDate, endDate));
         }
         [HttpGet]
         public async Task<ActionResult> GetWithPaginationsAsync(PaginationParams paramater)

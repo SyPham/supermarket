@@ -117,11 +117,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
         args.cancel = true;
         return;
       }
-      if (this.accountTypeId === this.ADMIN && this.team_ID === 0) {
-        this.alertify.error('Please select Team for Admin Acount! <br> Vui lòng chọn team cho user có vai trò Admin!');
-        args.cancel = true;
-        return;
-      }
+
       //console.log(this.accountTypeId);
 
       // console.log(args.data.accountType);

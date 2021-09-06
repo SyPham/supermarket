@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (accessToken && refreshToken && this.route.routeConfig.path === 'login') {
       const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
       const uri = decodeURI(this.uri) || accountTypeId === 1 ? '/admin/order' : '/consumer/product-list';
-      
+
       this.router.navigate([uri]);
     }
   }
@@ -124,6 +124,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       // });
       localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('teamId', JSON.parse(localStorage.getItem('user'))?.teamId);
       localStorage.setItem('token', data.token);
 
       const accountTypeId = JSON.parse(localStorage.getItem('user'))?.accountTypeId;
