@@ -33,9 +33,11 @@ export class AccountComponent extends BaseComponent implements OnInit {
   accountTypes: any[];
   groupData: any[];
   teamData: any[];
-  accountTypeId: any;
+  accountTypeId: any = 0;
+  ADMIN: number = 1
+  CONSUMER: number = 2
   group_ID: any;
-  team_ID: any;
+  team_ID: any = 0;
   wrapSettings= { wrapMode: 'Content' };
   constructor(
     private service: Account2Service,
@@ -110,10 +112,23 @@ export class AccountComponent extends BaseComponent implements OnInit {
         args.cancel = true;
         return;
       }
+      if (this.accountTypeId === 0) {
+        this.alertify.error('Please select Account Type! <br> Vui lòng chọn vai trò user!');
+        args.cancel = true;
+        return;
+      }
+      if (this.accountTypeId === this.ADMIN && this.team_ID === 0) {
+        this.alertify.error('Please select Team for Admin Acount! <br> Vui lòng chọn team cho user có vai trò Admin!');
+        args.cancel = true;
+        return;
+      }
+      //console.log(this.accountTypeId);
+
+      // console.log(args.data.accountType);
       this.create();
     }
     if (args.requestType === 'beginEdit') {
-      this.accountTypeId =args.rowData.accountTypeId
+      this.accountTypeId = args.rowData.accountTypeId
       this.group_ID =args.rowData.group_ID
       this.team_ID =args.rowData.team_ID
     }

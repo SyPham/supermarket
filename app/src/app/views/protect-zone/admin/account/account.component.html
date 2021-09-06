@@ -45,7 +45,13 @@
             </e-column>
             <e-column field="team" textAlign='Center' headerText="Team">
               <ng-template #editTemplate let-data>
-                <ejs-dropdownlist  [(ngModel)]='team_ID' [fields]="fields" placeholder='Select Team' [dataSource]='teamData'></ejs-dropdownlist>
+                <ng-container *ngIf="data.accountTypeId === ADMIN || data.accountTypeId === undefined; else elseTemplate">
+                  <ejs-dropdownlist  [(ngModel)]='team_ID' [fields]="fields" placeholder='Select Team' [dataSource]='teamData'></ejs-dropdownlist>
+                </ng-container>
+                <ng-template #elseTemplate>
+
+                </ng-template>
+
               </ng-template>
 
             </e-column>
