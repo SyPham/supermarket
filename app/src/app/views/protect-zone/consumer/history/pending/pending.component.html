@@ -47,6 +47,10 @@
                 #
               </ng-template>
             </e-column>
+            <e-column field="team" textAlign='Center' width="100" isPrimaryKey="true" headerText="Team">
+            </e-column>
+            <e-column field="store" textAlign='Center' width="100" isPrimaryKey="true" headerText="Store">
+            </e-column>
             <e-column field="avatar" width="100" textAlign='Center' headerText="{{ 'Photo' | translate}}">
              <ng-template #template let-data>
                <img class='avatar' [src]="imagePath(data.avatar) | image: 'url'" alt="{{data.name}}" />
@@ -60,7 +64,7 @@
                <span>{{data.name}}</span>
               </ng-template>
              </e-column>
-            <e-column field="description" textAlign='Left' headerText="{{'Unit' | translate}}">
+            <e-column field="description" textAlign='Center' width="100" headerText="{{'Unit' | translate}}">
               <ng-template #editTemplate let-data>
                <span style="text-align: left">{{data.description}}</span>
               </ng-template>
@@ -98,6 +102,8 @@
                 <ng-template #template let-data>
                <span>{{data.amount}} đ</span>
               </ng-template>
+            </e-column>
+            <e-column field="orderDate" textAlign='Center' width="100" isPrimaryKey="true" headerText="Order Date">
             </e-column>
           </e-columns>
         </ejs-grid>

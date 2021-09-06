@@ -1278,7 +1278,10 @@ namespace Supermarket.Services
                   OriginalPrice = x.Product.OriginalPrice,
                   Price = x.Product.OriginalPrice,
                   Quantity = x.PendingQty
-              }).ToListAsync();
+              })
+              .OrderByDescending(x=> x.DispatchDate)
+              .ThenByDescending(x=>x.OrderDate)
+              .ToListAsync();
             // var pending = model.Where(x => x.PendingQty > 0).Select(x => new
             // {
             //     x.FullName,
@@ -1469,7 +1472,9 @@ namespace Supermarket.Services
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
 
-            return await _repo.FindAll(x => x.CreatedBy == accountId).SelectMany(x => x.OrderDetails).Select(x => new
+            return await _repo.FindAll(x => x.CreatedBy == accountId)
+                .SelectMany(x => x.OrderDetails)
+                .Select(x => new
             {
                 ProductId = x.ProductId,
                 AccountId = x.Orders.CreatedBy.Value,
@@ -1477,10 +1482,13 @@ namespace Supermarket.Services
                 OriginalPrice = x.Product.OriginalPrice.ToString("n0"),
                 Quantity = x.Quantity,
                 Avatar = x.Product.Avatar,
+                Store = x.Product.Store.Name,
+                Team = x.Team != null ? x.Team.Name : "N/A",
                 Description = x.Product.Description,
                 Amount = (x.Quantity.Value * x.Product.OriginalPrice).ToString("n0"),
                 AmountValue = (x.Quantity.Value * x.Product.OriginalPrice),
                 DetailId = x.Id,
+                OrderDate = x.Orders.CreatedTime.ToString("MM/dd/yyyy HH:mm:ss"),
                 HistoryId = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).Id,
                 PendingQty = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).PendingQty
             }).Where(x => x.PendingQty > 0).ToListAsync();
