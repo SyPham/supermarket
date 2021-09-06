@@ -11,13 +11,13 @@
               </div>
               <div class="col-md-2">
                 <ejs-dropdownlist [dataSource]='dataStore' [fields]='storeFields' [allowFiltering]='true'
-                  [value]="storeId" (change)='onChangeStoreData($event)'
+                  [value]="storeIdData" (change)='onChangeStoreData($event)'
                   placeholder="Select a store">
                 </ejs-dropdownlist>
               </div>
               <div class="col-md-2">
                 <ejs-dropdownlist id='ddlelement' #ddlelement [dataSource]='dataKind' [fields]='kindFields' [allowFiltering]='true'
-                  [value]="kindId" (change)='onChangeKindData($event)'
+                  [value]="kindIdData" (change)='onChangeKindData($event)'
                   placeholder="Select a Kind">
                 </ejs-dropdownlist>
               </div>
@@ -144,7 +144,7 @@
                 <div class="form-group">
                   <label for="">Store</label>
                   <ejs-dropdownlist [dataSource]='dataStore' [fields]='storeFields' [allowFiltering]='true'
-                    [value]="storeId" (change)='onChangeStore($event)'
+                     (change)='onChangeStore($event)'
                     placeholder="Select a store">
                   </ejs-dropdownlist>
                 </div>
@@ -153,7 +153,7 @@
                 <div class="form-group">
                   <label for="">Kind</label>
                   <ejs-dropdownlist [dataSource]='dataKind' [fields]='kindFields' [allowFiltering]='true'
-                    [value]="kindId" (change)='onChangeKind($event)'
+                     (change)='onChangeKind($event)'
                     placeholder="Select a Kind">
                   </ejs-dropdownlist>
                 </div>

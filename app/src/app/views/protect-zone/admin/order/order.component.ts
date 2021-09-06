@@ -488,6 +488,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
   loadDataPending() {
     this.data = [];
+    console.log(this.teamId);
     this.service.getProductsInOrderPendingByAdmin(this.teamId).subscribe(res => {
       this.data = res.data || [];
       this.totalPrice = res.totalPrice || 0;

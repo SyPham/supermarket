@@ -101,7 +101,8 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetProductsForCartStatus(langId));
         }
-        [HttpGet]
+
+        [HttpGet("{langId}/{teamId}")]
         public async Task<ActionResult> GetProductsInOrderPendingByAdmin(string langId , int teamId)
         {
             return Ok(await _service.GetProductsInOrderPendingByAdmin(langId, teamId));
@@ -116,7 +117,7 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetBuyingBuyPerson(langId));
         }
-        [HttpGet]
+        [HttpGet("{langId}/{teamId}")]
         public async Task<ActionResult> GetProductsInOrderBuyingByAdmin(string langId ,int teamId)
         {
             return Ok(await _service.GetProductsInOrderBuyingByAdmin(langId, teamId));

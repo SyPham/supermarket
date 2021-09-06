@@ -36,7 +36,7 @@ export class OrderService extends CURDService<Order> {
     return this.http.get<any>(`${this.base}Order/getProductsInOrderByAdmin?langId=${localStorage.getItem("lang")}`);
   }
   getProductsInOrderPendingByAdmin(teamId): Observable<any> {
-    return this.http.get<any>(`${this.base}Order/getProductsInOrderPendingByAdmin?langId=${localStorage.getItem("lang")}?teamId=${teamId}`);
+    return this.http.get<any>(`${this.base}Order/getProductsInOrderPendingByAdmin/${localStorage.getItem("lang")}/${teamId}`);
   }
   GetUserDelevery(startDate, endDate): Observable<any> {
     return this.http.get<any>(`${this.base}Order/GetUserDelevery/${localStorage.getItem("lang")}/${startDate}/${endDate}`);
@@ -45,7 +45,7 @@ export class OrderService extends CURDService<Order> {
     return this.http.get<any>(`${this.base}Order/GetBuyingBuyPerson/${localStorage.getItem("lang")}`);
   }
   getProductsInOrderByingByAdmin(teamId): Observable<any> {
-    return this.http.get<any>(`${this.base}Order/GetProductsInOrderBuyingByAdmin?langId=${localStorage.getItem("lang")}?teamId=${teamId}`);
+    return this.http.get<any>(`${this.base}Order/GetProductsInOrderBuyingByAdmin/${localStorage.getItem("lang")}/${teamId}`);
   }
   getProductsInOrderCompleteByAdmin(teamId,startDate, endDate): Observable<any> {
     return this.http.get<any>(`${this.base}Order/getProductsInOrderCompleteByAdmin/${localStorage.getItem("lang")}/${teamId}/${startDate}/${endDate}`);

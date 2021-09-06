@@ -61,6 +61,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
   filterRequest: FilterRequest;
   @ViewChild('ddlelement')
   public dropDownListObject: DropDownListComponent;
+  storeIdData: any;
+  kindIdData: any;
   constructor(
     private service: ProductService,
     private service_kind: KindService,
@@ -210,21 +212,21 @@ export class ProductComponent extends BaseComponent implements OnInit {
   }
   onChangeStoreData(args) {
     this.dropDownListObject.value = null;
-    this.storeId = args.value
+    this.storeIdData = args.value
     this.filterRequest = {
-      storeId: this.storeId ?? 0,
+      storeId: this.storeIdData ?? 0,
       langId: localStorage.getItem("lang"),
-      kindId: this.kindId ?? 0
+      kindId: this.kindIdData ?? 0
     };
-    this.getAllKindByStore(this.storeId)
+    this.getAllKindByStore(this.storeIdData)
     this.getAllProduct();
   }
   onChangeKindData(args) {
-    this.kindId = args.itemData?.id || 0;
+    this.kindIdData = args.itemData?.id || 0;
       this.filterRequest = {
-        storeId: this.storeId ?? 0,
+        storeId: this.storeIdData ?? 0,
         langId: localStorage.getItem("lang"),
-        kindId: this.kindId ?? 0
+        kindId: this.kindIdData ?? 0
       };
       this.getAllProduct();
   }

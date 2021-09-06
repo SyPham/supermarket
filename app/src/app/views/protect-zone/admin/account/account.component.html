@@ -39,7 +39,7 @@
             </e-column>
             <e-column field="group" textAlign='Center' headerText="Group">
               <ng-template #editTemplate let-data>
-                <ejs-dropdownlist  [(ngModel)]='group_ID' [fields]="fields" placeholder='Select Group' [dataSource]='groupData'></ejs-dropdownlist>
+                <ejs-dropdownlist [allowFiltering]='true' [(ngModel)]='group_ID' [fields]="fields" placeholder='Select Group' [dataSource]='groupData'></ejs-dropdownlist>
               </ng-template>
 
             </e-column>
