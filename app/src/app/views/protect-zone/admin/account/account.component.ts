@@ -10,6 +10,7 @@ import { Account2Service } from 'src/app/_core/_service/account2.service';
 import { Account } from 'src/app/_core/_model/account';
 import { MessageConstants } from 'src/app/_core/_constants/system';
 import { GroupService } from 'src/app/_core/_service/group.service';
+import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 @Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
@@ -38,6 +39,10 @@ export class AccountComponent extends BaseComponent implements OnInit {
   CONSUMER: number = 2
   group_ID: any;
   team_ID: any = 0;
+  @ViewChild('groupDropDown')
+  public dropDownListObject: DropDownListComponent;
+  @ViewChild('ddlelement2')
+  public dropDownListObject1: DropDownListComponent;
   wrapSettings= { wrapMode: 'Content' };
   constructor(
     private service: Account2Service,
@@ -78,6 +83,11 @@ export class AccountComponent extends BaseComponent implements OnInit {
       accountType: null,
     };
 
+  }
+  refreshDropdownlist(){
+    this.group_ID = 0
+    this.team_ID = 0
+    // this.dropDownListObject1.value = null
   }
   actionBegin(args) {
     console.log(args);
@@ -122,6 +132,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
 
       // console.log(args.data.accountType);
       this.create();
+      this.refreshDropdownlist();
     }
     if (args.requestType === 'beginEdit') {
       this.accountTypeId = args.rowData.accountTypeId
@@ -146,6 +157,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
         accountType: null,
       };
       this.update();
+      this.refreshDropdownlist();
     }
     if (args.requestType === 'delete') {
       this.delete(args.data[0].id);

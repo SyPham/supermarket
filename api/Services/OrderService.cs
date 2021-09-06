@@ -905,7 +905,7 @@ namespace Supermarket.Services
         {
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
-            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == teamId).FirstOrDefaultAsync();
             //if (accountItem == null) return new
             //{
             //    TotalPrice = 0,
