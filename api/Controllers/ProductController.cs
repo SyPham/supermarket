@@ -97,6 +97,7 @@ namespace Supermarket.Controllers
                     entity.CreatedBy = entity.CreatedBy;
                     entity.StoreId = entity.StoreId;
                     entity.KindId = entity.KindId;
+                    entity.Avatar = $"image/default.png";
 
                 }
                 _context.Add(entity);
