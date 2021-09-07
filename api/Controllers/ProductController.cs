@@ -83,6 +83,7 @@ namespace Supermarket.Controllers
                         entity.CreatedBy = entity.CreatedBy;
                         entity.StoreId = entity.StoreId;
                         entity.KindId = entity.KindId;
+                        entity.Status = true;
                         entity.Avatar = $"image/{file.FileName}";
 
                     }
@@ -97,6 +98,7 @@ namespace Supermarket.Controllers
                     entity.CreatedBy = entity.CreatedBy;
                     entity.StoreId = entity.StoreId;
                     entity.KindId = entity.KindId;
+                    entity.Status = true;
                     entity.Avatar = $"image/default.png";
 
                 }
@@ -138,6 +140,7 @@ namespace Supermarket.Controllers
                         entity.CreatedBy = entity.CreatedBy;
                         entity.StoreId = entity.StoreId;
                         entity.KindId = entity.KindId;
+                        entity.Status = entity.Status;
                         entity.Avatar = $"image/{file.FileName}";
                         //return "\\image\\" + file.FileName;
 
@@ -152,6 +155,7 @@ namespace Supermarket.Controllers
                     entity.OriginalPrice = entity.OriginalPrice;
                     entity.CreatedBy = entity.CreatedBy;
                     entity.StoreId = entity.StoreId;
+                    entity.Status = entity.Status;
                     entity.KindId = entity.KindId;
                     entity.Avatar = entity.Avatar;
                 }
