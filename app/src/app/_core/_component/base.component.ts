@@ -9,7 +9,7 @@ export abstract class BaseComponent {
   editSettings = { showDeleteConfirmDialog: false, allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Normal' };
   editSettingOCs = { showDeleteConfirmDialog: false, allowEditing: false, allowAdding: true, allowDeleting: true, mode: 'Normal' };
   toolbarOptions = ['ExcelExport', 'Add', 'Update','Edit', 'Delete', 'Cancel', 'Search'];
-  toolbarProductOptions = ['ExcelExport', 'Add',  'Cancel', 'Search'];
+  toolbarProductOptions = ['ExcelExport', 'Add',  'Cancel', 'Search', 'Excel Import'];
   toolbarDeliveryOptions = ['ExcelExport', 'Search'];
   toolbarOptionsTree = [
   'Add',
