@@ -62,6 +62,7 @@ namespace Supermarket.Services
                 item.Password = item.Password.ToEncrypt();
                 if (model.Team_ID == 0)
                     item.Team_ID = null;
+               
                 item.Consumer = new Consumer
                 {
                     EmployeeId = model.Username,
@@ -102,7 +103,14 @@ namespace Supermarket.Services
                 item.Username = model.Username;
                 item.AccountTypeId = model.AccountTypeId;
                 item.Group_ID = model.Group_ID;
-                item.Team_ID = model.Team_ID;
+                if (model.Team_ID == 0)
+                {
+                    item.Team_ID = null;
+                }else
+                {
+                    item.Team_ID = model.Team_ID;
+                }
+                        
                 item.Consumer.EmployeeId = model.Username;
                 item.Consumer.Email = model.Email;
                 item.Consumer.FullName= model.FullName;

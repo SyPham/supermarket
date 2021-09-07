@@ -44,6 +44,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
   @ViewChild('ddlelement2')
   public dropDownListObject1: DropDownListComponent;
   wrapSettings= { wrapMode: 'Content' };
+  disable: boolean = false
   constructor(
     private service: Account2Service,
     private teamService: TeamService,
@@ -84,15 +85,27 @@ export class AccountComponent extends BaseComponent implements OnInit {
     };
 
   }
+
+  OnchangeAccountType(args){
+    if(args.value === this.ADMIN) {
+      this.disable = false
+    } else {
+      this.disable = true
+    }
+  }
   refreshDropdownlist(){
     this.group_ID = 0
     this.team_ID = 0
+    this.accountTypeId = 0
     // this.dropDownListObject1.value = null
   }
   actionBegin(args) {
-    console.log('actionBegin',args);
+    console.log(args);
     if (args.requestType === 'add') {
       this.initialModel();
+    }
+    if (args.requestType === 'cancel') {
+      this.refreshDropdownlist();
     }
     if (args.requestType === 'save' && args.action === 'add') {
       this.accountCreate = {
@@ -127,6 +140,12 @@ export class AccountComponent extends BaseComponent implements OnInit {
         args.cancel = true;
         return;
       }
+      console.log(this.group_ID);
+      if (this.group_ID === 0) {
+        this.alertify.error('Please select Group ! <br> Vui lòng chọn nhóm cho user!');
+        args.cancel = true;
+        return;
+      }
 
       //console.log(this.accountTypeId);
 
@@ -137,7 +156,12 @@ export class AccountComponent extends BaseComponent implements OnInit {
     if (args.requestType === 'beginEdit') {
       this.accountTypeId = args.rowData.accountTypeId
       this.group_ID =args.rowData.group_ID
-      this.team_ID =args.rowData.team_ID
+      this.team_ID = args.rowData.team_ID
+      if(this.accountTypeId === this.ADMIN) {
+        this.disable = false
+      } else {
+        this.disable = true
+      }
     }
     if (args.requestType === 'save' && args.action === 'edit') {
       this.accountUpdate = {
@@ -174,7 +198,6 @@ export class AccountComponent extends BaseComponent implements OnInit {
     }
   }
   actionComplete(args) {
-    console.log('actionComplete', args);
     if (args.requestType === 'add') {
       args.form.elements.namedItem('username').focus(); // Set focus to the Target element
     }
@@ -187,11 +210,13 @@ export class AccountComponent extends BaseComponent implements OnInit {
   getAllGroup() {
     this.groupService.getAll().subscribe(data => {
       this.groupData = data;
+
     });
   }
   getAllTeam() {
     this.teamService.getAll().subscribe(data => {
       this.teamData = data;
+      this.teamData.unshift({ id: 0, name: 'N/A'  });
     });
   }
   // end life cycle ejs-grid
