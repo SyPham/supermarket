@@ -19,8 +19,10 @@ namespace Supermarket.DTO
 
         public bool Status { get; set; }
         public int StoreId { get; set; }
+        public string Store { get; set; }
         public int KindId { get; set; }
-     
+        public string Kind { get; set; }
+
     }
     public class ProductListDto
     {

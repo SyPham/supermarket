@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using NetUtility;
+using OfficeOpenXml;
 using Supermarket.Data;
 using Supermarket.DTO;
 using Supermarket.Helpers;
 using Supermarket.Models;
 using Supermarket.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,6 +38,93 @@ namespace Supermarket.Controllers
             _environment = environment;
         }
 
+        [HttpPost]
+        public async Task<ActionResult> Import([FromForm] IFormFile file2)
+        {
+            IFormFile file = Request.Form.Files["UploadedFile"];
+            object createdBy = Request.Form["CreatedBy"];
+            var datasList = new List<ProductDto>();
+            //var datasList2 = new List<UploadDataVM2>();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
+            {
+                string fileName = file.FileName;
+                int userid = createdBy.ToInt();
+                using (var package = new ExcelPackage(file.OpenReadStream()))
+                {
+                    var currentSheet = package.Workbook.Worksheets;
+                    var workSheet = currentSheet.First();
+                    var noOfCol = workSheet.Dimension.End.Column;
+                    var noOfRow = workSheet.Dimension.End.Row;
+
+                    for (int rowIterator = 3; rowIterator <= noOfRow; rowIterator++)
+                    {
+                        datasList.Add(new ProductDto()
+                        {
+                            EnglishName = workSheet.Cells[rowIterator, 2].Value.ToSafetyString(),
+                            ChineseName = workSheet.Cells[rowIterator, 3].Value.ToSafetyString(),
+                            VietnameseName = workSheet.Cells[rowIterator, 4].Value.ToSafetyString(),
+                            Description = workSheet.Cells[rowIterator, 5].Value.ToSafetyString(),
+                            OriginalPrice = workSheet.Cells[rowIterator, 6].Value.ToDecimal(),
+                            Store = workSheet.Cells[rowIterator, 7].Value.ToSafetyString(),
+                            Kind = workSheet.Cells[rowIterator, 8].Value.ToSafetyString(),
+                            Status = workSheet.Cells[rowIterator, 9].Value.ToBool(),
+                        });
+                    }
+                }
+                datasList.ForEach(item =>
+                {
+                    item.CreatedBy = userid;
+                });
+                await _service.ImportExcel(datasList);
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> ExcelExport()
+        {
+            string filename = "Productfile.xlsx";
+            if (filename == null)
+                return Content("filename not present");
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/excelTemplate", filename);
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, GetContentType(path), Path.GetFileName(path));
+        }
+        private string GetContentType(string path)
+        {
+            var types = GetMimeTypes();
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return types[ext];
+        }
+        private Dictionary<string, string> GetMimeTypes()
+        {
+            return new Dictionary<string, string>
+            {
+                {".txt", "text/plain"},
+                {".pdf", "application/pdf"},
+                {".doc", "application/vnd.ms-word"},
+                {".docx", "application/vnd.ms-word"},
+                {".xls", "application/vnd.ms-excel"},
+                {".xlsx", "application/octet-stream"},
+                {".png", "image/png"},
+                {".jpg", "image/jpeg"},
+                {".jpeg", "image/jpeg"},
+                {".gif", "image/gif"},
+                {".csv", "text/csv"}
+            };
+        }
         [HttpPost("{id}")]
         public async Task<ActionResult> UpdateStatus(int id)
         {

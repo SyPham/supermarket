@@ -11,6 +11,8 @@ import { MessageConstants } from 'src/app/_core/_constants/system';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { UtilitiesService } from 'src/app/_core/_service/utilities.service';
 import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
+import { Spinner } from 'ngx-spinner/lib/ngx-spinner.enum';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-product',
@@ -47,6 +49,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
   @ViewChild('productModal', { static: true })
   productModal: TemplateRef<any>;
   modalReference: NgbModalRef;
+  @ViewChild('importModal', { static: true })
+  importModal: TemplateRef<any>;
   file: File = null
   previewUrl:any = null
   name: string = null
@@ -63,9 +67,11 @@ export class ProductComponent extends BaseComponent implements OnInit {
   public dropDownListObject: DropDownListComponent;
   storeIdData: any;
   kindIdData: any;
+  excelDownloadUrl: string;
   constructor(
     private service: ProductService,
     private service_kind: KindService,
+    private spinner: NgxSpinnerService,
     private service_store: StoreService,
     private alertify: AlertifyService,
     private utilitiesService: UtilitiesService,
@@ -75,6 +81,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
   ngOnInit() {
     this.getAllStore();
     this.getAllKind();
+    this.excelDownloadUrl = `${environment.apiUrl}Product/ExcelExport`;
     setTimeout(() => {
       this.getAllProduct();
     }, 300);
@@ -156,8 +163,10 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.getAllStore()
     this.modalReference = this.modalService.open(modal, { size: 'lg'});
   }
+  showModalImport(modal) {
+    this.modalReference = this.modalService.open(modal, { size: 'xl'});
+  }
   edit(data ,modal) {
-    console.log(data);
     this.openModalEdit(modal)
     this.ProductCreate.id = data.id;
     this.ProductCreate.englishName = data.englishName
@@ -241,6 +250,18 @@ export class ProductComponent extends BaseComponent implements OnInit {
       this.previewUrl = reader.result
     }
   }
+  uploadFile() {
+    this.spinner.show()
+    const createdBy = JSON.parse(localStorage.getItem('user')).id;
+    this.service
+      .import(this.file, createdBy)
+      .subscribe((res: any) => {
+        this.getAllProduct();
+        this.modalReference.close();
+        this.alertify.success(MessageConstants.CREATED_OK_MSG);
+        this.spinner.hide()
+      });
+  }
   toolbarClick(args) {
     switch (args.item.id) {
       case 'grid_excelexport':
@@ -249,6 +270,9 @@ export class ProductComponent extends BaseComponent implements OnInit {
       case 'grid_add':
         args.cancel = true;
         this.showModal(this.productModal);
+        break;
+      case 'grid_Excel Import':
+        this.showModalImport(this.importModal);
         break;
       default:
         break;
