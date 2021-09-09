@@ -111,10 +111,10 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.removeLocalStore("dispatch")
     this.teamIdStore = localStorage.getItem("teamId")
     this.teamId = localStorage.getItem("teamId")
-    console.log(this.teamId);
     this.getAllTeam();
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.wrapSettings = { wrapMode: 'Content' };
+    this.spinner.show()
     this.loadDataBuying();
   }
   getAllTeam() {
@@ -226,6 +226,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.service.getProductsInOrderCompleteByAdmin(this.teamId,this.startDate.toDateString() , this.endDate.toDateString()).subscribe(res => {
       this.data = res.data || [];
       this.totalPrice = res.totalPrice || 0;
+      this.spinner.hide()
     });
   }
   imagePath(data) {
@@ -247,6 +248,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
       this.data = res.data || [];
       console.log(this.data);
       this.totalPrice = res.totalPrice || 0;
+      this.spinner.hide()
     });
   }
 
@@ -459,6 +461,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
 
   // api
   Tabpending(){
+    this.spinner.show()
     this.pendingTabClass = "btn btn-success"
     this.buyingTabClass = "btn btn-default"
     this.completeTabClass = "btn btn-default"
@@ -468,6 +471,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.loadDataPending()
   }
   TabBuying(){
+    this.spinner.show()
     this.pendingTabClass = "btn btn-default"
     this.buyingTabClass = "btn btn-success"
     this.completeTabClass = "btn btn-default"
@@ -475,9 +479,9 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.completeTab = false
     this.buyingTab = true
     this.loadDataBuying()
-    this.getbuyingPersion()
   }
   TabComplete(){
+    this.spinner.show()
     this.pendingTabClass = "btn btn-default"
     this.buyingTabClass = "btn btn-default"
     this.completeTabClass = "btn btn-success"
@@ -492,6 +496,7 @@ export class OrderComponent extends BaseComponent implements OnInit {
     this.service.getProductsInOrderPendingByAdmin(this.teamId).subscribe(res => {
       this.data = res.data || [];
       this.totalPrice = res.totalPrice || 0;
+      this.spinner.hide()
     });
   }
 
