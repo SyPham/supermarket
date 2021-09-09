@@ -122,7 +122,7 @@ namespace Supermarket.Services
         }
         private async Task<bool> CheckExistProductName(ProductDto pro)
         {
-            return await _repo.FindAll().AnyAsync(x => x.VietnameseName.ToUpper().Equals(pro.VietnameseName.ToUpper()) && x.ChineseName.ToUpper().Equals(pro.ChineseName.ToUpper()) && x.EnglishName.ToUpper().Equals(pro.EnglishName.ToUpper()));
+            return await _repo.FindAll().AnyAsync(x => x.VietnameseName.ToUpper().Equals(pro.VietnameseName.ToUpper()) && x.ChineseName.ToUpper().Equals(pro.ChineseName.ToUpper()) && x.EnglishName.ToUpper().Equals(pro.EnglishName.ToUpper()) && x.StoreId == pro.StoreId && x.KindId == pro.KindId);
         }
         public async Task<object> GetProductsForAdmin(FilterRequest request)
         {

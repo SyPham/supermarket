@@ -82,9 +82,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.getAllStore();
     this.getAllKind();
     this.excelDownloadUrl = `${environment.apiUrl}Product/ExcelExport`;
-    setTimeout(() => {
-      this.getAllProduct();
-    }, 300);
+    this.spinner.show()
+    this.getAllProduct();
   }
   updateStatus(id) {
     this.service.updateStatus(id).subscribe(res => {
@@ -155,7 +154,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
           description: item.description
         }
       });
-
+      this.spinner.hide()
     })
   }
   showModal(modal) {
@@ -220,6 +219,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.kindId = args.value
   }
   onChangeStoreData(args) {
+    this.spinner.show();
     this.dropDownListObject.value = null;
     this.storeIdData = args.value
     this.filterRequest = {
@@ -231,6 +231,7 @@ export class ProductComponent extends BaseComponent implements OnInit {
     this.getAllProduct();
   }
   onChangeKindData(args) {
+    this.spinner.show()
     this.kindIdData = args.itemData?.id || 0;
       this.filterRequest = {
         storeId: this.storeIdData ?? 0,
