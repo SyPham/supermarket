@@ -78,7 +78,7 @@ namespace Supermarket.Controllers
                 {
                     item.CreatedBy = userid;
                 });
-                await _service.ImportExcel(datasList,storeId);
+                await _service.ImportExcel(datasList);
                 return Ok();
             }
             else

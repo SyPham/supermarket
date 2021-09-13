@@ -252,24 +252,23 @@ export class ProductComponent extends BaseComponent implements OnInit {
     }
   }
   uploadFile() {
-    if (this.file === null) {
-      this.alertify.error('Please choose file upload ! ');
-      return;
-    }
-    if (this.storeId === 0) {
-      this.alertify.error('Please select Store ! ');
-      return;
-    }
+    // if (this.file === null) {
+    //   this.alertify.error('Please choose file upload ! ');
+    //   return;
+    // }
+    // if (this.storeId === 0) {
+    //   this.alertify.error('Please select Store ! ');
+    //   return;
+    // }
     this.spinner.show()
     const createdBy = JSON.parse(localStorage.getItem('user')).id;
     this.service
-    .import(this.file, createdBy, this.storeId)
+    .import(this.file, createdBy)
     .subscribe((res: any) => {
       this.getAllProduct();
       this.modalReference.close();
       this.alertify.success(MessageConstants.CREATED_OK_MSG);
       this.spinner.hide()
-      this.storeId = 0
     });
   }
   toolbarClick(args) {

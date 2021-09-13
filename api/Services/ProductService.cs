@@ -25,7 +25,7 @@ namespace Supermarket.Services
         Task<object> GetProductsForAdmin(FilterRequest request);
         Task<bool> UpdateStatus(int id);
 
-        Task ImportExcel(List<ProductDto> dto , int storeId);
+        Task ImportExcel(List<ProductDto> dto );
 
     }
     public class ProductService : ServiceBase<Product, ProductDto>, IProductService
@@ -65,16 +65,10 @@ namespace Supermarket.Services
             _configMapper = configMapper;
         }
 
-        public async Task ImportExcel(List<ProductDto> dto , int StoreID)
+        public async Task ImportExcel(List<ProductDto> dto)
         {
             try
             {
-                var dataProductStore = _repo.FindAll(x => x.StoreId == StoreID).ToList();
-                if (dataProductStore.Count > 0)
-                {
-                    _repo.RemoveMultiple(dataProductStore);
-                    await _unitOfWork.SaveChangeAsync();
-                }
                 var list = new List<ProductDto>();
                 var listChuaAdd = new List<ProductDto>();
                 var result = dto.DistinctBy(x => new
@@ -94,28 +88,31 @@ namespace Supermarket.Services
                         item.KindId = kindId.Id;
                         list.Add(item);
                     }
-                   
+                    //if (kindId != null)
+                    //{
+                    //}
+                    // var ink = await AddInk(item);
                 }
 
                 var listAdd = new List<Product>();
                 foreach (var productItem in list)
                 {
-                    var pro = new Product();
-                    pro.VietnameseName = productItem.VietnameseName;
-                    pro.EnglishName = productItem.EnglishName;
-                    pro.ChineseName = productItem.ChineseName;
-                    pro.Description = productItem.Description;
-                    pro.OriginalPrice = productItem.OriginalPrice;
-                    pro.StoreId = productItem.StoreId;
-                    pro.Status = productItem.Status;
-                    pro.KindId = productItem.KindId;
-                    pro.CreatedBy = productItem.CreatedBy;
-                    pro.Avatar = $"image/default.png";
-                    _repo.Add(pro);
-                    await _unitOfWork.SaveChangeAsync();
-                    //if (!await CheckExistProductName(productItem))
-                    //{
-                    //}
+                    if (!await CheckExistProductName(productItem))
+                    {
+                        var pro = new Product();
+                        pro.VietnameseName = productItem.VietnameseName;
+                        pro.EnglishName = productItem.EnglishName;
+                        pro.ChineseName = productItem.ChineseName;
+                        pro.Description = productItem.Description;
+                        pro.OriginalPrice = productItem.OriginalPrice;
+                        pro.StoreId = productItem.StoreId;
+                        pro.Status = productItem.Status;
+                        pro.KindId = productItem.KindId;
+                        pro.CreatedBy = productItem.CreatedBy;
+                        pro.Avatar = $"image/default.png";
+                        _repo.Add(pro);
+                        await _unitOfWork.SaveChangeAsync();
+                    }
                 }
             }
             catch
