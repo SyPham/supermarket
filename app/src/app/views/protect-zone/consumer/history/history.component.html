@@ -104,6 +104,9 @@
           </e-columns>
         </ejs-grid>
       </div>
+      <div class="card-footer d-flex flex-row-reverse" *ngIf="!showPending">
+        <div style="font-weight:bold; font-size: 16px"> Total: {{totalPrice}} đ</div>
+       </div>
       <div class="card-body table-responsive p-0" *ngIf="showPending">
        <app-pending></app-pending>
       </div>

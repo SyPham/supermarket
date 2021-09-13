@@ -43,8 +43,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
   ProductUpdate: Product;
   data: Product[] = [];
   storeFields: object = { text: 'name', value: 'id' };
-  storeId: 0;
-  kindId: 0;
+  storeId: number =  0;
+  kindId: number = 0;
   @ViewChild('grid') public grid: GridComponent;
   @ViewChild('productModal', { static: true })
   productModal: TemplateRef<any>;
@@ -252,16 +252,25 @@ export class ProductComponent extends BaseComponent implements OnInit {
     }
   }
   uploadFile() {
+    if (this.file === null) {
+      this.alertify.error('Please choose file upload ! ');
+      return;
+    }
+    if (this.storeId === 0) {
+      this.alertify.error('Please select Store ! ');
+      return;
+    }
     this.spinner.show()
     const createdBy = JSON.parse(localStorage.getItem('user')).id;
     this.service
-      .import(this.file, createdBy)
-      .subscribe((res: any) => {
-        this.getAllProduct();
-        this.modalReference.close();
-        this.alertify.success(MessageConstants.CREATED_OK_MSG);
-        this.spinner.hide()
-      });
+    .import(this.file, createdBy, this.storeId)
+    .subscribe((res: any) => {
+      this.getAllProduct();
+      this.modalReference.close();
+      this.alertify.success(MessageConstants.CREATED_OK_MSG);
+      this.spinner.hide()
+      this.storeId = 0
+    });
   }
   toolbarClick(args) {
     switch (args.item.id) {

@@ -20,6 +20,7 @@ export class HistoryComponent implements OnInit {
   base = environment.apiUrl.replace('/api','');
   active = 1;
   showPending: boolean;
+  totalPrice = 0;
   constructor(
     private service: OrderService,
     private utilitiesService: UtilitiesService,
@@ -52,11 +53,22 @@ export class HistoryComponent implements OnInit {
   loadDataByCompleteStatus() {
     this.service.getProductsForCartStatusByCompleteStatus().subscribe(data => {
       this.data = data || [];
+
+      if ( this.data.length > 0) {
+        this.totalPrice = data.map(x=> x.amountValue).reduce((previousValue,currentValue)=>previousValue + currentValue).toLocaleString();
+      } else {
+        this.totalPrice = 0;
+      }
     });
   }
   loadDataByBuyingAndPenidngStatus() {
     this.service.getProductsForCartStatusByBuyingAndPenidngStatus().subscribe(data => {
       this.data = data || [];
+      if ( this.data.length > 0) {
+        this.totalPrice = data.map(x=> x.amountValue).reduce((previousValue,currentValue)=>previousValue + currentValue).toLocaleString();
+      } else {
+        this.totalPrice = 0;
+      }
     });
   }
   NO(index) {

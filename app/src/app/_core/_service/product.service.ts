@@ -50,10 +50,11 @@ export class ProductService extends CURDService<Product> {
     formData.append('Status', model.status.toString());
     return this.http.post(this.base + 'Product/Updated', formData);
   }
-  import(file, createdBy) {
+  import(file, createdBy, storeId) {
     const formData = new FormData();
     formData.append('UploadedFile', file);
     formData.append('CreatedBy', createdBy);
+    formData.append('StoreId', storeId);
     return this.http.post(this.base + 'Product/Import', formData);
   }
 }

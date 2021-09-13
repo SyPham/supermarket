@@ -1333,7 +1333,8 @@ namespace Supermarket.Services
                   x.CancelStatus,
                   OriginalPrice = x.Product.OriginalPrice,
                   Price = x.Product.OriginalPrice,
-                  Quantity = x.PendingQty
+                  Quantity = x.PendingQty,
+                  AmountValue = (x.CompleteQty * x.Product.OriginalPrice)
               }).ToListAsync();
 
             var complete = model.Where(x => x.CompleteQty > 0)
@@ -1352,7 +1353,8 @@ namespace Supermarket.Services
               OriginalPrice = x.OriginalPrice.ToString("n0"),
               Quantity = x.CompleteQty,
               Amount = (x.CompleteQty * x.OriginalPrice).ToString("n0"),
-              Status = x.CancelStatus == true ? "Cancel" : "Complete"
+              Status = x.CancelStatus == true ? "Cancel" : "Complete",
+              x.AmountValue
           }).ToList();
             return complete;
         }
@@ -1379,7 +1381,8 @@ namespace Supermarket.Services
                   x.OrderDate,
                   OriginalPrice = x.Product.OriginalPrice,
                   Price = x.Product.OriginalPrice,
-                  Quantity = x.PendingQty
+                  Quantity = x.PendingQty,
+                  AmountValue = (x.ByingQty * x.Product.OriginalPrice)
               })
               .OrderByDescending(x=> x.DispatchDate)
               .ThenByDescending(x=>x.OrderDate)
@@ -1414,7 +1417,8 @@ namespace Supermarket.Services
                 OriginalPrice = x.OriginalPrice.ToString("n0"),
                 Quantity = x.ByingQty,
                 Amount = (x.ByingQty * x.OriginalPrice).ToString("n0"),
-                Status = "Buying"
+                Status = "Buying",
+                x.AmountValue
             }).ToList();
 
             // return pending.Concat(buying);

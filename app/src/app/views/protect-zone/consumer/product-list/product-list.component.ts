@@ -48,7 +48,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   @ViewChild('preview', { static: true }) previewModal: TemplateRef<any>;
   editSettings = { showDeleteConfirmDialog: false, allowEditing: false, allowAdding: false, allowDeleting: false, mode: 'Normal' };
   teams: any[];
-  teamId: any = 1;
+  teamId: any = 0;
 
   constructor(
     private service: ProductListService,
@@ -62,7 +62,6 @@ export class ProductListComponent extends BaseComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
   ) { super();
-    this.teamId = 1;
     this.initialModel();
     this.loadTeamData();
     this.loadKindData();
@@ -74,6 +73,8 @@ export class ProductListComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     // this.Permission(this.route);
+    this.teamId = 1;
+
     this.wrapSettings = { wrapMode: 'Content' };
   }
   search(args) {
@@ -222,6 +223,17 @@ export class ProductListComponent extends BaseComponent implements OnInit {
       this.model.quantity = data.quantity;
       this.model.productId = data.id;
       this.model.teamId = this.teamId;
+      if (this.model.teamId == 0) {
+        this.alertify.warning('Please select a team! Can not submit!', true);
+        for (var i in this.data) {
+          if (this.data[i].id == data.productId) {
+            this.data[i].quantity = 0;
+             break; //Stop this loop, we found it!
+          }
+        }
+        this.grid.dataSource = this.data;
+        return;
+      }
       this.addCart();
 
     }
@@ -232,6 +244,17 @@ export class ProductListComponent extends BaseComponent implements OnInit {
     this.model.quantity = data.quantity;
     this.model.productId = data.id;
     this.model.teamId = this.teamId;
+    if (this.model.teamId == 0) {
+      this.alertify.warning('Please select a team! Can not submit!', true);
+      for (var i in this.data) {
+        if (this.data[i].id == data.productId) {
+          this.data[i].quantity = 0;
+           break; //Stop this loop, we found it!
+        }
+      }
+      this.grid.dataSource = this.data;
+      return;
+    }
     this.addCart();
   }
   addCart() {
@@ -239,6 +262,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
       this.alertify.warning('Can not submit!', true);
       return;
     }
+
     this.serviceCart.addToCart(this.model).subscribe(
       (res) => {
         if (res.success === true) {

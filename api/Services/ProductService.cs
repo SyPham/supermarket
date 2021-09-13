@@ -25,7 +25,7 @@ namespace Supermarket.Services
         Task<object> GetProductsForAdmin(FilterRequest request);
         Task<bool> UpdateStatus(int id);
 
-        Task ImportExcel(List<ProductDto> dto);
+        Task ImportExcel(List<ProductDto> dto , int storeId);
 
     }
     public class ProductService : ServiceBase<Product, ProductDto>, IProductService
@@ -65,10 +65,16 @@ namespace Supermarket.Services
             _configMapper = configMapper;
         }
 
-        public async Task ImportExcel(List<ProductDto> dto)
+        public async Task ImportExcel(List<ProductDto> dto , int StoreID)
         {
             try
             {
+                var dataProductStore = _repo.FindAll(x => x.StoreId == StoreID).ToList();
+                if (dataProductStore.Count > 0)
+                {
+                    _repo.RemoveMultiple(dataProductStore);
+                    await _unitOfWork.SaveChangeAsync();
+                }
                 var list = new List<ProductDto>();
                 var listChuaAdd = new List<ProductDto>();
                 var result = dto.DistinctBy(x => new
@@ -88,31 +94,28 @@ namespace Supermarket.Services
                         item.KindId = kindId.Id;
                         list.Add(item);
                     }
-                    //if (kindId != null)
-                    //{
-                    //}
-                    // var ink = await AddInk(item);
+                   
                 }
 
                 var listAdd = new List<Product>();
                 foreach (var productItem in list)
                 {
-                    if (!await CheckExistProductName(productItem))
-                    {
-                        var pro = new Product();
-                        pro.VietnameseName = productItem.VietnameseName;
-                        pro.EnglishName = productItem.EnglishName;
-                        pro.ChineseName = productItem.ChineseName;
-                        pro.Description = productItem.Description;
-                        pro.OriginalPrice = productItem.OriginalPrice;
-                        pro.StoreId = productItem.StoreId;
-                        pro.Status = productItem.Status;
-                        pro.KindId = productItem.KindId;
-                        pro.CreatedBy = productItem.CreatedBy;
-                        pro.Avatar = $"image/default.png";
-                        _repo.Add(pro);
-                        await _unitOfWork.SaveChangeAsync();
-                    }
+                    var pro = new Product();
+                    pro.VietnameseName = productItem.VietnameseName;
+                    pro.EnglishName = productItem.EnglishName;
+                    pro.ChineseName = productItem.ChineseName;
+                    pro.Description = productItem.Description;
+                    pro.OriginalPrice = productItem.OriginalPrice;
+                    pro.StoreId = productItem.StoreId;
+                    pro.Status = productItem.Status;
+                    pro.KindId = productItem.KindId;
+                    pro.CreatedBy = productItem.CreatedBy;
+                    pro.Avatar = $"image/default.png";
+                    _repo.Add(pro);
+                    await _unitOfWork.SaveChangeAsync();
+                    //if (!await CheckExistProductName(productItem))
+                    //{
+                    //}
                 }
             }
             catch
@@ -132,11 +135,44 @@ namespace Supermarket.Services
             if (item == null)
                 return new List<ProductListDto>();
             if (request.StoreId == 0 && request.KindId == 0)
-                return await _repo.FindAll().ToListAsync();
+                return await _repo.FindAll().Select(x => new {
+                    x.Id,
+                    x.VietnameseName,
+                    x.EnglishName,
+                    x.ChineseName,
+                    x.Description,
+                    x.OriginalPrice,
+                    x.Avatar,
+                    x.Status,
+                    x.StoreId,
+                    x.KindId
+                }).ToListAsync();
             if (request.StoreId > 0 && request.KindId > 0)
-                return await _repo.FindAll().Where(x => x.StoreId == request.StoreId && x.KindId == request.KindId).ToListAsync();
+                return await _repo.FindAll().Where(x => x.StoreId == request.StoreId && x.KindId == request.KindId).Select(x => new {
+                    x.Id,
+                    x.VietnameseName,
+                    x.EnglishName,
+                    x.ChineseName,
+                    x.Description,
+                    x.OriginalPrice,
+                    x.Avatar,
+                    x.Status,
+                    x.StoreId,
+                    x.KindId
+                }).ToListAsync();
             if (request.StoreId > 0)
-                return await _repo.FindAll(x => x.Status).Where(x => x.StoreId == request.StoreId).ToListAsync();
+                return await _repo.FindAll().Where(x => x.StoreId == request.StoreId).Select(x => new {
+                    x.Id,
+                    x.VietnameseName,
+                    x.EnglishName,
+                    x.ChineseName,
+                    x.Description,
+                    x.OriginalPrice,
+                    x.Avatar,
+                    x.Status,
+                    x.StoreId,
+                    x.KindId
+                }).ToListAsync();
             //return new List<ProductListDto>();
             throw new NotImplementedException();
         }

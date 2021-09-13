@@ -151,11 +151,11 @@ export class CartComponent extends BaseComponent implements OnInit {
           this.router.navigate([`/consumer/buy-list`]);
 
         } else {
-          this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+          this.alertify.warning('Server is unavailable, please try after 5 mins');
         }
       },
       (error) => {
-        this.alertify.warning(MessageConstants.SYSTEM_ERROR_MSG);
+        this.alertify.warning('Server is unavailable, please try after 5 mins');
       }
     );
   }

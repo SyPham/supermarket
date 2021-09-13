@@ -44,6 +44,7 @@ namespace Supermarket.Controllers
             IFormFile file = Request.Form.Files["UploadedFile"];
             object createdBy = Request.Form["CreatedBy"];
             var datasList = new List<ProductDto>();
+            var storeId = Request.Form["StoreId"].ToInt();
             //var datasList2 = new List<UploadDataVM2>();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -77,7 +78,7 @@ namespace Supermarket.Controllers
                 {
                     item.CreatedBy = userid;
                 });
-                await _service.ImportExcel(datasList);
+                await _service.ImportExcel(datasList,storeId);
                 return Ok();
             }
             else
