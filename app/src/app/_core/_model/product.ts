@@ -12,7 +12,8 @@ export interface Product {
   storeId: number;
   kindId: number,
   file: null,
-  status: boolean
+  status: boolean,
+  isDelete: boolean
 }
 export interface FilterRequest {
   kindId: number

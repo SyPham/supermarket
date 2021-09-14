@@ -63,10 +63,11 @@ namespace Supermarket.Services
                 OriginalPrice = x.Product.OriginalPrice.ToString("n0"),
                 Quantity = x.Quantity,
                 Avatar = x.Product.Avatar,
+                IsDelete = x.Product.IsDelete,
                 Description = x.Product.Description,
                 Amount = (x.Quantity.Value * x.Product.OriginalPrice).ToString("n0"),
                 AmountValue = (x.Quantity.Value * x.Product.OriginalPrice)
-            }).ToListAsync();
+            }).Where(y => y.IsDelete == false).ToListAsync();
         }
 
         public async Task<OperationResult> UpdateQuantity(UpdateQuantityRequest request)

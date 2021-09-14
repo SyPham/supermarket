@@ -23,9 +23,10 @@ namespace Supermarket.Services
         Task<OperationResult> UploadAvatar(UploadAvatarRequest request);
         Task<object> GetProductsForConsumer(FilterRequest request);
         Task<object> GetProductsForAdmin(FilterRequest request);
+        Task<object> GetProductsForAdmin2(int kindId , int storeId , string lang);
         Task<bool> UpdateStatus(int id);
 
-        Task ImportExcel(List<ProductDto> dto );
+        Task ImportExcel(List<ProductDto> dto , int storeId);
 
     }
     public class ProductService : ServiceBase<Product, ProductDto>, IProductService
@@ -65,10 +66,21 @@ namespace Supermarket.Services
             _configMapper = configMapper;
         }
 
-        public async Task ImportExcel(List<ProductDto> dto)
+        public async Task ImportExcel(List<ProductDto> dto , int StoreID)
         {
             try
             {
+                var dataProductStore = _repo.FindAll(x => x.StoreId == StoreID).ToList();
+                if (dataProductStore.Count > 0)
+                {
+                    foreach (var item in dataProductStore)
+                    {
+                        item.Status = false;
+                        item.IsDelete = true;
+                    }
+                    _repo.UpdateRange(dataProductStore);
+                    await _unitOfWork.SaveChangeAsync();
+                }
                 var list = new List<ProductDto>();
                 var listChuaAdd = new List<ProductDto>();
                 var result = dto.DistinctBy(x => new
@@ -88,31 +100,32 @@ namespace Supermarket.Services
                         item.KindId = kindId.Id;
                         list.Add(item);
                     }
-                    //if (kindId != null)
-                    //{
-                    //}
-                    // var ink = await AddInk(item);
+                   
                 }
 
                 var listAdd = new List<Product>();
                 foreach (var productItem in list)
                 {
-                    if (!await CheckExistProductName(productItem))
-                    {
-                        var pro = new Product();
-                        pro.VietnameseName = productItem.VietnameseName;
-                        pro.EnglishName = productItem.EnglishName;
-                        pro.ChineseName = productItem.ChineseName;
-                        pro.Description = productItem.Description;
-                        pro.OriginalPrice = productItem.OriginalPrice;
-                        pro.StoreId = productItem.StoreId;
-                        pro.Status = productItem.Status;
-                        pro.KindId = productItem.KindId;
-                        pro.CreatedBy = productItem.CreatedBy;
-                        pro.Avatar = $"image/default.png";
-                        _repo.Add(pro);
-                        await _unitOfWork.SaveChangeAsync();
-                    }
+                    var pro = new Product();
+                    pro.VietnameseName = productItem.VietnameseName;
+                    pro.EnglishName = productItem.EnglishName;
+                    pro.ChineseName = productItem.ChineseName;
+                    pro.Description = productItem.Description;
+                    pro.OriginalPrice = productItem.OriginalPrice;
+                    pro.StoreId = productItem.StoreId;
+                    pro.Status = productItem.Status;
+                    pro.KindId = productItem.KindId;
+                    pro.CreatedBy = productItem.CreatedBy;
+                    pro.Avatar = $"image/default.png";
+                    _repo.Add(pro);
+                    await _unitOfWork.SaveChangeAsync();
+                    //if (!await CheckExistProductName(productItem))
+                    //{
+                    //}
+                    //else
+                    //{
+
+                    //}
                 }
             }
             catch
@@ -126,13 +139,13 @@ namespace Supermarket.Services
         }
         public async Task<object> GetProductsForAdmin(FilterRequest request)
         {
-            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
-            var item = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
-            if (item == null)
-                return new List<ProductListDto>();
+            //string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            //var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            //var item = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            //if (item == null)
+            //    return new List<ProductListDto>();
             if (request.StoreId == 0 && request.KindId == 0)
-                return await _repo.FindAll().Select(x => new {
+                return await _repo.FindAll(x => x.IsDelete == false).Select(x => new {
                     x.Id,
                     x.VietnameseName,
                     x.EnglishName,
@@ -141,11 +154,63 @@ namespace Supermarket.Services
                     x.OriginalPrice,
                     x.Avatar,
                     x.Status,
+                    x.IsDelete,
                     x.StoreId,
                     x.KindId
                 }).ToListAsync();
             if (request.StoreId > 0 && request.KindId > 0)
-                return await _repo.FindAll().Where(x => x.StoreId == request.StoreId && x.KindId == request.KindId).Select(x => new {
+                return await _repo.FindAll().Where(x => x.StoreId == request.StoreId && x.KindId == request.KindId && x.IsDelete == false).Select(x => new {
+                    x.Id,
+                    x.VietnameseName,
+                    x.EnglishName,
+                    x.ChineseName,
+                    x.Description,
+                    x.OriginalPrice,
+                    x.Avatar,
+                    x.Status,
+                    x.IsDelete,
+                    x.StoreId,
+                    x.KindId
+                }).ToListAsync();
+            if (request.StoreId > 0)
+                return await _repo.FindAll(x => x.IsDelete == false).Where(x => x.StoreId == request.StoreId).Select(x => new {
+                    x.Id,
+                    x.VietnameseName,
+                    x.EnglishName,
+                    x.ChineseName,
+                    x.Description,
+                    x.OriginalPrice,
+                    x.Avatar,
+                    x.Status,
+                    x.IsDelete,
+                    x.StoreId,
+                    x.KindId
+                }).ToListAsync();
+            //return new List<ProductListDto>();
+            throw new NotImplementedException();
+        }
+        public async Task<object> GetProductsForAdmin2(int kindId , int storeId , string lang)
+        {
+            //string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            //var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            //var item = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            //if (item == null)
+            //    return new List<ProductListDto>();
+            if (storeId == 0 && kindId == 0)
+                return await _repo.FindAll().Select(x => new { 
+                x.Id,
+                x.VietnameseName,
+                x.EnglishName,
+                x.ChineseName,
+                x.Description,
+                x.OriginalPrice,
+                x.Avatar,
+                x.Status,
+                x.StoreId,
+                x.KindId
+                }).ToListAsync();
+            if (storeId > 0 && kindId > 0)
+                return await _repo.FindAll().Where(x => x.StoreId == storeId && x.KindId == kindId).Select(x => new {
                     x.Id,
                     x.VietnameseName,
                     x.EnglishName,
@@ -157,8 +222,8 @@ namespace Supermarket.Services
                     x.StoreId,
                     x.KindId
                 }).ToListAsync();
-            if (request.StoreId > 0)
-                return await _repo.FindAll().Where(x => x.StoreId == request.StoreId).Select(x => new {
+            if (storeId > 0)
+                return await _repo.FindAll(x => x.Status).Where(x => x.StoreId == storeId).Select(x => new {
                     x.Id,
                     x.VietnameseName,
                     x.EnglishName,

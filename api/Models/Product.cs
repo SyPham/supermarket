@@ -22,6 +22,7 @@ namespace Supermarket.Models
         public decimal OriginalPrice { get; set; }
         public string Avatar { get; set; }
         public bool Status { get; set; }
+        public bool IsDelete { get; set; }
 
         public int CreatedBy { get; set; }
         public DateTime CreatedTime { get; set; }

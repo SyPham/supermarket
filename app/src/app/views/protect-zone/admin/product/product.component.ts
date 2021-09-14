@@ -38,7 +38,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
     storeId: 0,
     file: null,
     kindId: 0,
-    status: false
+    status: false,
+    isDelete: false,
   };
   ProductUpdate: Product;
   data: Product[] = [];
@@ -122,7 +123,8 @@ export class ProductComponent extends BaseComponent implements OnInit {
       storeId: 0,
       kindId: 0,
       file: null,
-      status: null
+      status: null,
+      isDelete: null
     }
   }
   getAllStore() {
@@ -252,23 +254,24 @@ export class ProductComponent extends BaseComponent implements OnInit {
     }
   }
   uploadFile() {
-    // if (this.file === null) {
-    //   this.alertify.error('Please choose file upload ! ');
-    //   return;
-    // }
-    // if (this.storeId === 0) {
-    //   this.alertify.error('Please select Store ! ');
-    //   return;
-    // }
+    if (this.file === null) {
+      this.alertify.error('Please choose file upload ! ');
+      return;
+    }
+    if (this.storeId === 0) {
+      this.alertify.error('Please select Store ! ');
+      return;
+    }
     this.spinner.show()
     const createdBy = JSON.parse(localStorage.getItem('user')).id;
     this.service
-    .import(this.file, createdBy)
+    .import(this.file, createdBy, this.storeId)
     .subscribe((res: any) => {
       this.getAllProduct();
       this.modalReference.close();
       this.alertify.success(MessageConstants.CREATED_OK_MSG);
       this.spinner.hide()
+      this.storeId = 0
     });
   }
   toolbarClick(args) {

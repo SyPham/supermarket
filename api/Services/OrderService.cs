@@ -135,6 +135,7 @@ namespace Supermarket.Services
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.ByingQty,
                 Description = x.Product.Description,
+                IsDelete = x.Product.IsDelete,
                 Amount = (x.ByingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
                 Avatar = ConvertImageURLToBase64ExportEcel(host + x.Product.Avatar) ?? "",
@@ -145,7 +146,7 @@ namespace Supermarket.Services
                 FullName = x.Consumer.FullName,
                 ConsumerId = x.Consumer.Id,
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
-            }).ToList();
+            }).Where(y => y.IsDelete == false).ToList();
             var item = new List<ProductBuyingDto>();
 
             var result = res.GroupBy(x => new { x.Name })
@@ -473,6 +474,7 @@ namespace Supermarket.Services
                 Amount = (x.ByingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
                 KindId = x.Product.KindId,
+                IsDelete = x.Product.IsDelete,
                 ProductId = x.ProductId,
                 OderDetailId = x.OrderDetailId,
                 EmployeeId = x.Consumer.EmployeeId,
@@ -482,7 +484,7 @@ namespace Supermarket.Services
                 ConsumerId = x.Consumer.Id,
                 totalPrice = _repoOrderHistory.FindAll().Where(y => y.ConsumerId == x.Consumer.Id && y.ByingQty > 0).ToList().Select(x => (x.ByingQty * x.Product.OriginalPrice)).Sum(),
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
-            }).ToList();
+            }).Where(y => y.IsDelete == false).ToList();
             var item = new List<ProductBuyingDto>();
 
             var result = res.GroupBy(x => new { x.Name, x.ConsumerId })
@@ -1028,6 +1030,7 @@ namespace Supermarket.Services
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.PendingQty,
                 Avatar = x.Product.Avatar,
+                IsDelete = x.Product.IsDelete,
                 Description = x.Product.Description,
                 Amount = (x.PendingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
@@ -1038,7 +1041,7 @@ namespace Supermarket.Services
                 FullName = x.Consumer.FullName,
                 ConsumerId = x.Consumer.Id,
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
-            }).ToList();
+            }).Where(y => y.IsDelete == false).ToList();
 
             var result = res.GroupBy(x => new { x.Name })
                 .Select(x => new
@@ -1086,6 +1089,7 @@ namespace Supermarket.Services
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.ByingQty,
                 Avatar = x.Product.Avatar,
+                IsDelete = x.Product.IsDelete,
                 Description = x.Product.Description,
                 Amount = (x.ByingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
@@ -1096,7 +1100,7 @@ namespace Supermarket.Services
                 FullName = x.Consumer.FullName,
                 ConsumerId = x.Consumer.Id,
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
-            }).ToList();
+            }).Where(y => y.IsDelete == false).ToList();
 
             var result = res.GroupBy(x => new { x.Name })
                 .Select(x => new
@@ -1146,6 +1150,7 @@ namespace Supermarket.Services
                 OriginalPrice = x.Product.OriginalPrice,
                 Quantity = x.CompleteQty,
                 Avatar = x.Product.Avatar,
+                IsDelete = x.Product.IsDelete,
                 Description = x.Product.Description,
                 Amount = (x.CompleteQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
@@ -1158,7 +1163,7 @@ namespace Supermarket.Services
                 CancelStatus = x.CancelStatus,
                 ConsumerId = x.Consumer.Id,
                 KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
-            }).ToList();
+            }).Where(y => y.IsDelete == false).ToList();
 
             var result = res.GroupBy(x => new { x.Name, x.ConsumerId })
                 .Select(x => new
@@ -1324,6 +1329,7 @@ namespace Supermarket.Services
                   KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
                   ProductName = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                   x.Product.Avatar,
+                  x.Product.IsDelete,
                   x.Product.Description,
                   x.PendingQty,
                   x.ByingQty,
@@ -1345,6 +1351,7 @@ namespace Supermarket.Services
               x.KindName,
               x.ProductName,
               x.Avatar,
+              x.IsDelete,
               x.Description,
               x.PendingQty,
               x.DispatchDate,
@@ -1355,7 +1362,7 @@ namespace Supermarket.Services
               Amount = (x.CompleteQty * x.OriginalPrice).ToString("n0"),
               Status = x.CancelStatus == true ? "Cancel" : "Complete",
               x.AmountValue
-          }).ToList();
+          }).Where(y => y.IsDelete == false).ToList();
             return complete;
         }
 
@@ -1373,6 +1380,7 @@ namespace Supermarket.Services
                   KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
                   ProductName = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                   x.Product.Avatar,
+                  x.Product.IsDelete,
                   x.Product.Description,
                   x.PendingQty,
                   x.ByingQty,
@@ -1412,6 +1420,7 @@ namespace Supermarket.Services
                 x.Avatar,
                 x.Description,
                 x.PendingQty,
+                x.IsDelete,
                 x.DispatchDate,
                 x.OrderDate,
                 OriginalPrice = x.OriginalPrice.ToString("n0"),
@@ -1419,7 +1428,7 @@ namespace Supermarket.Services
                 Amount = (x.ByingQty * x.OriginalPrice).ToString("n0"),
                 Status = "Buying",
                 x.AmountValue
-            }).ToList();
+            }).Where(y => y.IsDelete == false).ToList();
 
             // return pending.Concat(buying);
             return buying;
@@ -1588,6 +1597,7 @@ namespace Supermarket.Services
                 OriginalPrice = x.Product.OriginalPrice.ToString("n0"),
                 Quantity = x.Quantity,
                 Avatar = x.Product.Avatar,
+                IsDelete = x.Product.IsDelete,
                 Store = x.Product.Store.Name,
                 Team = x.Team != null ? x.Team.Name : "N/A",
                 Description = x.Product.Description,
@@ -1597,7 +1607,7 @@ namespace Supermarket.Services
                 OrderDate = x.Orders.CreatedTime.ToString("MM/dd/yyyy HH:mm:ss"),
                 HistoryId = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).Id,
                     PendingQty = _repoOrderHistory.FindAll().FirstOrDefault(a => a.OrderDetailId == x.Id).PendingQty
-            }).Where(x => x.PendingQty > 0).OrderBy(x=>x.ProductId).ToListAsync();
+            }).Where(x => x.PendingQty > 0 && x.IsDelete == false).OrderBy(x=>x.ProductId).ToListAsync();
         }
 
     }

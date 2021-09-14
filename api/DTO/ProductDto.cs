@@ -18,6 +18,7 @@ namespace Supermarket.DTO
         public DateTime? ModifiedTime { get; set; }
 
         public bool Status { get; set; }
+        public bool IsDelete { get; set; }
         public int StoreId { get; set; }
         public string Store { get; set; }
         public int KindId { get; set; }
@@ -54,7 +55,7 @@ namespace Supermarket.DTO
         public string Description { get; set; }
         public string Avatar { get; set; }
         public string OriginalPrice { get; set; }
-
+        public bool IsDelete { get; set; }
         public int? Quantity { get; set; }
         public int StoreId { get; set; }
         public int KindId { get; set; }

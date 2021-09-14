@@ -78,7 +78,7 @@ namespace Supermarket.Controllers
                 {
                     item.CreatedBy = userid;
                 });
-                await _service.ImportExcel(datasList);
+                await _service.ImportExcel(datasList,storeId);
                 return Ok();
             }
             else
@@ -141,6 +141,12 @@ namespace Supermarket.Controllers
         {
             return Ok(await _service.GetProductsForAdmin(request));
         }
+
+        [HttpGet("{KindId}/{StoreId}/{LangId}")]
+        public async Task<IActionResult> GetProductsForAdmin2(int KindId , int StoreId , string LangId)
+        {
+            return Ok(await _service.GetProductsForAdmin2(KindId, StoreId, LangId));
+        }
         [HttpPost]
         public async Task<ActionResult> AddAsync([FromBody] ProductDto model)
         {
@@ -175,6 +181,7 @@ namespace Supermarket.Controllers
                         entity.StoreId = entity.StoreId;
                         entity.KindId = entity.KindId;
                         entity.Status = true;
+                        entity.IsDelete = false;
                         entity.Avatar = $"image/{file.FileName}";
 
                     }
@@ -190,6 +197,7 @@ namespace Supermarket.Controllers
                     entity.StoreId = entity.StoreId;
                     entity.KindId = entity.KindId;
                     entity.Status = true;
+                    entity.IsDelete = false;
                     entity.Avatar = $"image/default.png";
 
                 }
@@ -232,6 +240,7 @@ namespace Supermarket.Controllers
                         entity.StoreId = entity.StoreId;
                         entity.KindId = entity.KindId;
                         entity.Status = entity.Status;
+                        entity.IsDelete = entity.IsDelete;
                         entity.Avatar = $"image/{file.FileName}";
                         //return "\\image\\" + file.FileName;
 
@@ -247,6 +256,7 @@ namespace Supermarket.Controllers
                     entity.CreatedBy = entity.CreatedBy;
                     entity.StoreId = entity.StoreId;
                     entity.Status = entity.Status;
+                    entity.IsDelete = entity.IsDelete;
                     entity.KindId = entity.KindId;
                     entity.Avatar = entity.Avatar;
                 }
