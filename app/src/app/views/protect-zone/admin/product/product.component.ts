@@ -262,16 +262,21 @@ export class ProductComponent extends BaseComponent implements OnInit {
       this.alertify.error('Please select Store ! ');
       return;
     }
-    this.spinner.show()
-    const createdBy = JSON.parse(localStorage.getItem('user')).id;
-    this.service
-    .import(this.file, createdBy, this.storeId)
-    .subscribe((res: any) => {
-      this.getAllProduct();
-      this.modalReference.close();
-      this.alertify.success(MessageConstants.CREATED_OK_MSG);
-      this.spinner.hide()
-      this.storeId = 0
+    this.alertify.confirm2('Warning! <br>!', 'uploading this data may delete the order the user has placed and they have to place the order again!', () => {
+
+      this.spinner.show()
+      const createdBy = JSON.parse(localStorage.getItem('user')).id;
+      this.service
+      .import(this.file, createdBy, this.storeId)
+      .subscribe((res: any) => {
+        this.getAllProduct();
+        this.modalReference.close();
+        this.alertify.success(MessageConstants.CREATED_OK_MSG);
+        this.spinner.hide()
+        this.storeId = 0
+      });
+    }, () => {
+      // cancelCallback();
     });
   }
   toolbarClick(args) {

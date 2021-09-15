@@ -110,7 +110,11 @@ export class OrderComponent extends BaseComponent implements OnInit {
     // this.Permission(this.route);
     this.removeLocalStore("dispatch")
     this.teamIdStore = localStorage.getItem("teamId")
-    this.teamId = localStorage.getItem("teamId")
+    if (this.teamIdStore === 'null') {
+      this.teamId = 0
+    } else {
+      this.teamId = localStorage.getItem("teamId")
+    }
     this.getAllTeam();
     this.fullName = JSON.parse(localStorage.getItem("user")).fullName;
     this.wrapSettings = { wrapMode: 'Content' };
