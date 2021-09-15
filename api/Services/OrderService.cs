@@ -32,6 +32,7 @@ namespace Supermarket.Services
         Task<bool> Transfer(List<AddToBuyListDto> model);
         Task<bool> CancelBuyList(List<AddToBuyListDto> model);
         Task<byte[]> ReportBuyPersion(string langId , int teamId);
+        Task<byte[]> ReportBuyItemPending(string langId , int teamId);
         Task<byte[]> ReportBuyItem(string langId , int teamId);
 
         Task<bool> CancelPendingList(List<AddToBuyListDto> model);
@@ -115,6 +116,67 @@ namespace Supermarket.Services
             var res = await GetBuyingBuyItemExcel(langId, teamId);
             return ReportBuyItem(res);
             //throw new NotImplementedException();
+        }
+        public async Task<byte[]> ReportBuyItemPending(string langId, int teamId)
+        {
+            var res = await GetPendingBuyItemExcel(langId, teamId);
+            return ReportBuyItem(res);
+            //throw new NotImplementedException();
+        }
+        public async Task<List<ProductBuyingDto>> GetPendingBuyItemExcel(string langId, int teamId)
+        {
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var accountId = JWTExtensions.GetDecodeTokenById(token).ToInt();
+            var accountItem = await _repoAccount.FindAll(x => x.Id == accountId).FirstOrDefaultAsync();
+            string host = _httpContextAccessor.HttpContext.Request.Scheme + "://" +
+                    _httpContextAccessor.HttpContext.Request.Host + "/api/";
+            var data = await _repoOrderHistory.FindAll(x => x.TeamId == teamId).ToListAsync();
+            if (data == null) return new List<ProductBuyingDto>();
+            //{
+            //    TotalPrice = 0,
+            //    Data = new List<ProductCartDto> { }
+            //};v
+            var res = data.Where(x => x.PendingQty > 0).Select(x => new
+            {
+                Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
+                OriginalPrice = x.Product.OriginalPrice,
+                Quantity = x.ByingQty,
+                Description = x.Product.Description,
+                IsDelete = x.Product.IsDelete,
+                Amount = (x.ByingQty * x.Product.OriginalPrice),
+                StoreId = x.Product.StoreId,
+                Avatar = ConvertImageURLToBase64ExportEcel(host + x.Product.Avatar) ?? "",
+                KindId = x.Product.KindId,
+                ProductId = x.ProductId,
+                OderDetailId = x.OrderDetailId,
+                StoreName = x.Product.Store.Name,
+                FullName = x.Consumer.FullName,
+                ConsumerId = x.Consumer.Id,
+                KindName = langId == SystemLang.VI ? x.Product.Kind.VietnameseName : langId == SystemLang.EN ? x.Product.Kind.EnglishName : x.Product.Kind.ChineseName,
+            }).Where(y => y.IsDelete == false).ToList();
+            var item = new List<ProductBuyingDto>();
+
+            var result = res.GroupBy(x => new { x.Name })
+                .Select(x => new ProductBuyingDto
+                {
+                    Name = x.First().Name,
+                    OriginalPrice = x.First().OriginalPrice.ToString("n0"),
+                    Description = x.First().Description,
+                    StoreName = x.First().StoreName,
+                    Avatar = x.First().Avatar,
+                    OderDetailId = x.First().OderDetailId,
+                    KindName = x.First().KindName,
+                    Amount = x.Sum(a => a.Amount).ToString("n0"),
+                    Quantity = x.Sum(a => a.Quantity),
+                    Consumers = x.GroupBy(s => new { s.FullName, s.ConsumerId })
+                    .Select(a => new ConsumerOrderDto
+                    {
+                        FullName = a.First().FullName,
+                        Quantity = a.Sum(b => b.Quantity),
+                    }).ToList(),
+
+                }).ToList();
+            return result;
         }
         public async Task<List<ProductBuyingDto>> GetBuyingBuyItemExcel(string langId, int teamId)
         {

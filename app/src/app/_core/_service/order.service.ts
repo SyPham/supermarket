@@ -26,6 +26,9 @@ export class OrderService extends CURDService<Order> {
   reportBuyItem(teamId){
     return this.http.get(`${this.base}Order/ReportBuyItem/${localStorage.getItem("lang")}/${teamId}`,{responseType: 'blob'});
   }
+  pendingReportBuyItem(teamId){
+    return this.http.get(`${this.base}Order/ReportBuyItemPending/${localStorage.getItem("lang")}/${teamId}`,{responseType: 'blob'});
+  }
   download(url: string){
     return this.http.get(url,{responseType: 'blob'})
   }

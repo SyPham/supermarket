@@ -23,11 +23,19 @@ namespace Supermarket.Controllers
             var bin = await _service.ReportBuyPersion(langId, teamId);
             return File(bin, "application/octet-stream", "ReportBuyPersion.xlsx");
         }
+
         [HttpGet("{langId}/{teamId}")]
         public async Task<IActionResult> ReportBuyItem(string langId, int teamId)
         {
             var bin = await _service.ReportBuyItem(langId, teamId);
             return File(bin, "application/octet-stream", "ReportBuyItem.xlsx");
+        }
+
+        [HttpGet("{langId}/{teamId}")]
+        public async Task<IActionResult> ReportBuyItemPending(string langId, int teamId)
+        {
+            var bin = await _service.ReportBuyItemPending(langId, teamId);
+            return File(bin, "application/octet-stream", "PendingReportBuyItem.xlsx");
         }
         [HttpPut]
         public async Task<IActionResult> TransferBuyList(List<AddToBuyListDto> model)

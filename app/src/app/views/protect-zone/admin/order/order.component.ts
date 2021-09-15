@@ -184,7 +184,6 @@ export class OrderComponent extends BaseComponent implements OnInit {
   }
   exportBuyItem() {
     this.spinner.show();
-    console.log(this.teamId);
     this.service.reportBuyItem(this.teamId).subscribe(data =>{
       (saveAs(data,'exportBuyItem.xlsx'))
       this.alertify.success(MessageConstants.CREATED_OK_MSG);
@@ -197,10 +196,15 @@ export class OrderComponent extends BaseComponent implements OnInit {
     // });
 
   }
+  exportPendingItem() {
+    this.spinner.show();
+    this.service.pendingReportBuyItem(this.teamId).subscribe(data =>{
+      (saveAs(data,'PendingExportBuyItem.xlsx'))
+      this.alertify.success(MessageConstants.CREATED_OK_MSG);
+      this.spinner.hide();
+    })
+  }
   exportBuyPersion() {
-    // this.exportAsService.save(this.configPersion, 'BuyingPerisonItem').subscribe(() => {
-    //   // save started
-    // });
     this.spinner.show();
     this.service.reportBuyPersion(this.teamId).subscribe(data =>{
       (saveAs(data,'exportBuyPersion.xlsx'))

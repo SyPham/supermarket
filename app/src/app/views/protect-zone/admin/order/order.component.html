@@ -36,35 +36,40 @@
           <e-items>
             <e-item id='buy-list' >
               <ng-template #template>
-                <button type="button" *ngIf="pendingTab" (click)="byList()" class="btn btn-success" ><i class="fa fa-exchange" aria-hidden="true"></i> Today buy list </button>
+                <button type="button" *ngIf="pendingTab && this.data.length > 0" (click)="byList()" class="btn btn-success" ><i class="fa fa-exchange" aria-hidden="true"></i> Today buy list </button>
+              </ng-template>
+            </e-item>
+            <e-item id='exportBuyItem' >
+              <ng-template #template>
+                <button type="button" *ngIf="pendingTab && this.data.length > 0" (click)="exportPendingItem()" class="btn btn-secondary" ><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Buy Item </button>
               </ng-template>
             </e-item>
 
             <e-item id='cancelPending' align='right'>
               <ng-template #template>
-                <button type="button" style="margin-right: 150px;" *ngIf="pendingTab" (click)="CancelPending()" class="btn btn-danger" >Cancel</button>
+                <button type="button" style="margin-right: 150px;" *ngIf="pendingTab && this.data.length > 0" (click)="CancelPending()" class="btn btn-danger" >Cancel</button>
               </ng-template>
             </e-item>
 
 
             <e-item id='exportBuyItem' >
               <ng-template #template>
-                <button type="button" *ngIf="buyingTab" (click)="exportBuyItem()" class="btn btn-secondary" ><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Buy Item </button>
+                <button type="button" *ngIf="buyingTab && this.data.length > 0" (click)="exportBuyItem()" class="btn btn-secondary" ><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Buy Item </button>
               </ng-template>
             </e-item>
             <e-item id='exportBuyPersion' >
               <ng-template #template>
-                <button type="button" *ngIf="buyingTab" (click)="exportBuyPersion()" class="btn btn-secondary" ><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Buy Persion </button>
+                <button type="button" *ngIf="buyingTab && this.data.length > 0" (click)="exportBuyPersion()" class="btn btn-secondary" ><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Buy Persion </button>
               </ng-template>
             </e-item>
             <e-item id='dispatch' >
               <ng-template #template>
-                <button type="button" *ngIf="buyingTab" (click)="DisPatchCheckBox()" class="btn btn-primary" ><i class="fa fa-exchange" aria-hidden="true"></i> Dispatch </button>
+                <button type="button" *ngIf="buyingTab && this.data.length > 0" (click)="DisPatchCheckBox()" class="btn btn-primary" ><i class="fa fa-exchange" aria-hidden="true"></i> Dispatch </button>
               </ng-template>
             </e-item>
             <e-item id='cancelBuying' align='right' >
               <ng-template #template>
-                <button type="button" style="margin-right: 177px;" *ngIf="buyingTab" (click)="CancelBuying()" class="btn btn-danger" ><i class="fa fa-ban" aria-hidden="true"></i> Cancel </button>
+                <button type="button" style="margin-right: 177px;" *ngIf="buyingTab && this.data.length > 0" (click)="CancelBuying()" class="btn btn-danger" ><i class="fa fa-ban" aria-hidden="true"></i> Cancel </button>
               </ng-template>
             </e-item>
             <e-item align='right'>
