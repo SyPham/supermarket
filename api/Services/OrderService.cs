@@ -140,10 +140,10 @@ namespace Supermarket.Services
             {
                 Name = langId == SystemLang.VI ? x.Product.VietnameseName : langId == SystemLang.EN ? x.Product.EnglishName : x.Product.ChineseName,
                 OriginalPrice = x.Product.OriginalPrice,
-                Quantity = x.ByingQty,
+                Quantity = x.PendingQty,
                 Description = x.Product.Description,
                 IsDelete = x.Product.IsDelete,
-                Amount = (x.ByingQty * x.Product.OriginalPrice),
+                Amount = (x.PendingQty * x.Product.OriginalPrice),
                 StoreId = x.Product.StoreId,
                 Avatar = ConvertImageURLToBase64ExportEcel(host + x.Product.Avatar) ?? "",
                 KindId = x.Product.KindId,
