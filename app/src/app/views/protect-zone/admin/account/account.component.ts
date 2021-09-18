@@ -215,7 +215,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
   }
   getAllTeam() {
     this.teamService.getAll().subscribe(data => {
-      this.teamData = data;
+      this.teamData = data.filter(x => x.status == true);
       this.teamData.unshift({ id: 0, name: 'N/A'  });
     });
   }

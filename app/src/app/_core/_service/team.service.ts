@@ -17,7 +17,7 @@ export class TeamService extends CURDService<Team> {
   }
 
   updateStatus(id) {
-    return this.http.post(this.base + `Store/UpdateStatus/${id}` ,{});
+    return this.http.post(this.base + `Team/UpdateStatus/${id}` ,{});
   }
 
   getAll(): Observable<any[]> {

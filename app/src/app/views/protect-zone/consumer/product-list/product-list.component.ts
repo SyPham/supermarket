@@ -189,7 +189,7 @@ export class ProductListComponent extends BaseComponent implements OnInit {
   // api
   loadTeamData() {
     this.serviceTeam.getAll().subscribe(data => {
-      this.teams = data;
+      this.teams = data.filter(x => x.status == true);
     });
   }
   loadData() {
