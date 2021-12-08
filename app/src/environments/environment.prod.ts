@@ -13,12 +13,12 @@ const SYSTEM_CODE = 3;
 export const environment = {
   production: true,
   systemCode: SYSTEM_CODE,
-  apiUrlEC: '/api/',
-  apiUrl: '/api/',
-  apiUrl2: '/api/',
-  hub: '/ec-hub',
-  scalingHub: 'http://localhost:5001/ec-hub',
-  scalingHubLocal: 'http://localhost:5001/scalingHub',
+  apiUrlEC: 'http://10.4.5.174:80/api/',
+  apiUrl: 'http://10.4.5.174:44310/api/',
+  apiUrl2: 'http://10.4.5.174:44310/api/',
+  hub: 'http://10.4.5.174:80/ec-hub',
+  scalingHub: 'http://10.4.5.174:80/ec-hub',
+  scalingHubLocal: 'http://10.4.5.174:5001/scalingHub',
   _mqtt: {
     server: 'mqtt.myweb.com',
     protocol: "wss",
